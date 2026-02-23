@@ -8,6 +8,12 @@ import PartyList from './pages/Party/PartyList'
 import DeptList from './pages/Department/DeptList'
 import AccountVoucherCreation from './pages/AccountVoucherCreation/AccountVoucherCreation'
 import AccountCreation from './pages/AccountCreation/AccountCreation'
+import UserCreate from './pages/Settings/UserCreate'
+import RoleAssign from './pages/Settings/RoleAssign'
+import UserList from './pages/Settings/UserList'
+import AdminPin from './pages/Settings/AdminPin'
+import CompanyRegistration from './pages/CompanyRegistration/CompanyRegistration'
+import Register from './pages/Register/Register'
 import MainLayout from './components/MainLayout'
 
 const router = createBrowserRouter([
@@ -16,8 +22,20 @@ const router = createBrowserRouter([
     element: <Login />,
   },
   {
+    path: '/login',
+    element: <Login />,
+  },
+  {
+    path: '/register',
+    element: <Register />,
+  },
+  {
     path: '/companylist',
     element: <CompanyList />,
+  },
+  {
+    path: '/company-registration',
+    element: <CompanyRegistration />,
   },
   {
     element: <MainLayout />,
@@ -39,6 +57,10 @@ const router = createBrowserRouter([
         element: <Party />,
       },
       {
+        path: '/party/edit/:id',
+        element: <Party />,
+      },
+      {
         path: '/department',
         element: <DeptList />,
       },
@@ -49,6 +71,26 @@ const router = createBrowserRouter([
       {
         path: '/account/create',
         element: <AccountCreation />,
+      },
+      {
+        path: '/account/edit/:id',
+        element: <AccountCreation />,
+      },
+      {
+        path: '/settings/user-create',
+        element: <UserCreate />,
+      },
+      {
+        path: '/settings/role-assign',
+        element: <RoleAssign />,
+      },
+      {
+        path: '/settings/user-list',
+        element: <UserList />,
+      },
+      {
+        path: '/settings/admin-pin',
+        element: <AdminPin />,
       },
     ],
   },

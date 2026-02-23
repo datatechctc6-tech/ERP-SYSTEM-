@@ -14,7 +14,11 @@ import {
     ShoppingCart,
     CreditCard,
     ArrowLeftRight,
-    Circle
+    Circle,
+    UserPlus,
+    Shield,
+    List,
+    KeyRound
 } from 'lucide-react';
 
 const NavItem = ({ item, isSidebarOpen, openMenus, toggleMenu, handleNavigate, depth = 0 }) => {
@@ -136,7 +140,17 @@ const Sidebar = () => {
                 // { label: 'Transfer Stock', icon: <ArrowLeftRight size={16} /> },
             ]
         },
-        { id: 'settings', label: 'Settings', icon: <Settings size={20} />, path: '/settings' },
+        {
+            id: 'settings',
+            label: 'Settings',
+            icon: <Settings size={20} />,
+            subItems: [
+                { label: 'User Create', icon: <UserPlus size={16} />, path: '/settings/user-create' },
+                { label: 'Role Assign', icon: <Shield size={16} />, path: '/settings/role-assign' },
+                { label: 'User List', icon: <List size={16} />, path: '/settings/user-list' },
+                { label: 'Admin Pin', icon: <KeyRound size={16} />, path: '/settings/admin-pin' },
+            ]
+        },
     ];
 
     return (

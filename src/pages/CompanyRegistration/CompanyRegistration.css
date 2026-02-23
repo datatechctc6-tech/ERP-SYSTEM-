@@ -1,0 +1,384 @@
+.registration-page {
+    min-height: 100vh;
+    background: #f0f7f7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    font-family: 'Inter', sans-serif;
+}
+
+.registration-main-title {
+    color: #0c4b3d;
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 25px;
+    text-align: left;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.registration-container {
+    width: 100%;
+    max-width: 1200px;
+    height: 90vh;
+    /* Fixed height for the card */
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.registration-container form {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.registration-header {
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #eee;
+}
+
+.registration-header h2 {
+    color: #0c4b3d;
+    font-size: 1.25rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid #ff000022;
+    background: #fff5f5;
+    color: #ff4d4d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.close-btn:hover {
+    background: #ff4d4d;
+    color: white;
+    transform: rotate(90deg);
+}
+
+.registration-content {
+    padding: 30px;
+    padding-bottom: 300px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 40px;
+    overflow-y: auto;
+    /* Internal scrolling */
+    flex: 1;
+    /* Take up available space */
+}
+
+.form-section-title {
+    background: #00897b;
+    color: white;
+    display: inline-block;
+    padding: 6px 20px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.section-divider {
+    grid-column: span 2;
+    margin: 20px 0 10px 0;
+    border-bottom: 1.5px solid #00897b22;
+    position: relative;
+    padding-bottom: 30px;
+}
+
+.badge-title {
+    background: #00897b;
+    color: white;
+    padding: 6px 18px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    position: absolute;
+    top: 5px;
+    left: 0;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.form-group label span {
+    color: #ff4d4d;
+    margin-left: 2px;
+}
+
+.reg-input {
+    width: 100%;
+    height: 40px;
+    padding: 0 15px;
+    border: 1.5px solid #00897b33;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #0c4b3d;
+    font-weight: 500;
+    transition: all 0.2s;
+    outline: none;
+    background: #fff;
+}
+
+.reg-input:focus {
+    border-color: #00897b;
+    box-shadow: 0 0 0 4px rgba(0, 137, 123, 0.1);
+}
+
+.dual-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.tri-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+}
+
+.relative {
+    position: relative;
+}
+
+.date-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 12px;
+}
+
+.date-field {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.date-field label {
+    font-size: 10px;
+    color: #888;
+    margin-bottom: 0;
+    min-width: 30px;
+}
+
+.logo-upload-area {
+    margin-top: 15px;
+    border: 2px dashed #00897b44;
+    border-radius: 12px;
+    height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #f9fdfd;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.logo-upload-area:hover {
+    background: #f0f7f7;
+    border-color: #00897b;
+}
+
+.logo-upload-area span {
+    font-size: 11px;
+    font-weight: 700;
+    color: #0c4b3d;
+    text-transform: uppercase;
+}
+
+.logo-upload-area p {
+    font-size: 10px;
+    color: #888;
+    margin-top: 4px;
+}
+
+.registration-footer {
+    padding: 15px 30px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    background: #fdfdfd;
+    flex-shrink: 0;
+}
+
+.btn-reg {
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    border: none;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: white;
+}
+
+.btn-reg:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.btn-save {
+    background: #004d40;
+}
+
+.btn-edit {
+    background: #004d40;
+}
+
+.btn-clear {
+    background: #004d40;
+}
+
+.btn-hide {
+    background: #004d40;
+}
+
+.btn-lock {
+    background: #004d40;
+}
+
+.btn-unlock {
+    background: #004d40;
+}
+
+.btn-print {
+    background: #004d40;
+}
+
+.btn-close {
+    background: #004d40;
+}
+
+.btn-save:hover {
+    background: #00332e;
+}
+
+.btn-edit:hover {
+    background: #00332e;
+}
+
+.btn-clear:hover {
+    background: #00332e;
+}
+
+.btn-hide:hover {
+    background: #00332e;
+}
+
+.btn-lock:hover {
+    background: #00332e;
+}
+
+.btn-unlock:hover {
+    background: #00332e;
+}
+
+.btn-print:hover {
+    background: #00332e;
+}
+
+.btn-close:hover {
+    background: #00332e;
+}
+
+.btn-verify-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-minimal {
+    height: 36px;
+    padding: 0 15px;
+    font-size: 11px;
+    font-weight: 800;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+}
+
+.btn-check-format {
+    background: #e0f2f1;
+    color: #00897b;
+    border: 1.5px solid #00897b33;
+}
+
+.btn-verify-online {
+    background: #00897b;
+    color: white;
+    border: none;
+    box-shadow: 0 4px 10px rgba(0, 137, 123, 0.2);
+}
+
+.btn-minimal:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.col-span-2 {
+    grid-column: span 2;
+}
+
+.bank-others-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    width: 100%;
+}
+
+.upload-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.short-upload {
+    height: 100px !important;
+}

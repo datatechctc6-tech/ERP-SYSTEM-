@@ -121,15 +121,15 @@ const PartyList = () => {
                                         </td>
                                         <td className="px-3 py-2 border border-gray-200">
                                             <div className="flex items-center justify-center gap-1">
-                                                <button className="p-1 text-blue-600 hover:bg-blue-50 rounded border border-blue-100 transition-colors" title="Edit">
+                                                <button onClick={() => navigate(`/party/edit/${party.id}`, { state: { party } })} className="p-1 text-blue-600 hover:bg-blue-50 rounded border border-blue-100 transition-colors" title="Edit">
                                                     <Edit2 size={14} />
                                                 </button>
                                                 <button className="p-1 text-red-600 hover:bg-red-50 rounded border border-red-100 transition-colors" title="Delete">
                                                     <Trash2 size={14} />
                                                 </button>
-                                                <button className="p-1 text-gray-600 hover:bg-gray-50 rounded border border-gray-100 transition-colors">
+                                                {/* <button className="p-1 text-gray-600 hover:bg-gray-50 rounded border border-gray-100 transition-colors">
                                                     <MoreVertical size={14} />
-                                                </button>
+                                                </button> */}
                                             </div>
                                         </td>
                                     </tr>

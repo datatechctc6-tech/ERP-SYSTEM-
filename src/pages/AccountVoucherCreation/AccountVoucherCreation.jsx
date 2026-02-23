@@ -1,12 +1,14 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Plus, Printer, ArrowLeft, Edit3, Trash2, Calendar } from 'lucide-react';
+import PrintModal from '../../components/PrintModal/PrintModal';
 
 const AccountVoucherCreation = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [dateFilter, setDateFilter] = useState('today');
     const [selectedIndex, setSelectedIndex] = useState(0);
+    const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
     const searchInputRef = useRef(null);
 
     useEffect(() => {
@@ -36,16 +38,35 @@ const AccountVoucherCreation = () => {
     };
 
     // Mock data for the table
-    const vouchers = [
-        { id: 1, billNo: 'VOU-001', billDate: '2024-03-20', partyName: 'Sample Party A', contract: 'C-101', gp: 'GP-01', zone: 'Zone-1', dept: 'Sales', message: 'First installment', amount: 5000, status: 'Pending' },
+    const [vouchers, setVouchers] = useState([
+        { id: 1, billNo: 'VOU-001', billDate: '2024-03-20', partyName: 'Sample Party A', contract: 'C-101', gp: 'GP-01', zone: 'Zone-1', dept: 'Sales', message: 'First installment First installment First installment First installment First installment First installment', amount: 5000, status: 'Pending' },
         { id: 2, billNo: 'VOU-002', billDate: '2024-03-21', partyName: 'Sample Party B', contract: 'C-102', gp: 'GP-02', zone: 'Zone-2', dept: 'Ops', message: 'Material supply', amount: 12500, status: 'Approved' },
         { id: 3, billNo: 'VOU-003', billDate: '2024-03-21', partyName: 'Sample Party C', contract: 'C-103', gp: 'GP-03', zone: 'Zone-3', dept: 'Finance', message: 'Service fee', amount: 3200, status: 'Rejected' },
-    ];
+    ]);
+
+    const handleDelete = (voucher) => {
+        if (window.confirm(`Are you sure you want to delete "${voucher.billNo}"?`)) {
+            setVouchers(prev => prev.filter(v => v.id !== voucher.id));
+        }
+    };
 
     const filteredVouchers = vouchers.filter(v =>
         v.partyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
         v.billNo.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    const handleOpenPrintModal = () => {
+        setIsPrintModalOpen(true);
+    };
+
+    const handleClosePrintModal = () => {
+        setIsPrintModalOpen(false);
+    };
+
+    const handlePrint = (options) => {
+        console.log('Printing with options:', options);
+    };
+
 
     return (
         <div className="h-full w-full bg-[#f0f4f4] flex overflow-hidden">
@@ -108,8 +129,8 @@ const AccountVoucherCreation = () => {
                                     <tr
                                         key={voucher.id}
                                         className={`transition-colors text-[11px] ${index === selectedIndex
-                                                ? 'bg-yellow-100 border-y-2 z-10 relative'
-                                                : 'hover:bg-gray-50'
+                                            ? 'bg-yellow-100 border-y-2 z-10 relative'
+                                            : 'hover:bg-gray-50'
                                             }`}
                                     >
                                         <td className="px-3 py-2 border border-gray-200 font-bold whitespace-nowrap">{voucher.billNo}</td>
@@ -131,10 +152,10 @@ const AccountVoucherCreation = () => {
                                         </td>
                                         <td className="px-3 py-2 border border-gray-200 text-center">
                                             <div className="flex items-center justify-center gap-2">
-                                                <button className="p-1 text-blue-600 hover:bg-blue-50 rounded border border-blue-100 transition-colors" title="Edit">
+                                                <button onClick={() => navigate(`/account/edit/${voucher.id}`, { state: { voucher } })} className="p-1 text-blue-600 hover:bg-blue-50 rounded border border-blue-100 transition-colors" title="Edit">
                                                     <Edit3 size={14} />
                                                 </button>
-                                                <button className="p-1 text-red-600 hover:bg-red-50 rounded border border-red-100 transition-colors" title="Delete">
+                                                <button onClick={() => handleDelete(voucher)} className="p-1 text-red-600 hover:bg-red-50 rounded border border-red-100 transition-colors" title="Delete">
                                                     <Trash2 size={14} />
                                                 </button>
                                             </div>
@@ -155,8 +176,12 @@ const AccountVoucherCreation = () => {
                         <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
                         <span className="text-[12px] font-black uppercase tracking-widest">Back</span>
                     </button>
-                    <button className="h-10 px-6 bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-2 transition-all shadow-md">
-                        <Printer size={16} />
+                    <button
+                        onClick={handleOpenPrintModal}
+                        disabled={filteredVouchers.length === 0}
+                        className="h-10 px-6 bg-[#004d40] hover:bg-[#00332e] disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group"
+                    >
+                        <Printer size={16} className="group-hover:scale-110 transition-transform" />
                         <span className="text-[12px] font-black uppercase tracking-widest">Print</span>
                     </button>
                     <button
@@ -168,6 +193,14 @@ const AccountVoucherCreation = () => {
                     </button>
                 </div>
             </div>
+
+            {/* Print Modal */}
+            <PrintModal
+                isOpen={isPrintModalOpen}
+                onClose={handleClosePrintModal}
+                voucherData={filteredVouchers}
+                onPrint={handlePrint}
+            />
         </div>
     );
 };
