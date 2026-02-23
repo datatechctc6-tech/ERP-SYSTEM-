@@ -1,17 +1,33 @@
 import React, { useState } from 'react';
-import { Save, Edit3, XCircle, ArrowLeft } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Save, Edit3, XCircle, ArrowLeft, Trash2 } from 'lucide-react';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 
 const AccountCreation = () => {
     const navigate = useNavigate();
-    const [message, setMessage] = useState('');
-    const [accounts, setAccounts] = useState([...Array(20)].map((_, i) => ({
-        id: i + 1,
-        partyName: '',
-        department: '',
-        amount: '',
-        status: ''
-    })));
+    const location = useLocation();
+    const { id } = useParams();
+    const isEditMode = !!id;
+    const editVoucher = location.state?.voucher;
+    const [message, setMessage] = useState(editVoucher?.message || '');
+    const [accounts, setAccounts] = useState(() => {
+        const rows = [...Array(20)].map((_, i) => ({
+            id: i + 1,
+            partyName: '',
+            department: '',
+            amount: '',
+            status: ''
+        }));
+        if (editVoucher) {
+            rows[0] = {
+                id: 1,
+                partyName: editVoucher.partyName || '',
+                department: editVoucher.dept || '',
+                amount: editVoucher.amount ? String(editVoucher.amount) : '',
+                status: editVoucher.status || ''
+            };
+        }
+        return rows;
+    });
 
     const handleInputChange = (index, field, value) => {
         const newAccounts = [...accounts];
@@ -70,6 +86,7 @@ const AccountCreation = () => {
                             <th className="px-3 py-3 text-[10px] font-black uppercase tracking-widest border-r border-[#00332e] flex-1">Department</th>
                             <th className="px-3 py-3 text-[10px] font-black uppercase tracking-widest border-r border-[#00332e] flex-1 text-right">Amount</th>
                             <th className="px-3 py-3 text-[10px] font-black uppercase tracking-widest border-[#00332e] w-32">Status</th>
+                            <th className="px-3 py-3 text-[10px] font-black uppercase tracking-widest border-l border-[#00332e] w-20 text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 flex-1 overflow-y-auto custom-scrollbar">
@@ -123,18 +140,32 @@ const AccountCreation = () => {
                                         placeholder={index === 0 ? "Status" : ""}
                                     />
                                 </td>
+                                <td className="border-l border-gray-200 w-20 h-10 flex items-center justify-center">
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const newAccounts = [...accounts];
+                                            newAccounts[index] = { id: account.id, partyName: '', department: '', amount: '', status: '' };
+                                            setAccounts(newAccounts);
+                                        }}
+                                        className="p-1.5 text-red-400 hover:text-white hover:bg-red-500 rounded transition-all"
+                                        title="Delete"
+                                    >
+                                        <Trash2 size={14} />
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
                     <tfoot className="bg-gray-100 border-t-2 border-[#004d40] flex-none">
                         <tr className="flex w-full items-center justify-between">
                             <td className="px-4 py-3 flex items-center gap-3">
-                                <input
-                                    type="text"
+                                <textarea
                                     value={message}
                                     onChange={(e) => setMessage(e.target.value)}
                                     placeholder="Enter your message here..."
-                                    className="w-96 h-20 bg-white border border-gray-300 px-4 rounded text-[12px] font-bold text-gray-700 focus:outline-none focus:border-[#004d40] focus:bg-yellow-100 transition-colors shadow-sm"
+                                    rows={3}
+                                    className="w-96 bg-white border border-gray-300 px-4 py-2 rounded text-[12px] font-bold text-gray-700 focus:outline-none focus:border-[#004d40] focus:bg-yellow-100 transition-colors shadow-sm resize-none"
                                 />
                             </td>
                             <td className="px-4 py-3 text-[13px] font-black text-[#004d40] uppercase tracking-widest flex items-center gap-4">
@@ -156,7 +187,7 @@ const AccountCreation = () => {
                         className="h-10 px-6 bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group"
                     >
                         <Save size={16} className="group-hover:scale-110 transition-transform" />
-                        <span className="text-[12px] font-black uppercase tracking-widest">Save</span>
+                        <span className="text-[12px] font-black uppercase tracking-widest">{isEditMode ? 'Update' : 'Save'}</span>
                     </button>
                     <button className="h-10 px-6 bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group">
                         <Edit3 size={16} className="group-hover:rotate-12 transition-transform" />
@@ -164,7 +195,7 @@ const AccountCreation = () => {
                     </button>
                     <button
                         onClick={() => navigate('/account-voucher-creation')}
-                        className="h-10 px-6 bg-red-600 hover:bg-red-700 text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group"
+                        className="h-10 px-6 bg-[#004d40] hover:bg-red-600 text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group"
                     >
                         <XCircle size={16} className="group-hover:rotate-90 transition-transform" />
                         <span className="text-[12px] font-black uppercase tracking-widest">Close</span>

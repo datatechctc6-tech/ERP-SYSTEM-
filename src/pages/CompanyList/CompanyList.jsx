@@ -75,7 +75,10 @@ const CompanyList = () => {
                     </div>
 
                     <div className="ml-auto flex items-center gap-2">
-                        <div className="w-7 h-7 rounded bg-[#00332e] border border-[#00695c] flex items-center justify-center hover:bg-[#004d40] transition-colors cursor-pointer text-[#a7ffeb]">
+                        <div
+                            onClick={() => navigate('/company-registration')}
+                            className="w-7 h-7 rounded bg-[#00332e] border border-[#00695c] flex items-center justify-center hover:bg-[#004d40] transition-colors cursor-pointer text-[#a7ffeb]"
+                        >
                             <Plus size={16} />
                         </div>
                         <div
@@ -141,7 +144,7 @@ const CompanyList = () => {
                         {buttons.map((btn, idx) => (
                             <button
                                 key={idx}
-                                onClick={btn.onClick || (() => { })}
+                                onClick={btn.label === 'ADD' ? () => navigate('/company-registration') : (btn.onClick || (() => { }))}
                                 className="flex-1 min-w-[60px] h-8 bg-[#004d40] hover:bg-[#00332e] text-white text-[12px] font-bold tracking-wider border border-[#00695c] rounded-md flex items-center justify-center transition-all active:brightness-90 shadow-sm"
                             >
                                 {btn.label}

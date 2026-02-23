@@ -238,7 +238,19 @@ const Login = () => {
             Login with PIN
           </button>
 
-          <div className="mt-6 text-center">
+          <div className="mt-4 text-center">
+            <p className="text-sm text-gray-500">
+              Don't have an account?{" "}
+              <button
+                onClick={() => navigate("/register")}
+                className="text-red-500 font-semibold hover:underline cursor-pointer"
+              >
+                Register Now
+              </button>
+            </p>
+          </div>
+
+          <div className="mt-3 text-center">
             <button
               onClick={() => {
                 checkConfirm("RESET CONNECTION?", () => {
