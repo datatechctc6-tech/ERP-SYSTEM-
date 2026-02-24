@@ -41,7 +41,7 @@ const Header = () => {
                 <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
                     <span className="text-[#004d40] font-black italic text-xs">DT</span>
                 </div>
-                <h1 className="text-xl font-black tracking-tighter uppercase hidden sm:block">
+                <h1 className="text-2xl font-black  uppercase hidden sm:block">
                     DATATECH ERP <span className="text-[#a7ffeb]">System</span>
                 </h1>
             </div>

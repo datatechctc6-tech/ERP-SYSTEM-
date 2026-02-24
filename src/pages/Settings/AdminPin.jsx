@@ -10,14 +10,6 @@ const AdminPin = () => {
         confirmPin: ''
     });
 
-    const handlePinChange = (name, index, value) => {
-        const val = value.replace(/\D/g, '');
-        const newPin = formData[name].split('');
-        newPin[index] = val;
-        const joined = newPin.join('').slice(0, 4);
-        setFormData(prev => ({ ...prev, [name]: joined }));
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
         if (formData.currentPin.length !== 4) {
@@ -47,31 +39,18 @@ const AdminPin = () => {
                 <KeyRound size={14} className="text-[#00695c]" />
                 {label}
             </label>
-            <div className="flex-1 flex gap-2">
-                {[0, 1, 2, 3].map((i) => (
-                    <input
-                        key={i}
-                        type="password"
-                        inputMode="numeric"
-                        maxLength={1}
-                        value={value[i] || ''}
-                        onChange={(e) => {
-                            handlePinChange(name, i, e.target.value);
-                            if (e.target.value.replace(/\D/g, '') && i < 3) {
-                                const next = e.target.parentElement.querySelectorAll('input')[i + 1];
-                                if (next) next.focus();
-                            }
-                        }}
-                        onKeyDown={(e) => {
-                            if (e.key === 'Backspace' && !value[i] && i > 0) {
-                                const prev = e.target.parentElement.querySelectorAll('input')[i - 1];
-                                if (prev) prev.focus();
-                            }
-                        }}
-                        className="w-12 h-12 bg-[#f8fafc] border-2 border-gray-300 focus:border-[#004d40] focus:ring-1 focus:ring-[#004d40] outline-none text-center text-[20px] font-black text-[#004d40] transition-all rounded-lg shadow-sm"
-                    />
-                ))}
-            </div>
+            <input
+                type="password"
+                inputMode="numeric"
+                maxLength={4}
+                value={value}
+                onChange={(e) => {
+                    const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                    setFormData(prev => ({ ...prev, [name]: val }));
+                }}
+                placeholder="Enter 4-digit PIN"
+                className="flex-1 h-10 bg-[#f8fafc] border-2 border-gray-300 focus:border-[#004d40] focus:ring-1 focus:ring-[#004d40] outline-none px-3 text-[14px] font-bold text-[#004d40] transition-all rounded-lg shadow-sm"
+            />
         </div>
     );
 

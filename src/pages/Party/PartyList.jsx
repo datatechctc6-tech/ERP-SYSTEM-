@@ -8,10 +8,27 @@ const PartyList = () => {
     const [selectedIndex, setSelectedIndex] = useState(0);
     const searchInputRef = useRef(null);
 
+    // Always keep focus on the search bar
     useEffect(() => {
         if (searchInputRef.current) {
             searchInputRef.current.focus();
         }
+
+        const handleFocusOut = () => {
+            setTimeout(() => {
+                if (searchInputRef.current && document.activeElement !== searchInputRef.current) {
+                    searchInputRef.current.focus();
+                }
+            }, 0);
+        };
+
+        document.addEventListener('click', handleFocusOut);
+        document.addEventListener('focusin', handleFocusOut);
+
+        return () => {
+            document.removeEventListener('click', handleFocusOut);
+            document.removeEventListener('focusin', handleFocusOut);
+        };
     }, []);
 
     const handleSearchChange = (value) => {
