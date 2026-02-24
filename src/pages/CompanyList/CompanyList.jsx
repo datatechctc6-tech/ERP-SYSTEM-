@@ -36,7 +36,7 @@ const CompanyList = () => {
                 e.preventDefault();
                 const currentData = data[selectedRowRef.current];
                 if (currentData) {
-                    navigate(`/dashboard/${currentData.id}`);
+                    navigate(`/dashboard/${currentData.id}`, { state: { fromLogin: true } });
                 }
             }
         };
@@ -53,7 +53,7 @@ const CompanyList = () => {
         { label: "PRINT" },
         { label: "HIDE" },
         { label: "FIND" },
-        { label: "SELECT", onClick: () => navigate(`/dashboard/${data[selectedRow]?.id || 1}`) },
+        { label: "SELECT", onClick: () => navigate(`/dashboard/${data[selectedRow]?.id || 1}`, { state: { fromLogin: true } }) },
         { label: "IMPORT" },
         { label: "EXIT", onClick: () => navigate('/') },
     ];
@@ -110,7 +110,7 @@ const CompanyList = () => {
                                     <tr
                                         key={row.id}
                                         onClick={() => setSelectedRow(idx)}
-                                        onDoubleClick={() => navigate(`/dashboard/${row.id}`)}
+                                        onDoubleClick={() => navigate(`/dashboard/${row.id}`, { state: { fromLogin: true } })}
                                         className={`
                                             cursor-pointer transition-colors duration-200 border-b border-gray-100
                                             ${selectedRow === idx ? 'bg-yellow-300 text-black font-bold' : 'bg-white text-gray-700 font-medium'}

@@ -1,5 +1,5 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useParams, useLocation } from 'react-router-dom';
 import {
   TrendingUp,
   Database,
@@ -60,9 +60,47 @@ const StatCard = ({ label, value, trend, icon, color }) => (
 
 function Dashboard() {
   const { id } = useParams();
+  const location = useLocation();
+  const cameFromLogin = location.state?.fromLogin && !sessionStorage.getItem('welcomeShown');
+  const [showWelcome, setShowWelcome] = useState(cameFromLogin);
+
+  const handleCloseWelcome = () => {
+    setShowWelcome(false);
+    sessionStorage.setItem('welcomeShown', 'true');
+  };
 
   return (
     <div className="h-[calc(100vh-80px)] overflow-hidden flex flex-col space-y-3 p-1">
+
+      {/* Welcome Message Modal */}
+      {showWelcome && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-2xl w-[90%] max-w-[420px] overflow-hidden animate-fadeIn">
+            {/* Header */}
+            <div className="bg-[#004d40] px-6 py-4 text-center">
+              <h2 className="text-xl font-black text-white tracking-wide">Welcome</h2>
+              <p className="text-[#a7ffeb] text-xs font-semibold mt-1">DATATECH ERP System</p>
+            </div>
+            {/* Body */}
+            <div className="px-6 py-5 text-center">
+              <p className="text-gray-700 text-sm font-semibold leading-relaxed">
+                Welcome to <span className="text-[#004d40] font-black">Datatech ERP System</span>
+              </p>
+              <p className="text-gray-400 text-xs mt-2">Your enterprise resource planning solution is ready.</p>
+            </div>
+            {/* Footer */}
+            <div className="flex border-t border-gray-100">
+              <button
+                onClick={handleCloseWelcome}
+                className="flex-1 py-3 text-sm font-bold text-gray-500 hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Minimal Header */}
       <div className="flex items-center justify-between bg-[#004d40] px-4 py-2 rounded-xl text-white shadow-lg flex-shrink-0">
         <div className="flex items-center gap-3">
