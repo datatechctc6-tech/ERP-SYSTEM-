@@ -57,16 +57,57 @@ const CompanyList = () => {
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [companies, navigate]);
+    const handleDelete = async () => {
+        const currentData = companies[selectedRow];
+        if (!currentData) return;
+
+        const confirmDelete = window.confirm(`Are you sure you want to delete ${currentData.companyName}?`);
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`http://localhost:5000/api/companies/${currentData.id}`, {
+                method: "DELETE"
+            });
+            if (response.ok) {
+                alert("Company deleted successfully");
+                setSelectedRow(0); // Reset selection
+                fetchCompanies();  // Reload table
+            } else {
+                alert("Failed to delete company");
+            }
+        } catch (error) {
+            console.error("Delete company error:", error);
+            alert("Error deleting company");
+        }
+    };
+
+    const handleModify = () => {
+        const currentData = companies[selectedRow];
+        if (currentData && currentData.id) {
+            navigate('/company-registration', { state: { companyId: currentData.id } });
+        } else {
+            alert("No company selected");
+        }
+    };
+
+    const handleView = () => {
+        const currentData = companies[selectedRow];
+        if (currentData && currentData.id) {
+            navigate('/company-registration', { state: { companyId: currentData.id, isView: true } });
+        } else {
+            alert("No company selected");
+        }
+    };
 
     const buttons = [
         { label: "ADD" },
-        { label: "MODIFY" },
-        { label: "VIEW" },
-        { label: "DELETE" },
+        { label: "MODIFY", onClick: handleModify },
+        { label: "VIEW", onClick: handleView },
+        { label: "DELETE", onClick: handleDelete },
         { label: "PRINT" },
         { label: "HIDE" },
         { label: "FIND" },
-        { label: "SELECT", onClick: () => navigate(`/dashboard/${data[selectedRow]?.id || 1}`, { state: { fromLogin: true } }) },
+        { label: "SELECT", onClick: () => navigate(`/dashboard/${companies[selectedRow]?.id || 1}`, { state: { fromLogin: true } }) },
         { label: "IMPORT" },
         { label: "EXIT", onClick: () => navigate('/') },
     ];

@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Import routes from src/routes
 const authRoutes = require('./src/routes/authRoutes');
-const companyRoutes = require('./src/routes/companyRoutes');
+const companyRoutes = require('./src/routes/company.routes');
 
 // Basic test route (/) to check server is running
 app.get('/', (req, res) => {
