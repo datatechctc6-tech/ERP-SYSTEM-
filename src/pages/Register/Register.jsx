@@ -64,12 +64,35 @@ const Register = () => {
     const handleRegister = async () => {
         if (!validate()) return;
         setLoading(true);
-        // Mock registration
-        setTimeout(() => {
+
+        try {
+            const response = await fetch("http://localhost:5000/api/register", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    name: formData.fullName,
+                    email: formData.email,
+                    phone_number: formData.phone,
+                    password: formData.password,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Registration successful! Please login.");
+                navigate("/login");
+            } else {
+                setErrors((prev) => ({ ...prev, email: data.message || data.error || "Registration failed" }));
+            }
+        } catch (error) {
+            console.error("Registration error:", error);
+            alert("An error occurred during registration. Please check if the server is running.");
+        } finally {
             setLoading(false);
-            alert("Registration successful! Please login.");
-            navigate("/login");
-        }, 1200);
+        }
     };
 
     const isFormValid =

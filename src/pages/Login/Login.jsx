@@ -91,10 +91,32 @@ const Login = () => {
   const handleLogin = async () => {
     if (!isFormValid) return;
     setLoading(true);
-    // Mocking a delay for the UI
-    setTimeout(() => {
-      navigate("/companylist"); // Mock navigation
-    }, 1000);
+    setLoginError("");
+
+    try {
+      const response = await fetch("http://localhost:5000/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Successful login
+        localStorage.setItem("user", JSON.stringify(data.user));
+        navigate("/companylist");
+      } else {
+        setLoginError(data.error || "Login failed");
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setLoginError("An error occurred. Please check if the server is running.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleVerifyOtp = async () => {
