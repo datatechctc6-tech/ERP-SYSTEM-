@@ -16,25 +16,38 @@ const CompanyList = () => {
         "COMPANY NAME", "CODE", "F-DATE", "L-DATE", "ADDRESS 1", "ADDRESS 2", "COMP", "DRIVE", "REGD NO"
     ];
 
-    const data = [
-        { id: 1, name: "AMAN KUMAR", code: "s.amku_26", fdate: "2025-04-01", ldate: "2026-03-31", addr1: "RAMPUR", addr2: "ODISHA", comp: "MAIN", drive: "C:", regd: "REG123" },
-        { id: 2, name: "INDIAN MEDICAL STORE", code: "I24", fdate: "2024-04-01", ldate: "2025-03-31", addr1: "AT/PO JAJPUR ROAD", addr2: "ODISHA", comp: "BRANCH", drive: "D:", regd: "REG456" },
-        { id: 3, name: "HERITAGE HEALTHCARE HOSPITAL", code: "H24", fdate: "2024-04-01", ldate: "2025-03-31", addr1: "CHANDINI CHOWK", addr2: "CUTTACK", comp: "MAIN", drive: "E:", regd: "REG789" },
-        { id: 4, name: "JYOTI MEDICAL STORE", code: "J25", fdate: "2025-04-01", ldate: "2026-03-31", addr1: "NIMASAHI", addr2: "BUXIBAZAR", comp: "BRANCH", drive: "F:", regd: "REG101" },
-        { id: 5, name: "PANDA PHARMACEUTICALS", code: "P25", fdate: "2025-04-01", ldate: "2026-03-31", addr1: "KHADIANGA", addr2: "ODISHA", comp: "MAIN", drive: "G:", regd: "REG202" },
-    ];
+    const [companies, setCompanies] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchCompanies = async () => {
+        try {
+            const response = await fetch("http://localhost:5000/api/companies");
+            if (response.ok) {
+                const data = await response.json();
+                setCompanies(data);
+            }
+        } catch (error) {
+            console.error("Fetch companies error:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchCompanies();
+    }, []);
 
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === 'ArrowDown') {
                 e.preventDefault();
-                setSelectedRow(prev => Math.min(prev + 1, data.length - 1));
+                setSelectedRow(prev => Math.min(prev + 1, companies.length - 1));
             } else if (e.key === 'ArrowUp') {
                 e.preventDefault();
                 setSelectedRow(prev => Math.max(prev - 1, 0));
             } else if (e.key === 'Enter') {
                 e.preventDefault();
-                const currentData = data[selectedRowRef.current];
+                const currentData = companies[selectedRowRef.current];
                 if (currentData) {
                     navigate(`/dashboard/${currentData.id}`, { state: { fromLogin: true } });
                 }
@@ -43,7 +56,7 @@ const CompanyList = () => {
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [data, navigate]);
+    }, [companies, navigate]);
 
     const buttons = [
         { label: "ADD" },
@@ -106,7 +119,7 @@ const CompanyList = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.map((row, idx) => (
+                                {companies.map((row, idx) => (
                                     <tr
                                         key={row.id}
                                         onClick={() => setSelectedRow(idx)}
@@ -116,19 +129,19 @@ const CompanyList = () => {
                                             ${selectedRow === idx ? 'bg-yellow-300 text-black font-bold' : 'bg-white text-gray-700 font-medium'}
                                         `}
                                     >
-                                        <td className="px-3 py-2 text-[14px] whitespace-nowrap border border-gray-200">{row.name}</td>
-                                        <td className="px-3 py-2 text-[14px] font-mono whitespace-nowrap border border-gray-200">{row.code}</td>
-                                        <td className="px-3 py-2 text-[14px] whitespace-nowrap border border-gray-200">{row.fdate}</td>
-                                        <td className="px-3 py-2 text-[14px] whitespace-nowrap border border-gray-200">{row.ldate}</td>
-                                        <td className="px-3 py-2 text-[14px] uppercase whitespace-nowrap border border-gray-200">{row.addr1}</td>
-                                        <td className="px-3 py-2 text-[14px] uppercase whitespace-nowrap border border-gray-200">{row.addr2}</td>
-                                        <td className="px-3 py-2 text-[14px] uppercase whitespace-nowrap border border-gray-200">{row.comp}</td>
-                                        <td className="px-3 py-2 text-[14px] font-mono text-amber-800 whitespace-nowrap border border-gray-200">{row.drive}</td>
-                                        <td className="px-3 py-2 text-[14px] font-mono whitespace-nowrap border border-gray-200">{row.regd}</td>
+                                        <td className="px-3 py-2 text-[14px] whitespace-nowrap border border-gray-200">{row.companyName}</td>
+                                        <td className="px-3 py-2 text-[14px] font-mono whitespace-nowrap border border-gray-200">{row.branchCode || 'N/A'}</td>
+                                        <td className="px-3 py-2 text-[14px] whitespace-nowrap border border-gray-200">{row.finYearFrom ? new Date(row.finYearFrom).toLocaleDateString() : 'N/A'}</td>
+                                        <td className="px-3 py-2 text-[14px] whitespace-nowrap border border-gray-200">{row.finYearTo ? new Date(row.finYearTo).toLocaleDateString() : 'N/A'}</td>
+                                        <td className="px-3 py-2 text-[14px] uppercase whitespace-nowrap border border-gray-200">{row.address1}</td>
+                                        <td className="px-3 py-2 text-[14px] uppercase whitespace-nowrap border border-gray-200">{row.address2}</td>
+                                        <td className="px-3 py-2 text-[14px] uppercase whitespace-nowrap border border-gray-200">{row.businessType}</td>
+                                        <td className="px-3 py-2 text-[14px] font-mono text-amber-800 whitespace-nowrap border border-gray-200">C:</td>
+                                        <td className="px-3 py-2 text-[14px] font-mono whitespace-nowrap border border-gray-200">{row.gstin || 'N/A'}</td>
                                     </tr>
                                 ))}
                                 {/* Empty space with grid lines */}
-                                {[...Array(Math.max(0, 10 - data.length))].map((_, i) => (
+                                {[...Array(Math.max(0, 10 - companies.length))].map((_, i) => (
                                     <tr key={`empty-${i}`} className="h-[32px]">
                                         {[...Array(columns.length)].map((_, j) => (
                                             <td key={`empty-cell-${j}`} className="border border-gray-100"></td>

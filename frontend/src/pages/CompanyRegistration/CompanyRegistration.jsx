@@ -80,14 +80,34 @@ export default function CompanyRegistration() {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.companyName) {
             alert("Company Name is required");
             return;
         }
-        alert("Company Registered Successfully!");
-        navigate("/companylist");
+
+        try {
+            const response = await fetch("http://localhost:5000/api/register-company", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Company Registered Successfully!");
+                navigate("/companylist");
+            } else {
+                alert(data.error || "Failed to register company");
+            }
+        } catch (error) {
+            console.error("Company registration error:", error);
+            alert("An error occurred. Please check if the server is running.");
+        }
     };
 
     const handleClear = () => {

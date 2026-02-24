@@ -37,6 +37,43 @@ const registerUser = async (req, res) => {
     }
 };
 
+const loginUser = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({ error: 'Email and password are required' });
+        }
+
+        const user = await UserModel.findByEmail(email);
+
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+
+        if (!isMatch) {
+            return res.status(401).json({ error: 'Invalid credentials' });
+        }
+
+        // In a real app, you would generate a JWT here.
+        // For now, we'll just return success.
+        return res.status(200).json({
+            message: 'Login successful',
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email
+            }
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 module.exports = {
-    registerUser
+    registerUser,
+    loginUser
 };
