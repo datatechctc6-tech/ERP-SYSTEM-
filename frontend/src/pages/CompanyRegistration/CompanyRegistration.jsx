@@ -484,8 +484,8 @@ export default function CompanyRegistration() {
                                     <div className="form-group">
                                         <label>Working Style</label>
                                         <select className="reg-input" value={formData.workingStyle} onChange={(e) => handleChange("workingStyle", e.target.value)}>
-                                            <option value="MRP">MRP</option>
-                                            <option value="NET">NET</option>
+                                            <option value="MRP">NORMAL</option>
+                                            <option value="NET">WORK</option>
                                             <option value="COST">COST</option>
                                         </select>
                                     </div>

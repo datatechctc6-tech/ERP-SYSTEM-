@@ -16,6 +16,6 @@ class UserModel {
         const [result] = await db.execute(query, [name, email, phone_number, password]);
         return result;
     }
-}
+}      
 
 module.exports = UserModel;
