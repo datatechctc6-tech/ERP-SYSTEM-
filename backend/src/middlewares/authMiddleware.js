@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const verifyToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     if (!authHeader) {
-        return res.status(403).json({ error: 'A token is required for authentication' });
+        return res.status(401).json({ error: 'A token is required for authentication' });
     }
 
     if (!authHeader.startsWith('Bearer ')) {
