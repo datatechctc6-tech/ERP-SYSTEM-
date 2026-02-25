@@ -247,43 +247,124 @@ export default function CompanyRegistration() {
                                             value={formData.state}
                                             onChange={(e) => handleChange("state", e.target.value)}
                                         >
-                                            <option value="">-- Select State --</option>
-                                            <option value="ANDHRA PRADESH">ANDHRA PRADESH</option>
-                                            <option value="ARUNACHAL PRADESH">ARUNACHAL PRADESH</option>
-                                            <option value="ASSAM">ASSAM</option>
-                                            <option value="BIHAR">BIHAR</option>
-                                            <option value="CHHATTISGARH">CHHATTISGARH</option>
-                                            <option value="GOA">GOA</option>
-                                            <option value="GUJARAT">GUJARAT</option>
-                                            <option value="HARYANA">HARYANA</option>
-                                            <option value="HIMACHAL PRADESH">HIMACHAL PRADESH</option>
-                                            <option value="JHARKHAND">JHARKHAND</option>
-                                            <option value="KARNATAKA">KARNATAKA</option>
-                                            <option value="KERALA">KERALA</option>
-                                            <option value="MADHYA PRADESH">MADHYA PRADESH</option>
-                                            <option value="MAHARASHTRA">MAHARASHTRA</option>
-                                            <option value="MANIPUR">MANIPUR</option>
-                                            <option value="MEGHALAYA">MEGHALAYA</option>
-                                            <option value="MIZORAM">MIZORAM</option>
-                                            <option value="NAGALAND">NAGALAND</option>
-                                            <option value="ODISHA">ODISHA</option>
-                                            <option value="PUNJAB">PUNJAB</option>
-                                            <option value="RAJASTHAN">RAJASTHAN</option>
-                                            <option value="SIKKIM">SIKKIM</option>
-                                            <option value="TAMIL NADU">TAMIL NADU</option>
-                                            <option value="TELANGANA">TELANGANA</option>
-                                            <option value="TRIPURA">TRIPURA</option>
-                                            <option value="UTTAR PRADESH">UTTAR PRADESH</option>
-                                            <option value="UTTARAKHAND">UTTARAKHAND</option>
-                                            <option value="WEST BENGAL">WEST BENGAL</option>
-                                            <option value="ANDAMAN AND NICOBAR ISLANDS">ANDAMAN AND NICOBAR ISLANDS</option>
-                                            <option value="CHANDIGARH">CHANDIGARH</option>
-                                            <option value="DADRA AND NAGAR HAVELI AND DAMAN AND DIU">DADRA AND NAGAR HAVELI AND DAMAN AND DIU</option>
-                                            <option value="DELHI">DELHI</option>
-                                            <option value="JAMMU AND KASHMIR">JAMMU AND KASHMIR</option>
-                                            <option value="LADAKH">LADAKH</option>
-                                            <option value="LAKSHADWEEP">LAKSHADWEEP</option>
-                                            <option value="PUDUCHERRY">PUDUCHERRY</option>
+                                            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                                         </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>Website</label>
+                                <input className="reg-input" value={formData.website} onChange={(e) => handleChange("website", e.target.value)} />
+                            </div>
+                        </div>
+
+                        {/* GST / TAX Details Section */}
+                        <div className="section-divider">
+                            <div className="badge-title">GST / Tax Details</div>
+                        </div>
+
+                        <div className="form-column col-span-2">
+                            <div className="form-group" style={{ maxWidth: '50%' }}>
+                                <label>Company Reg Type</label>
+                                <select className="reg-input" value={formData.regType} onChange={(e) => handleChange("regType", e.target.value)}>
+                                    <option value="REGISTERED">REGISTERED</option>
+                                    <option value="UNREGISTERED">UNREGISTERED</option>
+                                    <option value="COMPOSITION">COMPOSITION</option>
+                                </select>
+                            </div>
+
+                            <div className="tri-columns">
+                                <div className="form-group">
+                                    <label>GSTIN No</label>
+                                    <input className="reg-input" value={formData.gstin} onChange={(e) => handleChange("gstin", e.target.value)} />
+                                </div>
+                                <div className="form-group">
+                                    <label>Date</label>
+                                    <input type="date" className="reg-input" value={formData.gstDate} onChange={(e) => handleChange("gstDate", e.target.value)} />
+                                </div>
+                                <div className="form-group">
+                                    <label>TIN Number</label>
+                                    <input className="reg-input" value={formData.tinNo} onChange={(e) => handleChange("tinNo", e.target.value)} />
+                                </div>
+                            </div>
+
+                            <div className="btn-verify-group">
+                                <button type="button" className="btn-minimal btn-check-format">
+                                    <ShieldCheck size={14} /> Check Format
+                                </button>
+                                <button type="button" className="btn-minimal btn-verify-online">
+                                    <ExternalLink size={14} /> Verify Online
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* License Info Section */}
+                        <div className="section-divider">
+                            <div className="badge-title">License Info</div>
+                        </div>
+
+                        <div className="form-column col-span-2">
+                            {[
+                                { id: "dl1", label: "DL Number 1" },
+                                { id: "dl2", label: "DL Number 2" },
+                                { id: "dl3", label: "DL Number 3" },
+                                { id: "fssai", label: "FSSAI Number" },
+                                { id: "cin", label: "CIN Number" },
+                                { id: "udin", label: "UDIN Number" }
+                            ].map((lic) => (
+                                <div className="tri-columns mb-4" key={lic.id}>
+                                    <div className="form-group">
+                                        <label>{lic.label}</label>
+                                        <input className="reg-input" value={formData[lic.id]} onChange={(e) => handleChange(lic.id, e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Valid From</label>
+                                        <input type="date" className="reg-input" value={formData[`${lic.id}From`]} onChange={(e) => handleChange(`${lic.id}From`, e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Valid To</label>
+                                        <input type="date" className="reg-input" value={formData[`${lic.id}To`]} onChange={(e) => handleChange(`${lic.id}To`, e.target.value)} />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Bank / Others Info Section */}
+                        <div className="section-divider">
+                            <div className="badge-title">Bank / Others Info</div>
+                        </div>
+
+                        <div className="form-column col-span-2">
+                            <div className="bank-others-grid">
+                                {/* Left Side: Fields */}
+                                <div className="fields-column">
+                                    <div className="form-group">
+                                        <label>Bank Name <span>*</span></label>
+                                        <input className="reg-input" value={formData.bankName} onChange={(e) => handleChange("bankName", e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Account Number <span>*</span></label>
+                                        <input className="reg-input" value={formData.accountNo} onChange={(e) => handleChange("accountNo", e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>IFSC Code <span>*</span></label>
+                                        <input className="reg-input" value={formData.ifscCode} onChange={(e) => handleChange("ifscCode", e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Bank Address <span>*</span></label>
+                                        <input className="reg-input" value={formData.bankAddress} onChange={(e) => handleChange("bankAddress", e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Jurisdiction</label>
+                                        <input className="reg-input" value={formData.jurisdiction} onChange={(e) => handleChange("jurisdiction", e.target.value)} />
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Working Style</label>
+                                        <select className="reg-input" value={formData.workingStyle} onChange={(e) => handleChange("workingStyle", e.target.value)}>
+                                            <option value="MRP">NORMAL</option>
+                                            <option value="NET">WORK</option>
+                                            <option value="COST">COST</option>
                                         </select>
                                     </div>
                                 </div>

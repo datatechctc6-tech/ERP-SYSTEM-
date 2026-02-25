@@ -8,12 +8,17 @@ const DeptList = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [formData, setFormData] = useState({
-        name: '',
-        code: ''
+        Sl_No: '',
+        t_v_date: '',
+        dept_Name: '',
+        desc: '',
+        dept_code: ''
     });
 
     const searchInputRef = useRef(null);
     const nameInputRef = useRef(null);
+    const descInputRef = useRef(null);
+    const saveBtnRef = useRef(null);
 
     useEffect(() => {
         if (!isAddMode && searchInputRef.current) {
@@ -60,10 +65,49 @@ const DeptList = () => {
 
     const handleAction = (type) => {
         if (type === 'ADD') {
+            const nextSlNo = departments.length + 1;
+            const today = new Date().toISOString().split('T')[0];
+            setFormData({
+                Sl_No: nextSlNo,
+                t_v_date: today,
+                dept_Name: '',
+                desc: '',
+                dept_code: ''
+            });
             setIsAddMode(true);
         } else if (type === 'EXIT' || type === 'CLOSE') {
             if (isAddMode) setIsAddMode(false);
             else navigate(-1);
+        }
+    };
+
+    const handleSave = async () => {
+        if (!formData.dept_Name.trim()) {
+            alert('Please enter Department Name');
+            return;
+        }
+        try {
+            const res = await fetch('http://localhost:4000/create/dep', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            const data = await res.json();
+            if (res.ok) {
+                alert('Department created successfully!');
+                setDepartments(prev => [...prev, {
+                    id: String(formData.Sl_No).padStart(2, '0'),
+                    code: formData.dept_code,
+                    name: formData.dept_Name
+                }]);
+                setFormData({ Sl_No: '', t_v_date: '', dept_Name: '', desc: '', dept_code: '' });
+                setIsAddMode(false);
+            } else {
+                alert(data.message || 'Failed to create department');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Server error. Is backend running on port 5000?');
         }
     };
 
@@ -92,19 +136,47 @@ const DeptList = () => {
                                     <input
                                         ref={nameInputRef}
                                         type="text"
-                                        value={formData.name}
-                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        value={formData.dept_Name}
+                                        onChange={(e) => {
+                                            const name = e.target.value;
+                                            let code = formData.dept_code;
+                                            if (name.trim() && !formData.dept_code) {
+                                                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                                                let randomCode = '';
+                                                for (let i = 0; i < 4; i++) randomCode += chars.charAt(Math.floor(Math.random() * chars.length));
+                                                code = 'DEP' + randomCode;
+                                            } else if (!name.trim()) {
+                                                code = '';
+                                            }
+                                            setFormData({ ...formData, dept_Name: name, dept_code: code });
+                                        }}
                                         className="flex-1 border border-gray-300 px-2 py-1 text-sm bg-yellow-100 focus:outline-none focus:border-[#00695c]"
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') { e.preventDefault(); descInputRef.current?.focus(); }
+                                        }}
                                     />
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <label className="text-xs font-black uppercase w-20">CODE<span className="text-red-500">*</span></label>
                                     <input
                                         type="text"
-                                        value={formData.code}
+                                        value={formData.dept_code}
                                         readOnly
                                         placeholder="AUTO"
                                         className="w-24 border border-gray-300 px-2 py-1 text-sm bg-gray-50 uppercase"
+                                    />
+                                    <label className="text-xs font-black uppercase w-16 ml-4">DESC</label>
+                                    <input
+                                        ref={descInputRef}
+                                        type="text"
+                                        value={formData.desc}
+                                        onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
+                                        placeholder="Description..."
+                                        className="flex-1 border border-gray-300 px-2 py-1 text-sm bg-yellow-100 focus:outline-none focus:border-[#00695c]"
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') { e.preventDefault(); saveBtnRef.current?.focus(); }
+                                            if (e.key === 'ArrowUp') { e.preventDefault(); nameInputRef.current?.focus(); }
+                                        }}
                                     />
                                 </div>
                             </div>
@@ -172,7 +244,12 @@ const DeptList = () => {
                 <div className="bg-white p-2 border-t border-[#b2dfdb]">
                     <div className="flex gap-2 justify-end pr-2">
                         <button
-                            onClick={() => isAddMode ? null : handleAction('ADD')}
+                            ref={saveBtnRef}
+                            onClick={() => isAddMode ? handleSave() : handleAction('ADD')}
+                            onKeyDown={(e) => {
+                                if (isAddMode && e.key === 'ArrowUp') { e.preventDefault(); descInputRef.current?.focus(); }
+                                if (isAddMode && e.key === 'Enter') { e.preventDefault(); handleSave(); }
+                            }}
                             className="bg-[#00695c] hover:bg-[#004d40] text-white text-[10px] font-black px-6 h-8 flex items-center justify-center rounded-sm transition-transform active:scale-95 uppercase"
                         >
                             {isAddMode ? 'SAVE' : 'ADD'}
