@@ -141,18 +141,20 @@ const AccountCreation = () => {
                                     />
                                 </td>
                                 <td className="border-l border-gray-200 w-20 h-10 flex items-center justify-center">
-                                    <button
-                                        type="button"
-                                        onClick={() => {
-                                            const newAccounts = [...accounts];
-                                            newAccounts[index] = { id: account.id, partyName: '', department: '', amount: '', status: '' };
-                                            setAccounts(newAccounts);
-                                        }}
-                                        className="p-1.5 text-red-400 hover:text-white hover:bg-red-500 rounded transition-all"
-                                        title="Delete"
-                                    >
-                                        <Trash2 size={14} />
-                                    </button>
+                                    {totalRecords > 1 && (account.partyName.trim() || account.department.trim() || account.amount.trim()) && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                const newAccounts = [...accounts];
+                                                newAccounts[index] = { id: account.id, partyName: '', department: '', amount: '', status: '' };
+                                                setAccounts(newAccounts);
+                                            }}
+                                            className="p-1.5 text-red-400 hover:text-white hover:bg-red-500 rounded transition-all"
+                                            title="Delete"
+                                        >
+                                            <Trash2 size={14} />
+                                        </button>
+                                    )}
                                 </td>
                             </tr>
                         ))}
