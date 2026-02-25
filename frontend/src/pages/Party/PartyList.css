@@ -1,8 +1,76 @@
 /* ============================================= */
+/* Default / Small Screens                       */
+/* ============================================= */
+.partylist-page .pl-header {
+    padding: 6px 16px !important;
+}
+
+.partylist-page .pl-footer {
+    padding: 8px 16px !important;
+}
+
+.partylist-page .pl-footer-btn {
+    padding: 4px 10px !important;
+    border-radius: 6px !important;
+}
+
+.partylist-page .pl-th {
+    padding: 3px 12px !important;
+    font-size: 13px !important;
+}
+
+.partylist-page .pl-td {
+    padding: 3px 12px !important;
+}
+
+.partylist-page .pl-td-name {
+    font-size: 14px !important;
+    font-weight: 700 !important;
+}
+
+.partylist-page .pl-td-text {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+}
+
+.partylist-page .pl-icon {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+.partylist-page .pl-search-input {
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+}
+
+.partylist-page .pl-search-input:focus {
+    background-color: #cff2f3e1 !important;
+}
+
+.partylist-page .pl-selected-row {
+    background-color: #fdd55ce1 !important;
+    position: relative;
+    z-index: 10;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================= */
 /* Tablets (Portrait)                            */
 /* 768px – 991px                                 */
 /* ============================================= */
 @media screen and (min-width: 768px) and (max-width: 991px) {
+    .partylist-page .pl-header {
+        padding: 6px 16px !important;
+    }
+
+    .partylist-page .pl-footer {
+        padding: 8px 16px !important;
+    }
+
+    .partylist-page .pl-footer-btn {
+        padding: 4px 14px !important;
+    }
+
     .partylist-page .pl-page-title {
         font-size: 14px;
     }
@@ -14,19 +82,27 @@
     .partylist-page .pl-search-input {
         font-size: 11px;
         width: 200px;
+        padding-top: 5px !important;
+        padding-bottom: 5px !important;
     }
 
     .partylist-page .pl-th {
-        font-size: 9px;
-        padding: 6px 8px;
+        font-size: 11px !important;
+        padding: 3px 8px !important;
+    }
+
+    .partylist-page .pl-td {
+        padding: 3px 8px !important;
     }
 
     .partylist-page .pl-td-name {
-        font-size: 10px;
+        font-size: 12px !important;
+        font-weight: 700 !important;
     }
 
     .partylist-page .pl-td-text {
-        font-size: 9px;
+        font-size: 11px !important;
+        font-weight: 700 !important;
     }
 
     .partylist-page .pl-avatar {
@@ -50,6 +126,18 @@
 /* 992px – 1199px                                */
 /* ============================================= */
 @media screen and (min-width: 992px) and (max-width: 1199px) {
+    .partylist-page .pl-header {
+        padding: 8px 20px !important;
+    }
+
+    .partylist-page .pl-footer {
+        padding: 10px 20px !important;
+    }
+
+    .partylist-page .pl-footer-btn {
+        padding: 5px 16px !important;
+    }
+
     .partylist-page .pl-page-title {
         font-size: 15px;
     }
@@ -61,19 +149,27 @@
     .partylist-page .pl-search-input {
         font-size: 12px;
         width: 220px;
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
     }
 
     .partylist-page .pl-th {
-        font-size: 10px;
-        padding: 6px 10px;
+        font-size: 12px !important;
+        padding: 4px 10px !important;
+    }
+
+    .partylist-page .pl-td {
+        padding: 4px 10px !important;
     }
 
     .partylist-page .pl-td-name {
-        font-size: 11px;
+        font-size: 13px !important;
+        font-weight: 700 !important;
     }
 
     .partylist-page .pl-td-text {
-        font-size: 10px;
+        font-size: 12px !important;
+        font-weight: 700 !important;
     }
 
     .partylist-page .pl-avatar {
@@ -97,6 +193,18 @@
 /* 1200px – 1439px                               */
 /* ============================================= */
 @media screen and (min-width: 1200px) and (max-width: 1439px) {
+    .partylist-page .pl-header {
+        padding: 10px 24px !important;
+    }
+
+    .partylist-page .pl-footer {
+        padding: 12px 24px !important;
+    }
+
+    .partylist-page .pl-footer-btn {
+        padding: 5px 15px !important;
+    }
+
     .partylist-page .pl-page-title {
         font-size: 16px;
     }
@@ -107,18 +215,27 @@
 
     .partylist-page .pl-search-input {
         font-size: 13px;
+        padding-top: 7px !important;
+        padding-bottom: 7px !important;
     }
 
     .partylist-page .pl-th {
-        font-size: 10px;
+        font-size: 13px !important;
+        padding: 4px 12px !important;
+    }
+
+    .partylist-page .pl-td {
+        padding: 4px 12px !important;
     }
 
     .partylist-page .pl-td-name {
-        font-size: 11px;
+        font-size: 14px !important;
+        font-weight: 700 !important;
     }
 
     .partylist-page .pl-td-text {
-        font-size: 10px;
+        font-size: 13px !important;
+        font-weight: 700 !important;
     }
 
     .partylist-page .pl-btn-text {
@@ -132,35 +249,37 @@
 /* 1440px – 1919px                               */
 /* ============================================= */
 @media screen and (min-width: 1440px) and (max-width: 1919px) {
-    .partylist-page .pl-page-title {
-        font-size: 24px;
+    .partylist-page .pl-header {
+        padding: 12px 30px !important;
     }
 
-    .partylist-page .pl-page-subtitle {
-        font-size: 13px;
+    .partylist-page .pl-footer {
+        padding: 14px 30px !important;
     }
 
     .partylist-page .pl-search-input {
         font-size: 16px;
-        padding: 10px 14px 10px 40px;
+        padding: 8px 14px 8px 40px !important;
         width: 300px;
     }
 
     .partylist-page .pl-th {
-        font-size: 15px;
-        padding: 10px 14px;
+        font-size: 17px !important;
+        padding: 6px 14px !important;
     }
 
     .partylist-page .pl-td-name {
-        font-size: 16px;
+        font-size: 16px !important;
+        font-weight: 700 !important;
     }
 
     .partylist-page .pl-td-text {
-        font-size: 15px;
+        font-size: 15px !important;
+        font-weight: 700 !important;
     }
 
     .partylist-page .pl-td {
-        padding: 10px 14px;
+        padding: 6px 14px !important;
     }
 
     .partylist-page .pl-avatar {
@@ -174,8 +293,8 @@
     }
 
     .partylist-page .pl-footer-btn {
-        padding: 10px 28px;
-        border-radius: 10px;
+        padding: 6px 20px !important;
+        border-radius: 8px !important;
     }
 
     .partylist-page .pl-empty-text {
@@ -190,7 +309,11 @@
 /* ============================================= */
 @media screen and (min-width: 1920px) and (max-width: 2559px) {
     .partylist-page .pl-header {
-        padding: 18px 30px;
+        padding: 14px 30px !important;
+    }
+
+    .partylist-page .pl-footer {
+        padding: 16px 30px !important;
     }
 
     .partylist-page .pl-page-title {
@@ -203,26 +326,28 @@
 
     .partylist-page .pl-search-input {
         font-size: 18px;
-        padding: 12px 16px 12px 44px;
+        padding: 10px 16px 10px 44px !important;
         width: 340px;
         border-radius: 8px;
     }
 
     .partylist-page .pl-th {
-        font-size: 17px;
-        padding: 12px 16px;
+        font-size: 19px !important;
+        padding: 8px 16px !important;
     }
 
     .partylist-page .pl-td-name {
-        font-size: 18px;
+        font-size: 18px !important;
+        font-weight: 700 !important;
     }
 
     .partylist-page .pl-td-text {
-        font-size: 17px;
+        font-size: 17px !important;
+        font-weight: 700 !important;
     }
 
     .partylist-page .pl-td {
-        padding: 12px 16px;
+        padding: 8px 16px !important;
     }
 
     .partylist-page .pl-avatar {
@@ -235,13 +360,9 @@
         font-size: 18px;
     }
 
-    .partylist-page .pl-footer {
-        padding: 18px 30px;
-    }
-
     .partylist-page .pl-footer-btn {
-        padding: 12px 32px;
-        border-radius: 10px;
+        padding: 8px 24px !important;
+        border-radius: 10px !important;
     }
 
     .partylist-page .pl-empty-text {
@@ -261,7 +382,11 @@
 /* ============================================= */
 @media screen and (min-width: 2560px) and (max-width: 3839px) {
     .partylist-page .pl-header {
-        padding: 22px 40px;
+        padding: 18px 40px !important;
+    }
+
+    .partylist-page .pl-footer {
+        padding: 20px 40px !important;
     }
 
     .partylist-page .pl-page-title {
@@ -274,26 +399,28 @@
 
     .partylist-page .pl-search-input {
         font-size: 22px;
-        padding: 14px 18px 14px 48px;
+        padding: 12px 18px 12px 48px !important;
         width: 420px;
         border-radius: 10px;
     }
 
     .partylist-page .pl-th {
-        font-size: 20px;
-        padding: 14px 18px;
+        font-size: 22px !important;
+        padding: 10px 18px !important;
     }
 
     .partylist-page .pl-td-name {
-        font-size: 22px;
+        font-size: 24px !important;
+        font-weight: 700 !important;
     }
 
     .partylist-page .pl-td-text {
-        font-size: 20px;
+        font-size: 22px !important;
+        font-weight: 700 !important;
     }
 
     .partylist-page .pl-td {
-        padding: 14px 18px;
+        padding: 10px 18px !important;
     }
 
     .partylist-page .pl-avatar {
@@ -306,13 +433,9 @@
         font-size: 22px;
     }
 
-    .partylist-page .pl-footer {
-        padding: 22px 40px;
-    }
-
     .partylist-page .pl-footer-btn {
-        padding: 14px 38px;
-        border-radius: 12px;
+        padding: 10px 28px !important;
+        border-radius: 12px !important;
     }
 
     .partylist-page .pl-empty-text {
@@ -332,7 +455,11 @@
 /* ============================================= */
 @media screen and (min-width: 3840px) {
     .partylist-page .pl-header {
-        padding: 30px 50px;
+        padding: 24px 50px !important;
+    }
+
+    .partylist-page .pl-footer {
+        padding: 26px 50px !important;
     }
 
     .partylist-page .pl-page-title {
@@ -345,27 +472,29 @@
 
     .partylist-page .pl-search-input {
         font-size: 28px;
-        padding: 18px 24px 18px 56px;
+        padding: 16px 24px 16px 56px !important;
         width: 520px;
         border-radius: 14px;
         border-width: 2px;
     }
 
     .partylist-page .pl-th {
-        font-size: 28px;
-        padding: 18px 24px;
+        font-size: 30px !important;
+        padding: 14px 24px !important;
     }
 
     .partylist-page .pl-td-name {
-        font-size: 28px;
+        font-size: 30px !important;
+        font-weight: 700 !important;
     }
 
     .partylist-page .pl-td-text {
-        font-size: 26px;
+        font-size: 28px !important;
+        font-weight: 700 !important;
     }
 
     .partylist-page .pl-td {
-        padding: 18px 24px;
+        padding: 14px 24px !important;
     }
 
     .partylist-page .pl-avatar {
@@ -378,13 +507,9 @@
         font-size: 28px;
     }
 
-    .partylist-page .pl-footer {
-        padding: 30px 50px;
-    }
-
     .partylist-page .pl-footer-btn {
-        padding: 18px 48px;
-        border-radius: 16px;
+        padding: 12px 32px !important;
+        border-radius: 14px !important;
     }
 
     .partylist-page .pl-empty-text {

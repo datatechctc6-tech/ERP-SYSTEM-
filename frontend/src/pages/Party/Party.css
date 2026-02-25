@@ -1,4 +1,12 @@
 /* ============================================= */
+/* Default / Small Screens                       */
+/* ============================================= */
+.party-page .party-footer-btn {
+    height: 30px !important;
+    padding: 0 16px !important;
+}
+
+/* ============================================= */
 /* Tablets (Portrait)                            */
 /* 768px – 991px                                 */
 /* ============================================= */
@@ -18,7 +26,7 @@
 
     .party-page .party-input {
         font-size: 11px;
-        padding: 5px 8px;
+        padding: 4px 8px;
     }
 
     .party-page .party-error {
@@ -42,8 +50,8 @@
     }
 
     .party-page .party-footer-btn {
-        height: 32px;
-        padding: 0 20px;
+        height: 28px !important;
+        padding: 0 14px !important;
     }
 }
 
@@ -68,7 +76,7 @@
 
     .party-page .party-input {
         font-size: 12px;
-        padding: 6px 10px;
+        padding: 5px 10px;
     }
 
     .party-page .party-error {
@@ -92,8 +100,8 @@
     }
 
     .party-page .party-footer-btn {
-        height: 34px;
-        padding: 0 24px;
+        height: 30px !important;
+        padding: 0 18px !important;
     }
 }
 
@@ -117,6 +125,7 @@
 
     .party-page .party-input {
         font-size: 12px;
+        padding: 6px 12px;
     }
 
     .party-page .party-btn-text {
@@ -125,6 +134,11 @@
 
     .party-page .party-footer-info {
         font-size: 10px;
+    }
+
+    .party-page .party-footer-btn {
+        height: 32px !important;
+        padding: 0 20px !important;
     }
 }
 
@@ -153,7 +167,7 @@
 
     .party-page .party-input {
         font-size: 16px;
-        padding: 10px 14px;
+        padding: 8px 14px;
     }
 
     .party-page .party-error {
@@ -182,9 +196,9 @@
     }
 
     .party-page .party-footer-btn {
-        height: 44px;
-        padding: 0 36px;
-        border-radius: 10px;
+        height: 38px !important;
+        padding: 0 28px !important;
+        border-radius: 8px;
     }
 }
 
@@ -214,7 +228,7 @@
 
     .party-page .party-input {
         font-size: 18px;
-        padding: 11px 18px;
+        padding: 9px 18px;
         border-radius: 8px;
     }
 
@@ -249,9 +263,9 @@
     }
 
     .party-page .party-footer-btn {
-        height: 48px;
-        padding: 0 40px;
-        border-radius: 10px;
+        height: 42px !important;
+        padding: 0 32px !important;
+        border-radius: 8px;
     }
 }
 
@@ -281,7 +295,7 @@
 
     .party-page .party-input {
         font-size: 20px;
-        padding: 12px 20px;
+        padding: 10px 20px;
         border-radius: 10px;
     }
 
@@ -316,9 +330,9 @@
     }
 
     .party-page .party-footer-btn {
-        height: 56px;
-        padding: 0 48px;
-        border-radius: 12px;
+        height: 48px !important;
+        padding: 0 40px !important;
+        border-radius: 10px;
     }
 }
 
@@ -348,7 +362,7 @@
 
     .party-page .party-input {
         font-size: 24px;
-        padding: 16px 26px;
+        padding: 14px 26px;
         border-radius: 14px;
         border-width: 2px;
     }
@@ -385,8 +399,8 @@
     }
 
     .party-page .party-footer-btn {
-        height: 68px;
-        padding: 0 56px;
-        border-radius: 16px;
+        height: 58px !important;
+        padding: 0 48px !important;
+        border-radius: 14px;
     }
 }

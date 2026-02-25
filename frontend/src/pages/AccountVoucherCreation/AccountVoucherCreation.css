@@ -1,0 +1,342 @@
+/* ============================================= */
+/* Default / Small Screens (Normal Display)      */
+/* ============================================= */
+.av-page .av-btn {
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 4px;
+}
+
+.av-page .av-btn-text {
+    font-size: 10px;
+}
+
+.av-page .av-search-input:focus {
+    background-color: #cff2f3e1 !important;
+    color: #000000 !important;
+}
+
+.av-page .av-search-input:focus::placeholder {
+    color: rgba(0, 0, 0, 0.4) !important;
+}
+
+.av-page .av-th {
+    font-size: 11px !important;
+    padding: 2px 12px !important;
+}
+
+.av-page .av-td {
+    font-size: 12px !important;
+    padding: 2px 12px !important;
+}
+
+.av-page .av-selected-row {
+    background-color: #fdd55ce1 !important;
+    position: relative;
+    z-index: 10;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05);
+}
+
+/* ============================================= */
+/* Tablets (Portrait)                            */
+/* 768px – 991px                                 */
+/* ============================================= */
+@media screen and (min-width: 768px) and (max-width: 991px) {
+    .av-page .av-search-input {
+        font-size: 11px;
+        width: 180px;
+    }
+
+    .av-page .av-filter-select {
+        font-size: 10px;
+    }
+
+    .av-page .av-th {
+        font-size: 10px !important;
+        padding: 2px 8px !important;
+    }
+
+    .av-page .av-td {
+        font-size: 11px !important;
+        padding: 2px 8px !important;
+    }
+
+    .av-page .av-status-badge {
+        font-size: 8px;
+        padding: 1px 6px;
+    }
+
+    .av-page .av-btn {
+        height: 26px;
+        padding: 0 10px;
+    }
+
+    .av-page .av-btn-text {
+        font-size: 9px;
+    }
+}
+
+/* ============================================= */
+/* Tablets Landscape / Small Laptops             */
+/* 992px – 1199px                                */
+/* ============================================= */
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+    .av-page .av-search-input {
+        font-size: 12px;
+        width: 220px;
+    }
+
+    .av-page .av-filter-select {
+        font-size: 11px;
+    }
+
+    .av-page .av-th {
+        font-size: 11px !important;
+        padding: 3px 10px !important;
+    }
+
+    .av-page .av-td {
+        font-size: 12px !important;
+        padding: 3px 10px !important;
+    }
+
+    .av-page .av-status-badge {
+        font-size: 9px;
+    }
+
+    .av-page .av-btn {
+        height: 28px;
+        padding: 0 12px;
+    }
+
+    .av-page .av-btn-text {
+        font-size: 10px;
+    }
+}
+
+/* ============================================= */
+/* Standard Desktop                              */
+/* 1200px – 1439px                               */
+/* ============================================= */
+@media screen and (min-width: 1200px) and (max-width: 1439px) {
+    .av-page .av-btn {
+        height: 28px;
+        padding: 0 14px;
+    }
+
+    .av-page .av-btn-text {
+        font-size: 10px;
+    }
+
+    .av-page .av-th {
+        font-size: 13px !important;
+        padding: 2px 12px !important;
+    }
+
+    .av-page .av-td {
+        font-size: 14px !important;
+        padding: 2px 12px !important;
+    }
+}
+
+/* ============================================= */
+/* Large Desktop                                 */
+/* 1440px – 1919px                               */
+/* ============================================= */
+@media screen and (min-width: 1440px) and (max-width: 1919px) {
+    .av-page .av-header {
+        padding: 10px 24px;
+    }
+
+    .av-page .av-search-input {
+        font-size: 16px;
+        padding: 6px 14px 6px 40px;
+        width: 320px;
+    }
+
+    .av-page .av-filter-select {
+        font-size: 15px;
+    }
+
+    .av-page .av-th {
+        font-size: 15px !important;
+        padding: 4px 14px !important;
+    }
+
+    .av-page .av-td {
+        font-size: 16px !important;
+        padding: 4px 14px !important;
+    }
+
+    .av-page .av-status-badge {
+        font-size: 12px;
+        padding: 4px 12px;
+    }
+
+    .av-page .av-footer {
+        padding: 12px 24px;
+    }
+
+    .av-page .av-btn {
+        height: 32px;
+        padding: 0 20px;
+        border-radius: 6px;
+    }
+
+    .av-page .av-btn-text {
+        font-size: 12px;
+    }
+}
+
+/* ============================================= */
+/* Full HD Screens                               */
+/* 1920px – 2559px                               */
+/* ============================================= */
+@media screen and (min-width: 1920px) and (max-width: 2559px) {
+    .av-page .av-header {
+        padding: 12px 30px;
+    }
+
+    .av-page .av-search-input {
+        font-size: 18px;
+        padding: 8px 18px 8px 48px;
+        width: 380px;
+        border-radius: 8px;
+    }
+
+    .av-page .av-filter-select {
+        font-size: 17px;
+    }
+
+    .av-page .av-th {
+        font-size: 17px !important;
+        padding: 5px 16px !important;
+    }
+
+    .av-page .av-td {
+        font-size: 18px !important;
+        padding: 5px 16px !important;
+    }
+
+    .av-page .av-status-badge {
+        font-size: 13px;
+        padding: 5px 14px;
+    }
+
+    .av-page .av-footer {
+        padding: 14px 30px;
+    }
+
+    .av-page .av-btn {
+        height: 36px;
+        padding: 0 24px;
+        border-radius: 8px;
+    }
+
+    .av-page .av-btn-text {
+        font-size: 13px;
+    }
+}
+
+/* ============================================= */
+/* Ultra Wide Screens (21:9)                     */
+/* 2560px – 3839px                               */
+/* ============================================= */
+@media screen and (min-width: 2560px) and (max-width: 3839px) {
+    .av-page .av-header {
+        padding: 16px 40px;
+    }
+
+    .av-page .av-search-input {
+        font-size: 20px;
+        padding: 10px 20px 10px 56px;
+        width: 440px;
+        border-radius: 10px;
+    }
+
+    .av-page .av-filter-select {
+        font-size: 19px;
+    }
+
+    .av-page .av-th {
+        font-size: 19px !important;
+        padding: 6px 20px !important;
+    }
+
+    .av-page .av-td {
+        font-size: 20px !important;
+        padding: 6px 20px !important;
+    }
+
+    .av-page .av-status-badge {
+        font-size: 15px;
+        padding: 6px 18px;
+    }
+
+    .av-page .av-footer {
+        padding: 18px 40px;
+    }
+
+    .av-page .av-btn {
+        height: 42px;
+        padding: 0 32px;
+        border-radius: 10px;
+    }
+
+    .av-page .av-btn-text {
+        font-size: 15px;
+    }
+}
+
+/* ============================================= */
+/* 4K and Above                                  */
+/* 3840px and above                              */
+/* ============================================= */
+@media screen and (min-width: 3840px) {
+    .av-page .av-header {
+        padding: 24px 50px;
+    }
+
+    .av-page .av-search-input {
+        font-size: 28px;
+        padding: 14px 28px 14px 72px;
+        width: 600px;
+        border-radius: 14px;
+        border-width: 2px;
+    }
+
+    .av-page .av-filter-select {
+        font-size: 26px;
+    }
+
+    .av-page .av-th {
+        font-size: 28px !important;
+        padding: 10px 30px !important;
+    }
+
+    .av-page .av-td {
+        font-size: 30px !important;
+        padding: 10px 30px !important;
+    }
+
+    .av-page .av-status-badge {
+        font-size: 22px;
+        padding: 10px 24px;
+        border-radius: 20px;
+    }
+
+    .av-page .av-footer {
+        padding: 24px 50px;
+    }
+
+    .av-page .av-btn {
+        height: 56px;
+        padding: 0 48px;
+        border-radius: 14px;
+        border-width: 2px;
+    }
+
+    .av-page .av-btn-text {
+        font-size: 20px;
+    }
+}

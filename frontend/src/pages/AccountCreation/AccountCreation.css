@@ -1,0 +1,305 @@
+/* ============================================= */
+/* Default / Small Screens (Normal Display)      */
+/* ============================================= */
+.ac-page .ac-btn {
+    height: 28px !important;
+    padding: 0 12px !important;
+    border-radius: 4px !important;
+}
+
+.ac-page .ac-btn-text {
+    font-size: 10px !important;
+}
+
+.ac-page .ac-th {
+    font-size: 10px !important;
+    padding: 3px 12px !important;
+}
+
+.ac-page .ac-input {
+    font-size: 11px !important;
+    height: 21px !important;
+}
+
+/* ============================================= */
+/* Tablets (Portrait)                            */
+/* 768px – 991px                                 */
+/* ============================================= */
+@media screen and (min-width: 768px) and (max-width: 991px) {
+    .ac-page .ac-card {
+        height: 85vh !important;
+        max-height: 500px !important;
+        overflow: hidden !important;
+    }
+
+    .ac-page .ac-th {
+        font-size: 10px !important;
+        padding: 3px 8px !important;
+    }
+
+    .ac-page .ac-input {
+        font-size: 11px !important;
+        height: 23px !important;
+    }
+
+    .ac-page .ac-textarea {
+        font-size: 11px !important;
+        width: 300px !important;
+    }
+
+    .ac-page .ac-amount-box {
+        font-size: 14px !important;
+        width: 140px !important;
+    }
+
+    .ac-page .ac-btn {
+        height: 26px !important;
+        padding: 0 10px !important;
+    }
+
+    .ac-page .ac-btn-text {
+        font-size: 9px !important;
+    }
+}
+
+/* ============================================= */
+/* Tablets Landscape / Small Laptops             */
+/* 992px – 1199px                                */
+/* ============================================= */
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+    .ac-page .ac-card {
+        height: 85vh !important;
+        max-height: 550px !important;
+        overflow: hidden !important;
+    }
+
+    .ac-page .ac-th {
+        font-size: 11px !important;
+        padding: 4px 10px !important;
+    }
+
+    .ac-page .ac-input {
+        font-size: 12px !important;
+        height: 25px !important;
+    }
+
+    .ac-page .ac-textarea {
+        font-size: 12px !important;
+    }
+
+    .ac-page .ac-amount-box {
+        font-size: 16px !important;
+    }
+
+    .ac-page .ac-btn {
+        height: 28px !important;
+        padding: 0 12px !important;
+    }
+
+    .ac-page .ac-btn-text {
+        font-size: 10px !important;
+    }
+}
+
+/* ============================================= */
+/* Standard Desktop                              */
+/* 1200px – 1439px                               */
+/* ============================================= */
+@media screen and (min-width: 1200px) and (max-width: 1439px) {
+    .ac-page .ac-th {
+        font-size: 12px !important;
+        padding: 4px 12px !important;
+    }
+
+    .ac-page .ac-input {
+        font-size: 13px !important;
+        height: 27px !important;
+    }
+
+    .ac-page .ac-btn {
+        height: 28px !important;
+        padding: 0 14px !important;
+    }
+
+    .ac-page .ac-btn-text {
+        font-size: 10px !important;
+    }
+}
+
+/* ============================================= */
+/* Large Desktop                                 */
+/* 1440px – 1919px                               */
+/* ============================================= */
+@media screen and (min-width: 1440px) and (max-width: 1919px) {
+    .ac-page .ac-card {
+        max-width: 1300px !important;
+        height: 85vh !important;
+        max-height: 800px !important;
+        overflow: hidden !important;
+    }
+
+    .ac-page .ac-th {
+        font-size: 16px !important;
+        padding: 6px 14px !important;
+    }
+
+    .ac-page .ac-input {
+        font-size: 17px !important;
+        height: 32px !important;
+    }
+
+    .ac-page .ac-textarea {
+        font-size: 16px !important;
+        width: 450px !important;
+    }
+
+    .ac-page .ac-amount-box {
+        font-size: 26px !important;
+        width: 240px !important;
+        padding: 12px 0 !important;
+    }
+
+    .ac-page .ac-btn {
+        height: 32px !important;
+        padding: 0 20px !important;
+        border-radius: 6px !important;
+    }
+
+    .ac-page .ac-btn-text {
+        font-size: 12px !important;
+    }
+}
+
+/* ============================================= */
+/* Full HD Screens                               */
+/* 1920px – 2559px                               */
+/* ============================================= */
+@media screen and (min-width: 1920px) and (max-width: 2559px) {
+    .ac-page .ac-card {
+        max-width: 1600px !important;
+        height: 85vh !important;
+        max-height: 950px !important;
+        overflow: hidden !important;
+    }
+
+    .ac-page .ac-th {
+        font-size: 18px !important;
+        padding: 8px 18px !important;
+    }
+
+    .ac-page .ac-input {
+        font-size: 19px !important;
+        height: 38px !important;
+    }
+
+    .ac-page .ac-textarea {
+        font-size: 18px !important;
+        width: 500px !important;
+    }
+
+    .ac-page .ac-amount-box {
+        font-size: 32px !important;
+        width: 280px !important;
+        padding: 14px 0 !important;
+    }
+
+    .ac-page .ac-btn {
+        height: 36px !important;
+        padding: 0 24px !important;
+        border-radius: 8px !important;
+    }
+
+    .ac-page .ac-btn-text {
+        font-size: 13px !important;
+    }
+}
+
+/* ============================================= */
+/* Ultra Wide Screens (21:9)                     */
+/* 2560px – 3839px                               */
+/* ============================================= */
+@media screen and (min-width: 2560px) and (max-width: 3839px) {
+    .ac-page .ac-card {
+        max-width: 2000px !important;
+        height: 85vh !important;
+        max-height: 1200px !important;
+        overflow: hidden !important;
+    }
+
+    .ac-page .ac-th {
+        font-size: 20px !important;
+        padding: 10px 24px !important;
+    }
+
+    .ac-page .ac-input {
+        font-size: 22px !important;
+        height: 46px !important;
+    }
+
+    .ac-page .ac-textarea {
+        font-size: 20px !important;
+        width: 650px !important;
+    }
+
+    .ac-page .ac-amount-box {
+        font-size: 42px !important;
+        width: 360px !important;
+        padding: 18px 0 !important;
+    }
+
+    .ac-page .ac-btn {
+        height: 42px !important;
+        padding: 0 32px !important;
+        border-radius: 10px !important;
+    }
+
+    .ac-page .ac-btn-text {
+        font-size: 15px !important;
+    }
+}
+
+/* ============================================= */
+/* 4K and Above                                  */
+/* 3840px and above                              */
+/* ============================================= */
+@media screen and (min-width: 3840px) {
+    .ac-page .ac-card {
+        max-width: 2800px !important;
+        height: 85vh !important;
+        max-height: 1800px !important;
+        overflow: hidden !important;
+    }
+
+    .ac-page .ac-th {
+        font-size: 30px !important;
+        padding: 14px 40px !important;
+    }
+
+    .ac-page .ac-input {
+        font-size: 32px !important;
+        height: 60px !important;
+    }
+
+    .ac-page .ac-textarea {
+        font-size: 28px !important;
+        width: 900px !important;
+    }
+
+    .ac-page .ac-amount-box {
+        font-size: 64px !important;
+        width: 550px !important;
+        padding: 30px 0 !important;
+        border-width: 4px !important;
+    }
+
+    .ac-page .ac-btn {
+        height: 56px !important;
+        padding: 0 48px !important;
+        border-radius: 14px !important;
+        border-width: 2px !important;
+    }
+
+    .ac-page .ac-btn-text {
+        font-size: 22px !important;
+    }
+}
