@@ -217,18 +217,32 @@ const Party = () => {
             return;
         }
 
-        // Auto set Sl_No and t_v_date
-        const submitData = {
-            ...formData,
-            Sl_No: Date.now(),
-            t_v_date: new Date().toISOString().split('T')[0]
+        // Map frontend state to backend expected fields
+        const backendData = {
+            FULL_NAME: formData.hold_name,
+            ADDRESS: formData.address1,
+            ADDRESS2: formData.address2,
+            PINCODE: formData.pincode,
+            STATE: formData.state,
+            CITY: formData.city,
+            PHONE: formData.Mobile_No,
+            WHATSAPP: formData.Whatsapp_No,
+            EMAIL_ID: formData.Gmail_Id,
+            ZONE: formData.Zone_Name,
+            PANCHAYAT: formData.gp_Name,
+            DESIGNATION: formData.designation,
+            PARTY_PHOTO: photoPreview || null
         };
 
         try {
-            const res = await fetch('http://localhost:4000/create/gp', {
+            const token = localStorage.getItem('token');
+            const res = await fetch('http://localhost:5000/api/party', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(submitData)
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(backendData)
             });
             const data = await res.json();
             if (res.ok) {
@@ -240,7 +254,7 @@ const Party = () => {
             }
         } catch (err) {
             console.error(err);
-            alert('Server error. Is backend running on port 4000?');
+            alert('Server error. Backend is not responding.');
         }
     };
 
