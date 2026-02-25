@@ -106,6 +106,7 @@ const Login = () => {
 
       if (response.ok) {
         // Successful login
+        localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         navigate("/companylist");
       } else {
