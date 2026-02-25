@@ -1,0 +1,392 @@
+/* ============================================= */
+/* Tablets (Portrait)                            */
+/* 768px – 991px                                 */
+/* ============================================= */
+@media screen and (min-width: 768px) and (max-width: 991px) {
+    .party-page .party-header-title {
+        font-size: 11px;
+    }
+
+    .party-page .party-section-title {
+        font-size: 11px;
+    }
+
+    .party-page .party-label {
+        font-size: 10px;
+        width: 100px;
+    }
+
+    .party-page .party-input {
+        font-size: 11px;
+        padding: 5px 8px;
+    }
+
+    .party-page .party-error {
+        font-size: 8px;
+    }
+
+    .party-page .party-photo-title {
+        font-size: 8px;
+    }
+
+    .party-page .party-upload-text {
+        font-size: 8px;
+    }
+
+    .party-page .party-btn-text {
+        font-size: 11px;
+    }
+
+    .party-page .party-footer-info {
+        font-size: 8px;
+    }
+
+    .party-page .party-footer-btn {
+        height: 32px;
+        padding: 0 20px;
+    }
+}
+
+
+/* ============================================= */
+/* Tablets Landscape / Small Laptops             */
+/* 992px – 1199px                                */
+/* ============================================= */
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+    .party-page .party-header-title {
+        font-size: 12px;
+    }
+
+    .party-page .party-section-title {
+        font-size: 12px;
+    }
+
+    .party-page .party-label {
+        font-size: 11px;
+        width: 110px;
+    }
+
+    .party-page .party-input {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .party-page .party-error {
+        font-size: 9px;
+    }
+
+    .party-page .party-photo-title {
+        font-size: 9px;
+    }
+
+    .party-page .party-upload-text {
+        font-size: 9px;
+    }
+
+    .party-page .party-btn-text {
+        font-size: 12px;
+    }
+
+    .party-page .party-footer-info {
+        font-size: 9px;
+    }
+
+    .party-page .party-footer-btn {
+        height: 34px;
+        padding: 0 24px;
+    }
+}
+
+
+/* ============================================= */
+/* Standard Desktop                              */
+/* 1200px – 1439px                               */
+/* ============================================= */
+@media screen and (min-width: 1200px) and (max-width: 1439px) {
+    .party-page .party-header-title {
+        font-size: 13px;
+    }
+
+    .party-page .party-section-title {
+        font-size: 13px;
+    }
+
+    .party-page .party-label {
+        font-size: 11px;
+    }
+
+    .party-page .party-input {
+        font-size: 12px;
+    }
+
+    .party-page .party-btn-text {
+        font-size: 12px;
+    }
+
+    .party-page .party-footer-info {
+        font-size: 10px;
+    }
+}
+
+
+/* ============================================= */
+/* Large Desktop                                 */
+/* 1440px – 1919px                               */
+/* ============================================= */
+@media screen and (min-width: 1440px) and (max-width: 1919px) {
+    .party-page .party-header {
+        height: 52px;
+    }
+
+    .party-page .party-header-title {
+        font-size: 17px;
+    }
+
+    .party-page .party-section-title {
+        font-size: 17px;
+    }
+
+    .party-page .party-label {
+        font-size: 15px;
+        width: 160px;
+    }
+
+    .party-page .party-input {
+        font-size: 16px;
+        padding: 10px 14px;
+    }
+
+    .party-page .party-error {
+        font-size: 12px;
+    }
+
+    .party-page .party-photo-title {
+        font-size: 13px;
+    }
+
+    .party-page .party-photo-box {
+        width: 180px;
+        height: 180px;
+    }
+
+    .party-page .party-upload-text {
+        font-size: 12px;
+    }
+
+    .party-page .party-btn-text {
+        font-size: 16px;
+    }
+
+    .party-page .party-footer-info {
+        font-size: 12px;
+    }
+
+    .party-page .party-footer-btn {
+        height: 44px;
+        padding: 0 36px;
+        border-radius: 10px;
+    }
+}
+
+
+/* ============================================= */
+/* Full HD Screens                               */
+/* 1920px – 2559px                               */
+/* ============================================= */
+@media screen and (min-width: 1920px) and (max-width: 2559px) {
+    .party-page .party-header {
+        height: 56px;
+        padding: 0 24px;
+    }
+
+    .party-page .party-header-title {
+        font-size: 19px;
+    }
+
+    .party-page .party-section-title {
+        font-size: 19px;
+    }
+
+    .party-page .party-label {
+        font-size: 17px;
+        width: 180px;
+    }
+
+    .party-page .party-input {
+        font-size: 18px;
+        padding: 11px 18px;
+        border-radius: 8px;
+    }
+
+    .party-page .party-error {
+        font-size: 14px;
+    }
+
+    .party-page .party-photo-title {
+        font-size: 14px;
+    }
+
+    .party-page .party-photo-box {
+        width: 200px;
+        height: 200px;
+    }
+
+    .party-page .party-upload-text {
+        font-size: 13px;
+    }
+
+    .party-page .party-btn-text {
+        font-size: 18px;
+    }
+
+    .party-page .party-footer {
+        height: 64px;
+        padding: 0 24px;
+    }
+
+    .party-page .party-footer-info {
+        font-size: 13px;
+    }
+
+    .party-page .party-footer-btn {
+        height: 48px;
+        padding: 0 40px;
+        border-radius: 10px;
+    }
+}
+
+
+/* ============================================= */
+/* Ultra Wide Screens (21:9)                     */
+/* 2560px – 3839px                               */
+/* ============================================= */
+@media screen and (min-width: 2560px) and (max-width: 3839px) {
+    .party-page .party-header {
+        height: 64px;
+        padding: 0 32px;
+    }
+
+    .party-page .party-header-title {
+        font-size: 22px;
+    }
+
+    .party-page .party-section-title {
+        font-size: 22px;
+    }
+
+    .party-page .party-label {
+        font-size: 19px;
+        width: 200px;
+    }
+
+    .party-page .party-input {
+        font-size: 20px;
+        padding: 12px 20px;
+        border-radius: 10px;
+    }
+
+    .party-page .party-error {
+        font-size: 16px;
+    }
+
+    .party-page .party-photo-title {
+        font-size: 16px;
+    }
+
+    .party-page .party-photo-box {
+        width: 230px;
+        height: 230px;
+    }
+
+    .party-page .party-upload-text {
+        font-size: 15px;
+    }
+
+    .party-page .party-btn-text {
+        font-size: 20px;
+    }
+
+    .party-page .party-footer {
+        height: 76px;
+        padding: 0 32px;
+    }
+
+    .party-page .party-footer-info {
+        font-size: 16px;
+    }
+
+    .party-page .party-footer-btn {
+        height: 56px;
+        padding: 0 48px;
+        border-radius: 12px;
+    }
+}
+
+
+/* ============================================= */
+/* 4K and Above                                  */
+/* 3840px and above                              */
+/* ============================================= */
+@media screen and (min-width: 3840px) {
+    .party-page .party-header {
+        height: 84px;
+        padding: 0 44px;
+    }
+
+    .party-page .party-header-title {
+        font-size: 30px;
+    }
+
+    .party-page .party-section-title {
+        font-size: 28px;
+    }
+
+    .party-page .party-label {
+        font-size: 24px;
+        width: 260px;
+    }
+
+    .party-page .party-input {
+        font-size: 24px;
+        padding: 16px 26px;
+        border-radius: 14px;
+        border-width: 2px;
+    }
+
+    .party-page .party-error {
+        font-size: 18px;
+    }
+
+    .party-page .party-photo-title {
+        font-size: 20px;
+    }
+
+    .party-page .party-photo-box {
+        width: 280px;
+        height: 280px;
+        border-radius: 18px;
+    }
+
+    .party-page .party-upload-text {
+        font-size: 20px;
+    }
+
+    .party-page .party-btn-text {
+        font-size: 24px;
+    }
+
+    .party-page .party-footer {
+        height: 96px;
+        padding: 0 44px;
+    }
+
+    .party-page .party-footer-info {
+        font-size: 20px;
+    }
+
+    .party-page .party-footer-btn {
+        height: 68px;
+        padding: 0 56px;
+        border-radius: 16px;
+    }
+}
