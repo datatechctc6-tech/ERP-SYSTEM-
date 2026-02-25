@@ -161,22 +161,22 @@ const Login = () => {
     passwordError === "";
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
-      <div className="w-full max-w-5xl bg-white rounded-xl shadow-lg grid grid-cols-1 md:grid-cols-2 overflow-hidden">
+    <div className="login-page min-h-screen flex items-center justify-center bg-white">
+      <div className="login-card w-full max-w-5xl bg-white rounded-xl shadow-lg grid grid-cols-1 md:grid-cols-2 overflow-hidden">
         {/* ================= LEFT ================= */}
-        <div className="p-10 relative">
+        <div className="login-section p-10 relative">
           <div className="flex gap-3 mb-8">
             <div className="w-8 h-8 mt-1 bg-red-100 rounded flex items-center justify-center">
               <span className="text-red-600 font-bold">D</span>
             </div>
             <div>
-              <h2 className="text-2xl font-semibold text-red-800">Log in</h2>
-              <p className="text-xs text-gray-500">to access Admin</p>
+              <h2 className="login-title text-2xl font-semibold text-red-800">Log in</h2>
+              <p className="login-subtitle text-xs text-gray-500">to access Admin</p>
             </div>
           </div>
 
           <div className="mb-6">
-            <label className="block text-sm mb-2 text-gray-700 font-bold">
+            <label className="login-label block text-sm mb-2 text-gray-700 font-bold">
               Email address <span className="text-red-500">*</span>
             </label>
             <input
@@ -191,13 +191,13 @@ const Login = () => {
                   passwordRef.current?.focus();
                 }
               }}
-              className="w-full h-11 rounded-md bg-[#ffffff] border border-[#a6b0c7] px-4 text-sm text-black outline-none focus:border-red-500"
+              className="login-input w-full h-11 rounded-md bg-[#ffffff] border border-[#a6b0c7] px-4 text-sm text-black outline-none focus:border-red-500"
             />
             {emailError && <p className="mt-2 text-xs text-red-500">{emailError}</p>}
           </div>
 
           <div className="mb-3 relative">
-            <label className="text-sm font-bold text-gray-700">
+            <label className="login-label text-sm font-bold text-gray-700">
               Password <span className="text-red-500">*</span>
             </label>
             <input
@@ -211,7 +211,7 @@ const Login = () => {
                   handleLogin();
                 }
               }}
-              className="w-full h-11 rounded-md bg-[#ffffff] border border-[#a6b0c7] px-4 text-sm text-black outline-none focus:border-red-500 mt-1"
+              className="login-input w-full h-11 rounded-md bg-[#ffffff] border border-[#a6b0c7] px-4 text-sm text-black outline-none focus:border-red-500 mt-1"
             />
             <button
               onClick={() => setShowPassword(!showPassword)}
@@ -225,7 +225,7 @@ const Login = () => {
             {loginError && <p className="text-red-500 text-sm font-bold">{loginError}</p>}
             <button
               onClick={() => setShowForgot(true)}
-              className="text-sm text-red-500 hover:underline cursor-pointer ml-auto"
+              className="login-link text-sm text-red-500 hover:underline cursor-pointer ml-auto"
             >
               Forgot Password
             </button>
@@ -234,7 +234,7 @@ const Login = () => {
           <button
             onClick={handleLogin}
             disabled={!isFormValid || loading}
-            className={`w-full mt-3 py-2.5 rounded-md text-white font-medium cursor-pointer ${!isFormValid
+            className={`login-btn w-full mt-3 py-2.5 rounded-md text-white font-medium cursor-pointer ${!isFormValid
               ? "bg-gray-300 cursor-not-allowed"
               : loading
                 ? "bg-[rgb(232,3,8)] cursor-wait"
@@ -256,13 +256,13 @@ const Login = () => {
               setMpin("");
               setMpinError("");
             }}
-            className="w-full py-2.5 rounded-md border border-gray-300 text-gray-700 font-semibold bg-gray-100 hover:bg-gray-200 transition flex items-center justify-center gap-2 cursor-pointer"
+            className="login-btn w-full py-2.5 rounded-md border border-gray-300 text-gray-700 font-semibold bg-gray-100 hover:bg-gray-200 transition flex items-center justify-center gap-2 cursor-pointer"
           >
             Login with PIN
           </button>
 
           <div className="mt-4 text-center">
-            <p className="text-sm text-gray-500">
+            <p className="login-text text-sm text-gray-500">
               Don't have an account?{" "}
               <button
                 onClick={() => navigate("/register")}
@@ -288,7 +288,7 @@ const Login = () => {
         </div>
 
         {/* ================= RIGHT ================= */}
-        <div className="bg-gray-50 p-10 flex flex-col justify-between">
+        <div className="login-section bg-gray-50 p-10 flex flex-col justify-between">
           <div>
             <img
               src={dataQuestLogo}

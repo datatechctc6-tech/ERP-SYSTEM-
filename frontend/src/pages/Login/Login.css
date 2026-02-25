@@ -63,3 +63,328 @@
   color: white;
   font-size: 1.125rem;
 }
+
+
+/* ============================================= */
+/* Tablets (Portrait)                            */
+/* 768px – 991px                                 */
+/* ============================================= */
+@media screen and (min-width: 768px) and (max-width: 991px) {
+  .login-page .login-card {
+    max-width: 700px;
+  }
+
+  .login-page .login-title {
+    font-size: 1.4rem;
+  }
+
+  .login-page .login-subtitle {
+    font-size: 10px;
+  }
+
+  .login-page .login-label {
+    font-size: 12px;
+  }
+
+  .login-page .login-input {
+    height: 36px;
+    font-size: 12px;
+  }
+
+  .login-page .login-btn {
+    font-size: 12px;
+    padding: 8px 0;
+  }
+
+  .login-page .login-link {
+    font-size: 12px;
+  }
+
+  .login-page .login-text {
+    font-size: 12px;
+  }
+
+  .dev-text {
+    font-size: 0.75rem;
+  }
+
+  .social-icon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .social-icon svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+
+/* ============================================= */
+/* Tablets Landscape / Small Laptops             */
+/* 992px – 1199px                                */
+/* ============================================= */
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+  .login-page .login-card {
+    max-width: 800px;
+  }
+
+  .login-page .login-title {
+    font-size: 1.5rem;
+  }
+
+  .login-page .login-label {
+    font-size: 13px;
+  }
+
+  .login-page .login-input {
+    height: 38px;
+    font-size: 13px;
+  }
+
+  .login-page .login-btn {
+    font-size: 13px;
+  }
+
+  .login-page .login-link {
+    font-size: 13px;
+  }
+
+  .login-page .login-text {
+    font-size: 13px;
+  }
+
+  .dev-text {
+    font-size: 0.8rem;
+  }
+
+  .social-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+}
+
+
+/* ============================================= */
+/* Standard Desktop                              */
+/* 1200px – 1439px                               */
+/* ============================================= */
+@media screen and (min-width: 1200px) and (max-width: 1439px) {
+  .login-page .login-title {
+    font-size: 1.6rem;
+  }
+
+  .login-page .login-label {
+    font-size: 13px;
+  }
+
+  .login-page .login-input {
+    height: 40px;
+    font-size: 13px;
+  }
+
+  .dev-text {
+    font-size: 0.85rem;
+  }
+}
+
+
+/* ============================================= */
+/* Large Desktop                                 */
+/* 1440px – 1919px                               */
+/* ============================================= */
+@media screen and (min-width: 1440px) and (max-width: 1919px) {
+  /* Default sizes are designed for this range */
+  /* No changes needed */
+}
+
+
+/* ============================================= */
+/* Full HD Screens                               */
+/* 1920px – 2559px                               */
+/* ============================================= */
+@media screen and (min-width: 1920px) and (max-width: 2559px) {
+  .login-page .login-card {
+    max-width: 1100px;
+  }
+
+  .login-page .login-title {
+    font-size: 2rem;
+  }
+
+  .login-page .login-subtitle {
+    font-size: 14px;
+  }
+
+  .login-page .login-label {
+    font-size: 16px;
+  }
+
+  .login-page .login-input {
+    height: 48px;
+    font-size: 16px;
+    padding-left: 18px;
+    padding-right: 18px;
+    border-radius: 8px;
+  }
+
+  .login-page .login-btn {
+    font-size: 16px;
+    padding: 12px 0;
+    border-radius: 8px;
+  }
+
+  .login-page .login-link {
+    font-size: 15px;
+  }
+
+  .login-page .login-text {
+    font-size: 15px;
+  }
+
+  .login-page .login-section {
+    padding: 48px;
+  }
+
+  .dev-text {
+    font-size: 1.05rem;
+  }
+
+  .social-icon {
+    width: 3rem;
+    height: 3rem;
+  }
+
+  .social-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+
+/* ============================================= */
+/* Ultra Wide Screens (21:9)                     */
+/* 2560px – 3839px                               */
+/* ============================================= */
+@media screen and (min-width: 2560px) and (max-width: 3839px) {
+  .login-page .login-card {
+    max-width: 1400px;
+  }
+
+  .login-page .login-title {
+    font-size: 2.4rem;
+  }
+
+  .login-page .login-subtitle {
+    font-size: 16px;
+  }
+
+  .login-page .login-label {
+    font-size: 18px;
+  }
+
+  .login-page .login-input {
+    height: 56px;
+    font-size: 18px;
+    padding-left: 22px;
+    padding-right: 22px;
+    border-radius: 10px;
+  }
+
+  .login-page .login-btn {
+    font-size: 18px;
+    padding: 14px 0;
+    border-radius: 10px;
+  }
+
+  .login-page .login-link {
+    font-size: 17px;
+  }
+
+  .login-page .login-text {
+    font-size: 17px;
+  }
+
+  .login-page .login-section {
+    padding: 56px;
+  }
+
+  .dev-text {
+    font-size: 1.2rem;
+  }
+
+  .social-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+
+  .social-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+
+/* ============================================= */
+/* 4K and Above                                  */
+/* 3840px and above                              */
+/* ============================================= */
+@media screen and (min-width: 3840px) {
+  .login-page .login-card {
+    max-width: 1800px;
+  }
+
+  .login-page .login-title {
+    font-size: 3.2rem;
+  }
+
+  .login-page .login-subtitle {
+    font-size: 22px;
+  }
+
+  .login-page .login-label {
+    font-size: 24px;
+    margin-bottom: 10px;
+  }
+
+  .login-page .login-input {
+    height: 68px;
+    font-size: 24px;
+    padding-left: 28px;
+    padding-right: 28px;
+    border-radius: 14px;
+    border-width: 2px;
+  }
+
+  .login-page .login-btn {
+    font-size: 22px;
+    padding: 18px 0;
+    border-radius: 14px;
+  }
+
+  .login-page .login-link {
+    font-size: 20px;
+  }
+
+  .login-page .login-text {
+    font-size: 20px;
+  }
+
+  .login-page .login-section {
+    padding: 70px;
+  }
+
+  .dev-text {
+    font-size: 1.5rem;
+  }
+
+  .social-icon {
+    width: 4rem;
+    height: 4rem;
+  }
+
+  .social-icon svg {
+    width: 30px;
+    height: 30px;
+  }
+}

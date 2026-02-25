@@ -1,0 +1,422 @@
+/* ============================================= */
+/* Tablets (Portrait)                            */
+/* 768px – 991px                                 */
+/* ============================================= */
+@media screen and (min-width: 768px) and (max-width: 991px) {
+    .dashboard-page .dash-header-title {
+        font-size: 11px;
+    }
+
+    .dashboard-page .dash-header-sub {
+        font-size: 8px;
+    }
+
+    .dashboard-page .dash-header-badge {
+        font-size: 8px;
+    }
+
+    .dashboard-page .dash-stat-label {
+        font-size: 10px;
+    }
+
+    .dashboard-page .dash-stat-value {
+        font-size: 14px;
+    }
+
+    .dashboard-page .dash-stat-trend {
+        font-size: 8px;
+    }
+
+    .dashboard-page .dash-chart-title {
+        font-size: 9px;
+    }
+
+    .dashboard-page .dash-chart-legend {
+        font-size: 8px;
+    }
+
+    .dashboard-page .dash-status-label {
+        font-size: 7px;
+    }
+
+    .dashboard-page .dash-status-value {
+        font-size: 7px;
+    }
+
+    .dashboard-page .dash-footer {
+        font-size: 8px;
+    }
+
+    .dashboard-page .dash-footer-brand {
+        font-size: 8px;
+    }
+}
+
+
+/* ============================================= */
+/* Tablets Landscape / Small Laptops             */
+/* 992px – 1199px                                */
+/* ============================================= */
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+    .dashboard-page .dash-header-title {
+        font-size: 12px;
+    }
+
+    .dashboard-page .dash-header-sub {
+        font-size: 8px;
+    }
+
+    .dashboard-page .dash-header-badge {
+        font-size: 9px;
+    }
+
+    .dashboard-page .dash-stat-label {
+        font-size: 11px;
+    }
+
+    .dashboard-page .dash-stat-value {
+        font-size: 15px;
+    }
+
+    .dashboard-page .dash-stat-trend {
+        font-size: 8px;
+    }
+
+    .dashboard-page .dash-chart-title {
+        font-size: 9px;
+    }
+
+    .dashboard-page .dash-chart-legend {
+        font-size: 8px;
+    }
+
+    .dashboard-page .dash-status-label {
+        font-size: 7px;
+    }
+
+    .dashboard-page .dash-status-value {
+        font-size: 7px;
+    }
+
+    .dashboard-page .dash-footer {
+        font-size: 9px;
+    }
+
+    .dashboard-page .dash-footer-brand {
+        font-size: 9px;
+    }
+}
+
+
+/* ============================================= */
+/* Standard Desktop                              */
+/* 1200px – 1439px                               */
+/* ============================================= */
+@media screen and (min-width: 1200px) and (max-width: 1439px) {
+    .dashboard-page .dash-header-title {
+        font-size: 13px;
+    }
+
+    .dashboard-page .dash-stat-label {
+        font-size: 11px;
+    }
+
+    .dashboard-page .dash-stat-value {
+        font-size: 16px;
+    }
+
+    .dashboard-page .dash-chart-title {
+        font-size: 9px;
+    }
+
+    .dashboard-page .dash-footer {
+        font-size: 9px;
+    }
+}
+
+
+/* ============================================= */
+/* Large Desktop                                 */
+/* 1440px – 1919px                               */
+/* ============================================= */
+@media screen and (min-width: 1440px) and (max-width: 1919px) {
+    .dashboard-page .dash-header-title {
+        font-size: 15px;
+    }
+
+    .dashboard-page .dash-header-sub {
+        font-size: 10px;
+    }
+
+    .dashboard-page .dash-header-badge {
+        font-size: 11px;
+    }
+
+    .dashboard-page .dash-stat-label {
+        font-size: 13px;
+    }
+
+    .dashboard-page .dash-stat-value {
+        font-size: 20px;
+    }
+
+    .dashboard-page .dash-stat-trend {
+        font-size: 10px;
+    }
+
+    .dashboard-page .dash-chart-title {
+        font-size: 11px;
+    }
+
+    .dashboard-page .dash-chart-legend {
+        font-size: 10px;
+    }
+
+    .dashboard-page .dash-status-label {
+        font-size: 9px;
+    }
+
+    .dashboard-page .dash-status-value {
+        font-size: 9px;
+    }
+
+    .dashboard-page .dash-footer {
+        font-size: 11px;
+    }
+
+    .dashboard-page .dash-footer-brand {
+        font-size: 11px;
+    }
+}
+
+
+/* ============================================= */
+/* Full HD Screens                               */
+/* 1920px – 2559px                               */
+/* ============================================= */
+@media screen and (min-width: 1920px) and (max-width: 2559px) {
+    .dashboard-page .dash-header {
+        padding: 10px 20px;
+        border-radius: 16px;
+    }
+
+    .dashboard-page .dash-header-title {
+        font-size: 18px;
+    }
+
+    .dashboard-page .dash-header-sub {
+        font-size: 13px;
+    }
+
+    .dashboard-page .dash-header-badge {
+        font-size: 14px;
+    }
+
+    .dashboard-page .dash-stat-label {
+        font-size: 16px;
+    }
+
+    .dashboard-page .dash-stat-value {
+        font-size: 26px;
+    }
+
+    .dashboard-page .dash-stat-trend {
+        font-size: 13px;
+    }
+
+    .dashboard-page .dash-stat-card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .dashboard-page .dash-chart-title {
+        font-size: 15px;
+    }
+
+    .dashboard-page .dash-chart-legend {
+        font-size: 13px;
+    }
+
+    .dashboard-page .dash-chart-card {
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .dashboard-page .dash-status-label {
+        font-size: 12px;
+    }
+
+    .dashboard-page .dash-status-value {
+        font-size: 12px;
+    }
+
+    .dashboard-page .dash-status-box {
+        padding: 10px;
+        border-radius: 10px;
+    }
+
+    .dashboard-page .dash-footer {
+        font-size: 14px;
+        padding: 10px 20px;
+        border-radius: 16px;
+    }
+
+    .dashboard-page .dash-footer-brand {
+        font-size: 14px;
+    }
+}
+
+
+/* ============================================= */
+/* Ultra Wide Screens (21:9)                     */
+/* 2560px – 3839px                               */
+/* ============================================= */
+@media screen and (min-width: 2560px) and (max-width: 3839px) {
+    .dashboard-page .dash-header {
+        padding: 14px 28px;
+        border-radius: 20px;
+    }
+
+    .dashboard-page .dash-header-title {
+        font-size: 20px;
+    }
+
+    .dashboard-page .dash-header-sub {
+        font-size: 13px;
+    }
+
+    .dashboard-page .dash-header-badge {
+        font-size: 14px;
+    }
+
+    .dashboard-page .dash-stat-label {
+        font-size: 16px;
+    }
+
+    .dashboard-page .dash-stat-value {
+        font-size: 26px;
+    }
+
+    .dashboard-page .dash-stat-trend {
+        font-size: 13px;
+    }
+
+    .dashboard-page .dash-stat-card {
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .dashboard-page .dash-chart-title {
+        font-size: 15px;
+    }
+
+    .dashboard-page .dash-chart-legend {
+        font-size: 13px;
+    }
+
+    .dashboard-page .dash-chart-card {
+        padding: 26px;
+        border-radius: 20px;
+    }
+
+    .dashboard-page .dash-status-label {
+        font-size: 12px;
+    }
+
+    .dashboard-page .dash-status-value {
+        font-size: 12px;
+    }
+
+    .dashboard-page .dash-status-box {
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .dashboard-page .dash-footer {
+        font-size: 14px;
+        padding: 12px 28px;
+        border-radius: 20px;
+    }
+
+    .dashboard-page .dash-footer-brand {
+        font-size: 14px;
+    }
+}
+
+
+/* ============================================= */
+/* 4K and Above                                  */
+/* 3840px and above                              */
+/* ============================================= */
+@media screen and (min-width: 3840px) {
+    .dashboard-page .dash-header {
+        padding: 20px 40px;
+        border-radius: 24px;
+    }
+
+    .dashboard-page .dash-header-title {
+        font-size: 28px;
+    }
+
+    .dashboard-page .dash-header-sub {
+        font-size: 18px;
+    }
+
+    .dashboard-page .dash-header-badge {
+        font-size: 20px;
+    }
+
+    .dashboard-page .dash-stat-label {
+        font-size: 22px;
+    }
+
+    .dashboard-page .dash-stat-value {
+        font-size: 34px;
+    }
+
+    .dashboard-page .dash-stat-trend {
+        font-size: 16px;
+    }
+
+    .dashboard-page .dash-stat-card {
+        padding: 28px;
+        border-radius: 24px;
+        min-width: 280px;
+    }
+
+    .dashboard-page .dash-chart-title {
+        font-size: 20px;
+    }
+
+    .dashboard-page .dash-chart-legend {
+        font-size: 16px;
+    }
+
+    .dashboard-page .dash-chart-card {
+        padding: 34px;
+        border-radius: 24px;
+    }
+
+    .dashboard-page .dash-status-label {
+        font-size: 16px;
+    }
+
+    .dashboard-page .dash-status-value {
+        font-size: 16px;
+    }
+
+    .dashboard-page .dash-status-box {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    .dashboard-page .dash-footer {
+        font-size: 18px;
+        padding: 16px 40px;
+        border-radius: 24px;
+    }
+
+    .dashboard-page .dash-footer-brand {
+        font-size: 18px;
+    }
+}

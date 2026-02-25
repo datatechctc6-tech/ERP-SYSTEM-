@@ -22,6 +22,8 @@ import {
   Cell
 } from 'recharts';
 
+import './Dashboard.css';
+
 const data = [
   { name: 'Apr', revenue: 4000, expenses: 2400 },
   { name: 'May', revenue: 3000, expenses: 1398 },
@@ -43,11 +45,11 @@ const deptData = [
 ];
 
 const StatCard = ({ label, value, trend, icon, color }) => (
-  <div className="bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between flex-1 min-w-[180px]">
+  <div className="dash-stat-card bg-white p-3 rounded-xl border border-gray-100 shadow-sm flex items-center justify-between flex-1 min-w-[180px]">
     <div className="flex flex-col">
-      <p className="text-gray-800 text-[12px] font-black uppercase tracking-widest">{label}</p>
-      <h3 className="text-lg font-black text-gray-900 leading-tight whitespace-nowrap">{value}</h3>
-      <span className={`text-[9px] font-bold flex items-center ${trend >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+      <p className="dash-stat-label text-gray-800 text-[12px] font-black uppercase tracking-widest">{label}</p>
+      <h3 className="dash-stat-value text-lg font-black text-gray-900 leading-tight whitespace-nowrap">{value}</h3>
+      <span className={`dash-stat-trend text-[9px] font-bold flex items-center ${trend >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
         {trend >= 0 ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
         {Math.abs(trend)}%
       </span>
@@ -70,7 +72,7 @@ function Dashboard() {
   };
 
   return (
-    <div className="h-[calc(100vh-80px)] overflow-hidden flex flex-col space-y-3 p-1">
+    <div className="dashboard-page h-[calc(100vh-80px)] overflow-hidden flex flex-col space-y-3 p-1">
 
       {/* Welcome Message Modal */}
       {showWelcome && (
@@ -102,19 +104,19 @@ function Dashboard() {
       )}
 
       {/* Minimal Header */}
-      <div className="flex items-center justify-between bg-[#004d40] px-4 py-2 rounded-xl text-white shadow-lg flex-shrink-0">
+      <div className="dash-header flex items-center justify-between bg-[#004d40] px-4 py-2 rounded-xl text-white shadow-lg flex-shrink-0">
         <div className="flex items-center gap-3">
           <div className="p-1.5 bg-white/10 rounded-lg">
             <TrendingUp size={18} className="text-[#a7ffeb]" />
           </div>
           <div>
-            <h1 className="text-sm font-black tracking-tight uppercase leading-none">GP Command Center</h1>
-            <p className="text-[9px] text-[#80cbc4] font-bold mt-1">
+            <h1 className="dash-header-title text-sm font-black tracking-tight uppercase leading-none">GP Command Center</h1>
+            <p className="dash-header-sub text-[9px] text-[#80cbc4] font-bold mt-1">
               GP Admin: <span className="text-white">#{id || '001'}</span> | Status: <span className="text-[#a7ffeb]">ACTIVE</span>
             </p>
           </div>
         </div>
-        <div className="flex gap-2 text-[10px] font-bold uppercase tracking-widest text-[#a7ffeb]">
+        <div className="dash-header-badge flex gap-2 text-[10px] font-bold uppercase tracking-widest text-[#a7ffeb]">
           <span className="flex items-center gap-1"><Activity size={12} /> Live System</span>
         </div>
       </div>
@@ -130,10 +132,10 @@ function Dashboard() {
       {/* Main Area (70/30 split) */}
       <div className="flex-1 flex gap-3 min-h-0">
         {/* Growth Chart */}
-        <div className="w-[70%] bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col">
+        <div className="dash-chart-card w-[70%] bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-[10px] font-black text-gray-900 uppercase tracking-widest">Revenue Analytics</h3>
-            <div className="flex gap-4 text-[9px] font-black uppercase tracking-wider">
+            <h3 className="dash-chart-title text-[10px] font-black text-gray-900 uppercase tracking-widest">Revenue Analytics</h3>
+            <div className="dash-chart-legend flex gap-4 text-[9px] font-black uppercase tracking-wider">
               <span className="flex items-center gap-1 text-emerald-600">
                 <span className="w-2 h-2 rounded-full bg-emerald-600" /> Revenue
               </span>
@@ -174,8 +176,8 @@ function Dashboard() {
         </div>
 
         {/* Right distribution/metrics */}
-        <div className="w-[30%] bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col">
-          <h3 className="text-[10px] font-black text-gray-900 uppercase tracking-widest mb-4">Active Distribution</h3>
+        <div className="dash-chart-card w-[30%] bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex flex-col">
+          <h3 className="dash-chart-title text-[10px] font-black text-gray-900 uppercase tracking-widest mb-4">Active Distribution</h3>
           <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={deptData} layout="vertical">
@@ -191,12 +193,12 @@ function Dashboard() {
             </ResponsiveContainer>
           </div>
           <div className="mt-3 space-y-2">
-            <div className="bg-gray-50 rounded-lg p-2 flex items-center gap-2 border border-gray-100">
+            <div className="dash-status-box bg-gray-50 rounded-lg p-2 flex items-center gap-2 border border-gray-100">
               <Activity size={12} className="text-[#004d40]" />
               <div className="flex-1">
                 <div className="flex justify-between items-center mb-0.5">
-                  <span className="text-[8px] font-black text-gray-500 uppercase">System Status</span>
-                  <span className="text-[8px] font-bold text-emerald-600">Online</span>
+                  <span className="dash-status-label text-[8px] font-black text-gray-500 uppercase">System Status</span>
+                  <span className="dash-status-value text-[8px] font-bold text-emerald-600">Online</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-1">
                   <div className="bg-emerald-500 h-1 rounded-full w-[94%]" />
@@ -208,7 +210,7 @@ function Dashboard() {
       </div>
 
       {/* Compact Footer Utility */}
-      <div className="bg-white border border-gray-100 rounded-xl px-4 py-2 flex items-center justify-between flex-shrink-0 text-[10px]">
+      <div className="dash-footer bg-white border border-gray-100 rounded-xl px-4 py-2 flex items-center justify-between flex-shrink-0 text-[10px]">
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5 text-gray-500 font-bold">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" /> Live Updates Enabled
@@ -216,7 +218,7 @@ function Dashboard() {
           <span className="text-gray-300">|</span>
           <span className="text-gray-500 font-bold">Server Location: <span className="text-[#004d40]">Regional West</span></span>
         </div>
-        <div className="flex items-center gap-2 text-[#004d40] font-black uppercase tracking-tighter italic">
+        <div className="dash-footer-brand flex items-center gap-2 text-[#004d40] font-black uppercase tracking-tighter italic">
           <Database size={10} /> Data Integrity Verified 100%
         </div>
       </div>
