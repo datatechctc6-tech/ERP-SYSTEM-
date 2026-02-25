@@ -15,6 +15,7 @@ import AdminPin from './pages/Settings/AdminPin'
 import CompanyRegistration from './pages/CompanyRegistration/CompanyRegistration'
 import Register from './pages/Register/Register'
 import MainLayout from './components/MainLayout'
+import PrivateRoute from './components/PrivateRoute'
 
 const router = createBrowserRouter([
   {
@@ -31,14 +32,26 @@ const router = createBrowserRouter([
   },
   {
     path: '/companylist',
-    element: <CompanyList />,
+    element: (
+      <PrivateRoute>
+        <CompanyList />
+      </PrivateRoute>
+    ),
   },
   {
     path: '/company-registration',
-    element: <CompanyRegistration />,
+    element: (
+      <PrivateRoute>
+        <CompanyRegistration />
+      </PrivateRoute>
+    ),
   },
   {
-    element: <MainLayout />,
+    element: (
+      <PrivateRoute>
+        <MainLayout />
+      </PrivateRoute>
+    ),
     children: [
       {
         path: '/dashboard/:id',
