@@ -146,21 +146,27 @@ export default function CompanyRegistration() {
     };
 
     const handleKeyDown = (e) => {
+        const form = e.currentTarget;
+        const inputs = Array.from(form.querySelectorAll('input:not([type="file"]):not([type="hidden"]), select'));
+        const currentIndex = inputs.indexOf(e.target);
+        if (currentIndex === -1) return;
+
         if (e.key === 'Enter') {
             e.preventDefault();
-            const form = e.currentTarget;
-            const inputs = Array.from(form.querySelectorAll('input:not([type="file"]):not([type="hidden"]), select'));
-            const currentIndex = inputs.indexOf(e.target);
-            if (currentIndex === -1) return;
-
             // Only move to next if current field has a value
             if (e.target.value.trim() === '') return;
-
-            // Move to next input
             if (currentIndex < inputs.length - 1) {
                 inputs[currentIndex + 1].focus();
             }
         }
+
+        if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (currentIndex > 0) {
+                inputs[currentIndex - 1].focus();
+            }
+        }
+
     };
 
     return (

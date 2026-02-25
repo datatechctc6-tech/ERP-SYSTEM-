@@ -2,6 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
+/* Screen-adaptive scaling */
+html {
+  zoom: 1;          /* default for ~1920px screens */
+}
+
+@media (max-width: 1600px) { html { zoom: 0.95; } }
+@media (max-width: 1440px) { html { zoom: 0.9; } }
+@media (max-width: 1366px) { html { zoom: 0.85; } }
+@media (max-width: 1280px) { html { zoom: 0.8; } }
+@media (max-width: 1024px) { html { zoom: 0.75; } }
+@media (max-width: 768px)  { html { zoom: 0.7; } }
+
+@media (min-width: 1921px) { html { zoom: 1.05; } }
+@media (min-width: 2560px) { html { zoom: 1.15; } }
+
+
+
+
+
+
 @layer utilities {
     .animate-fadeIn {
         animation: fadeIn 0.3s ease-out;
@@ -36,3 +58,6 @@
         transform: translateY(0);
     }
 }
+
+
+
