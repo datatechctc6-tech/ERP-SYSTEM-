@@ -1,4 +1,5 @@
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const UserModel = require('../models/userModel');
 
 const registerUser = async (req, res) => {
@@ -57,14 +58,21 @@ const loginUser = async (req, res) => {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
 
-        // In a real app, you would generate a JWT here.
-        // For now, we'll just return success.
+        // Generate JWT token
+        const token = jwt.sign(
+            { id: user.id, type: user.type },
+            process.env.JWT_SECRET || 'your_jwt_secret',
+            { expiresIn: '1d' }
+        );
+
         return res.status(200).json({
             message: 'Login successful',
+            token,
             user: {
                 id: user.id,
                 name: user.name,
-                email: user.email
+                email: user.email,
+                type: user.type
             }
         });
     } catch (error) {
