@@ -3,27 +3,6 @@
 @tailwind utilities;
 
 
-
-/* Screen-adaptive scaling */
-html {
-  zoom: 1;          /* default for ~1920px screens */
-}
-
-@media (max-width: 1600px) { html { zoom: 0.95; } }
-@media (max-width: 1440px) { html { zoom: 0.9; } }
-@media (max-width: 1366px) { html { zoom: 0.85; } }
-@media (max-width: 1280px) { html { zoom: 0.8; } }
-@media (max-width: 1024px) { html { zoom: 0.75; } }
-@media (max-width: 768px)  { html { zoom: 0.7; } }
-
-@media (min-width: 1921px) { html { zoom: 1.05; } }
-@media (min-width: 2560px) { html { zoom: 1.15; } }
-
-
-
-
-
-
 @layer utilities {
     .animate-fadeIn {
         animation: fadeIn 0.3s ease-out;
@@ -59,5 +38,94 @@ html {
     }
 }
 
+/* ============================================= */
+/* Extra Small Devices (Very Small Phones)       */
+/* 0px – 319px                                   */
+/* ============================================= */
+/* @media screen and (min-width: 0px) and (max-width: 319px) {
+
+} */
 
 
+/* ============================================= */
+/* Small Phones                                  */
+/* 320px – 479px                                 */
+/* ============================================= */
+/* @media screen and (min-width: 320px) and (max-width: 479px) {
+
+} */
+
+
+/* ============================================= */
+/* Large Phones                                  */
+/* 480px – 767px                                 */
+/* ============================================= */
+/* @media screen and (min-width: 480px) and (max-width: 767px) {
+
+} */
+
+
+/* ============================================= */
+/* Tablets (Portrait)                            */
+/* 768px – 991px                                 */
+/* ============================================= */
+@media screen and (min-width: 768px) and (max-width: 991px) {
+    .ctr{
+        font-size: 12px;
+    }
+
+}
+
+
+/* ============================================= */
+/* Tablets Landscape / Small Laptops             */
+/* 992px – 1199px                                */
+/* ============================================= */
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+
+}
+
+
+/* ============================================= */
+/* Standard Desktop                              */
+/* 1200px – 1439px                               */
+/* ============================================= */
+@media screen and (min-width: 1200px) and (max-width: 1439px) {
+
+}
+
+
+/* ============================================= */
+/* Large Desktop                                 */
+/* 1440px – 1919px                               */
+/* ============================================= */
+@media screen and (min-width: 1440px) and (max-width: 1919px) {
+
+}
+
+
+/* ============================================= */
+/* Full HD Screens                               */
+/* 1920px – 2559px                               */
+/* ============================================= */
+@media screen and (min-width: 1920px) and (max-width: 2559px) {
+
+}
+
+
+/* ============================================= */
+/* Ultra Wide Screens (21:9)                     */
+/* 2560px – 3839px                               */
+/* ============================================= */
+@media screen and (min-width: 2560px) and (max-width: 3839px) {
+
+}
+
+
+/* ============================================= */
+/* 4K and Above                                  */
+/* 3840px and above                              */
+/* ============================================= */
+@media screen and (min-width: 3840px) {
+
+}

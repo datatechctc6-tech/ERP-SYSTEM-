@@ -382,3 +382,546 @@
 .short-upload {
     height: 100px !important;
 }
+
+
+/* ============================================= */
+/* Tablets (Portrait)                            */
+/* 768px – 991px                                 */
+/* ============================================= */
+@media screen and (min-width: 768px) and (max-width: 991px) {
+    .registration-main-title {
+        font-size: 1.1rem;
+        margin-bottom: 15px;
+    }
+
+    .registration-header h2 {
+        font-size: 0.95rem;
+    }
+
+    .registration-header {
+        padding: 12px 20px;
+    }
+
+    .registration-content {
+        padding: 15px;
+        gap: 12px 20px;
+    }
+
+    .form-section-title {
+        font-size: 9px;
+        padding: 4px 14px;
+        margin-bottom: 12px;
+    }
+
+    .form-group label {
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+
+    .reg-input {
+        height: 32px;
+        font-size: 11px;
+        padding: 0 10px;
+        border-radius: 6px;
+    }
+
+    .form-group {
+        margin-bottom: 8px;
+    }
+
+    .section-divider {
+        margin: 12px 0 8px 0;
+        padding-bottom: 22px;
+    }
+
+    .badge-title {
+        font-size: 9px;
+        padding: 4px 12px;
+    }
+
+    .btn-reg {
+        padding: 6px 10px;
+        font-size: 9px;
+    }
+
+    .btn-minimal {
+        height: 30px;
+        padding: 0 10px;
+        font-size: 9px;
+    }
+
+    .date-field label {
+        font-size: 9px;
+    }
+
+    .logo-upload-area {
+        height: 90px;
+        margin-top: 10px;
+    }
+
+    .logo-upload-area span {
+        font-size: 9px;
+    }
+
+    .logo-upload-area p {
+        font-size: 8px;
+    }
+
+    .registration-footer {
+        padding: 10px 20px;
+        gap: 6px;
+    }
+}
+
+
+/* ============================================= */
+/* Tablets Landscape / Small Laptops             */
+/* 992px – 1199px                                */
+/* ============================================= */
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+    .registration-main-title {
+        font-size: 1.2rem;
+        margin-bottom: 18px;
+    }
+
+    .registration-header h2 {
+        font-size: 1.05rem;
+    }
+
+    .registration-content {
+        padding: 20px;
+        gap: 14px 25px;
+    }
+
+    .form-section-title {
+        font-size: 10px;
+        padding: 5px 16px;
+        margin-bottom: 14px;
+    }
+
+    .form-group label {
+        font-size: 12px;
+        margin-bottom: 5px;
+    }
+
+    .reg-input {
+        height: 34px;
+        font-size: 12px;
+        padding: 0 12px;
+    }
+
+    .form-group {
+        margin-bottom: 10px;
+    }
+
+    .badge-title {
+        font-size: 10px;
+        padding: 5px 14px;
+    }
+
+    .btn-reg {
+        padding: 7px 12px;
+        font-size: 10px;
+    }
+
+    .btn-minimal {
+        height: 32px;
+        padding: 0 12px;
+        font-size: 10px;
+    }
+
+    .date-field label {
+        font-size: 9px;
+    }
+
+    .logo-upload-area {
+        height: 100px;
+    }
+
+    .logo-upload-area span {
+        font-size: 10px;
+    }
+
+    .logo-upload-area p {
+        font-size: 9px;
+    }
+
+    .registration-footer {
+        padding: 12px 25px;
+        gap: 8px;
+    }
+}
+
+
+/* ============================================= */
+/* Standard Desktop                              */
+/* 1200px – 1439px                               */
+/* ============================================= */
+@media screen and (min-width: 1200px) and (max-width: 1439px) {
+    .registration-main-title {
+        font-size: 1.35rem;
+    }
+
+    .registration-header h2 {
+        font-size: 1.15rem;
+    }
+
+    .form-section-title {
+        font-size: 10px;
+    }
+
+    .form-group label {
+        font-size: 12px;
+    }
+
+    .reg-input {
+        height: 36px;
+        font-size: 13px;
+    }
+
+    .form-group {
+        margin-bottom: 12px;
+    }
+
+    .badge-title {
+        font-size: 10px;
+    }
+
+    .btn-reg {
+        font-size: 10px;
+    }
+
+    .btn-minimal {
+        font-size: 10px;
+    }
+
+    .date-field label {
+        font-size: 10px;
+    }
+
+    .logo-upload-area span {
+        font-size: 10px;
+    }
+
+    .logo-upload-area p {
+        font-size: 9px;
+    }
+}
+
+
+/* ============================================= */
+/* Large Desktop                                 */
+/* 1440px – 1919px                               */
+/* ============================================= */
+@media screen and (min-width: 1440px) and (max-width: 1919px) {
+    /* Default sizes are designed for this range */
+    /* No changes needed */
+}
+
+
+/* ============================================= */
+/* Full HD Screens                               */
+/* 1920px – 2559px                               */
+/* ============================================= */
+@media screen and (min-width: 1920px) and (max-width: 2559px) {
+    .registration-main-title {
+        font-size: 1.7rem;
+        margin-bottom: 30px;
+    }
+
+    .registration-header h2 {
+        font-size: 1.4rem;
+    }
+
+    .registration-header {
+        padding: 24px 35px;
+    }
+
+    .registration-content {
+        padding: 35px;
+        gap: 24px 50px;
+    }
+
+    .form-section-title {
+        font-size: 13px;
+        padding: 8px 24px;
+        margin-bottom: 24px;
+    }
+
+    .form-group label {
+        font-size: 15px;
+        margin-bottom: 8px;
+    }
+
+    .reg-input {
+        height: 46px;
+        font-size: 16px;
+        padding: 0 18px;
+        border-radius: 10px;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .section-divider {
+        margin: 26px 0 14px 0;
+        padding-bottom: 36px;
+    }
+
+    .badge-title {
+        font-size: 13px;
+        padding: 8px 22px;
+        border-radius: 8px;
+    }
+
+    .btn-reg {
+        padding: 10px 18px;
+        font-size: 13px;
+        border-radius: 8px;
+    }
+
+    .btn-minimal {
+        height: 42px;
+        padding: 0 18px;
+        font-size: 13px;
+    }
+
+    .date-field label {
+        font-size: 12px;
+    }
+
+    .logo-upload-area {
+        height: 140px;
+        margin-top: 18px;
+    }
+
+    .logo-upload-area span {
+        font-size: 13px;
+    }
+
+    .logo-upload-area p {
+        font-size: 12px;
+    }
+
+    .registration-footer {
+        padding: 18px 35px;
+        gap: 12px;
+    }
+}
+
+
+/* ============================================= */
+/* Ultra Wide Screens (21:9)                     */
+/* 2560px – 3839px                               */
+/* ============================================= */
+@media screen and (min-width: 2560px) and (max-width: 3839px) {
+    .registration-container {
+        max-width: 1600px;
+    }
+
+    .registration-main-title {
+        font-size: 2rem;
+        margin-bottom: 35px;
+        max-width: 1600px;
+    }
+
+    .registration-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .registration-header {
+        padding: 28px 40px;
+    }
+
+    .registration-content {
+        padding: 40px;
+        gap: 28px 60px;
+    }
+
+    .form-section-title {
+        font-size: 15px;
+        padding: 9px 28px;
+        margin-bottom: 28px;
+    }
+
+    .form-group label {
+        font-size: 17px;
+        margin-bottom: 9px;
+    }
+
+    .reg-input {
+        height: 52px;
+        font-size: 18px;
+        padding: 0 20px;
+        border-radius: 12px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .section-divider {
+        margin: 30px 0 16px 0;
+        padding-bottom: 42px;
+    }
+
+    .badge-title {
+        font-size: 15px;
+        padding: 9px 24px;
+        border-radius: 9px;
+    }
+
+    .btn-reg {
+        padding: 12px 22px;
+        font-size: 14px;
+        border-radius: 9px;
+    }
+
+    .btn-minimal {
+        height: 48px;
+        padding: 0 22px;
+        font-size: 14px;
+    }
+
+    .date-field label {
+        font-size: 14px;
+    }
+
+    .logo-upload-area {
+        height: 160px;
+        margin-top: 20px;
+    }
+
+    .logo-upload-area span {
+        font-size: 15px;
+    }
+
+    .logo-upload-area p {
+        font-size: 13px;
+    }
+
+    .registration-footer {
+        padding: 20px 40px;
+        gap: 14px;
+    }
+
+    .close-btn {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+
+/* ============================================= */
+/* 4K and Above                                  */
+/* 3840px and above                              */
+/* ============================================= */
+@media screen and (min-width: 3840px) {
+    .registration-container {
+        max-width: 2200px;
+    }
+
+    .registration-main-title {
+        font-size: 2.8rem;
+        margin-bottom: 45px;
+        max-width: 2200px;
+    }
+
+    .registration-header h2 {
+        font-size: 2.2rem;
+    }
+
+    .registration-header {
+        padding: 35px 50px;
+    }
+
+    .registration-content {
+        padding: 50px;
+        gap: 36px 70px;
+    }
+
+    .form-section-title {
+        font-size: 20px;
+        padding: 12px 34px;
+        margin-bottom: 34px;
+        border-radius: 28px;
+    }
+
+    .form-group label {
+        font-size: 22px;
+        margin-bottom: 12px;
+    }
+
+    .reg-input {
+        height: 64px;
+        font-size: 22px;
+        padding: 0 24px;
+        border-radius: 14px;
+        border-width: 2px;
+    }
+
+    .form-group {
+        margin-bottom: 26px;
+    }
+
+    .section-divider {
+        margin: 38px 0 20px 0;
+        padding-bottom: 52px;
+        border-bottom-width: 2.5px;
+    }
+
+    .badge-title {
+        font-size: 20px;
+        padding: 12px 30px;
+        border-radius: 12px;
+    }
+
+    .btn-reg {
+        padding: 16px 28px;
+        font-size: 18px;
+        border-radius: 12px;
+        gap: 10px;
+    }
+
+    .btn-minimal {
+        height: 58px;
+        padding: 0 28px;
+        font-size: 18px;
+        border-radius: 14px;
+    }
+
+    .date-field label {
+        font-size: 18px;
+        min-width: 50px;
+    }
+
+    .logo-upload-area {
+        height: 200px;
+        margin-top: 24px;
+        border-radius: 18px;
+        border-width: 3px;
+    }
+
+    .logo-upload-area span {
+        font-size: 20px;
+    }
+
+    .logo-upload-area p {
+        font-size: 16px;
+    }
+
+    .registration-footer {
+        padding: 24px 50px;
+        gap: 18px;
+    }
+
+    .close-btn {
+        width: 48px;
+        height: 48px;
+    }
+
+    .short-upload {
+        height: 160px !important;
+    }
+}
