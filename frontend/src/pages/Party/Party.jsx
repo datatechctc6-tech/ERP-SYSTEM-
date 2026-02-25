@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { X, Save, Upload, User, MapPin, Phone, Mail, Map, Briefcase, Camera } from 'lucide-react';
+import './Party.css';
 
 const FormInput = forwardRef(({ label, name, type = "text", placeholder, icon: Icon, isFullWidth = false, value, onChange, onKeyDown, maxLength, error, required }, ref) => (
     <div className={`flex items-center gap-3 mb-2 ${isFullWidth ? 'col-span-full' : ''}`}>
-        <label className="w-32 flex-shrink-0 flex items-center gap-2 text-[12px] font-black text-[#004d40] uppercase tracking-tight">
+        <label className="party-label w-32 flex-shrink-0 flex items-center gap-2 text-[12px] font-black text-[#004d40] uppercase tracking-tight">
             {Icon && <Icon size={14} className="text-[#00695c]" />}
             {label}
             {required && <span className="text-red-500 text-sm">*</span>}
@@ -19,9 +20,9 @@ const FormInput = forwardRef(({ label, name, type = "text", placeholder, icon: I
                 onKeyDown={onKeyDown}
                 placeholder={placeholder}
                 maxLength={maxLength}
-                className={`w-full bg-[#f8fafc] border ${error ? 'border-red-400 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#004d40] focus:ring-[#004d40]'} focus:ring-1 outline-none px-3 py-2 text-[13px] font-bold text-gray-800 transition-all placeholder:text-gray-300 placeholder:font-normal rounded shadow-sm`}
+                className={`party-input w-full bg-[#f8fafc] border ${error ? 'border-red-400 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#004d40] focus:ring-[#004d40]'} focus:ring-1 outline-none px-3 py-2 text-[13px] font-bold text-gray-800 transition-all placeholder:text-gray-300 placeholder:font-normal rounded shadow-sm`}
             />
-            {error && <p className="text-[10px] text-red-500 mt-0.5 font-semibold">{error}</p>}
+            {error && <p className="party-error text-[10px] text-red-500 mt-0.5 font-semibold">{error}</p>}
         </div>
     </div>
 ));
@@ -258,15 +259,15 @@ const Party = () => {
     };
 
     return (
-        <div className="h-full w-full bg-[#f0f4f4] flex overflow-hidden">
+        <div className="party-page h-full w-full bg-[#f0f4f4] flex overflow-hidden">
             {/* Full-Screen Form Container */}
             <div className="w-full h-full bg-white border-[2px] border-[#004d40] shadow-2xl rounded-lg overflow-hidden flex flex-col">
 
                 {/* Compact Header */}
-                <div className="bg-[#004d40] px-4 py-2 text-white flex items-center justify-between h-12 flex-shrink-0">
+                <div className="party-header bg-[#004d40] px-4 py-2 text-white flex items-center justify-between h-12 flex-shrink-0">
                     <div className="flex items-center gap-2">
                         <User size={18} className="text-[#a7ffeb]" />
-                        <h1 className="text-sm font-black tracking-widest uppercase">{isEditMode ? 'EDIT GP HOLDER' : 'GP HOLDER MASTER'}</h1>
+                        <h1 className="party-header-title text-sm font-black tracking-widest uppercase">{isEditMode ? 'EDIT GP HOLDER' : 'GP HOLDER MASTER'}</h1>
                     </div>
                     <button
                         onClick={() => navigate('/party')}
@@ -284,7 +285,7 @@ const Party = () => {
 
                             {/* General Section */}
                             <div className="border border-gray-100 rounded-md p-3">
-                                <h2 className="text-[14px] font-black text-[#00695c] uppercase tracking-[0.2em] mb-2 flex items-center gap-1.5 border-b border-gray-50 pb-1">
+                                <h2 className="party-section-title text-[14px] font-black text-[#00695c] uppercase tracking-[0.2em] mb-2 flex items-center gap-1.5 border-b border-gray-50 pb-1">
                                     <span className="w-1 h-3 bg-[#004d40] rounded-full"></span>
                                     Core Details
                                 </h2>
@@ -302,7 +303,7 @@ const Party = () => {
 
                             {/* Categorization Section */}
                             <div className="border border-gray-100 rounded-md p-3">
-                                <h2 className="text-[14px] font-black text-[#00695c] uppercase tracking-[0.2em] mb-2 flex items-center gap-1.5 border-b border-gray-50 pb-1">
+                                <h2 className="party-section-title text-[14px] font-black text-[#00695c] uppercase tracking-[0.2em] mb-2 flex items-center gap-1.5 border-b border-gray-50 pb-1">
                                     <span className="w-1 h-3 bg-[#004d40] rounded-full"></span>
                                     Classification
                                 </h2>
@@ -319,9 +320,9 @@ const Party = () => {
                         <div className="flex-1 min-w-[200px] flex flex-col gap-4 border-l border-gray-50 pl-6 h-full p-4">
                             {/* Compact Photo Upload */}
                             <div className="bg-[#f8fcfb] border border-[#00695c33] rounded-lg p-4 flex flex-col items-center gap-4">
-                                <h2 className="text-[10px] font-black text-[#00695c] uppercase tracking-widest text-center">Party Photo</h2>
+                                <h2 className="party-photo-title text-[10px] font-black text-[#00695c] uppercase tracking-widest text-center">Party Photo</h2>
 
-                                <div className="relative group w-36 h-36 bg-gray-50 rounded-lg border-2 border-white shadow-md flex items-center justify-center overflow-hidden">
+                                <div className="party-photo-box relative group w-36 h-36 bg-gray-50 rounded-lg border-2 border-white shadow-md flex items-center justify-center overflow-hidden">
                                     {photoPreview ? (
                                         <img src={photoPreview} alt="Preview" className="w-full h-full object-cover" />
                                     ) : (
@@ -332,7 +333,7 @@ const Party = () => {
                                         className="absolute inset-0 bg-[#004d4099] opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center cursor-pointer text-white gap-1"
                                     >
                                         <Upload size={20} />
-                                        <span className="text-[10px] font-black uppercase tracking-widest">Upload</span>
+                                        <span className="party-upload-text text-[10px] font-black uppercase tracking-widest">Upload</span>
                                     </div>
                                 </div>
                                 <input type="file" ref={fileInputRef} onChange={handlePhotoChange} accept="image/*" className="hidden" />
@@ -341,8 +342,8 @@ const Party = () => {
                     </div>
 
                     {/* Footer Actions */}
-                    <div className="bg-[#f0f4f4] border-t border-gray-100 px-4 py-2 flex items-center justify-between h-14 flex-shrink-0 mt-2 rounded-b-lg">
-                        <div className="flex items-center gap-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                    <div className="party-footer bg-[#f0f4f4] border-t border-gray-100 px-4 py-2 flex items-center justify-between h-14 flex-shrink-0 mt-2 rounded-b-lg">
+                        <div className="party-footer-info flex items-center gap-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                             {/* <span>#PRT-2024</span> */}
                             <span className="text-[#00695c66]">●</span>
                             {/* <span>Auto-Scale: Active</span> */}
@@ -351,18 +352,18 @@ const Party = () => {
                         <div className="flex items-center gap-3">
                             <button
                                 type="submit"
-                                className="h-10 px-8 bg-[#004d40] hover:bg-[#00332e] text-white rounded-md flex items-center justify-center gap-2 transition-all shadow-md"
+                                className="party-footer-btn h-10 px-8 bg-[#004d40] hover:bg-[#00332e] text-white rounded-md flex items-center justify-center gap-2 transition-all shadow-md"
                             >
                                 <Save size={18} />
-                                <span className="text-[13px] font-black uppercase tracking-widest">{isEditMode ? 'Update' : 'Save'}</span>
+                                <span className="party-btn-text text-[13px] font-black uppercase tracking-widest">{isEditMode ? 'Update' : 'Save'}</span>
                             </button>
                             <button
                                 type="button"
                                 onClick={() => navigate('/party')}
-                                className="h-10 px-8 bg-[#004d40] hover:bg-red-600 text-white rounded-md flex items-center justify-center gap-2 transition-all shadow-sm"
+                                className="party-footer-btn h-10 px-8 bg-[#004d40] hover:bg-red-600 text-white rounded-md flex items-center justify-center gap-2 transition-all shadow-sm"
                             >
                                 <X size={18} />
-                                <span className="text-[13px] font-black uppercase tracking-widest">Exit</span>
+                                <span className="party-btn-text text-[13px] font-black uppercase tracking-widest">Exit</span>
                             </button>
                         </div>
                     </div>

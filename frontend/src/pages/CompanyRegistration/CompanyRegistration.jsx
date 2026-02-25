@@ -254,16 +254,35 @@ export default function CompanyRegistration() {
                                             onChange={(e) => handleChange("state", e.target.value)}
                                         >
                                             <option value="">Select State</option>
-                                            <option value="MAHARASHTRA">MAHARASHTRA</option>
-                                            <option value="GUJARAT">GUJARAT</option>
-                                            <option value="RAJASTHAN">RAJASTHAN</option>
-                                            <option value="KARNATAKA">KARNATAKA</option>
-                                            <option value="TAMIL NADU">TAMIL NADU</option>
-                                            <option value="UTTAR PRADESH">UTTAR PRADESH</option>
-                                            <option value="MADHYA PRADESH">MADHYA PRADESH</option>
-                                            <option value="WEST BENGAL">WEST BENGAL</option>
-                                            <option value="DELHI">DELHI</option>
+                                            <option value="ANDHRA PRADESH">ANDHRA PRADESH</option>
+                                            <option value="ARUNACHAL PRADESH">ARUNACHAL PRADESH</option>
+                                            <option value="ASSAM">ASSAM</option>
+                                            <option value="BIHAR">BIHAR</option>
+                                            <option value="CHHATTISGARH">CHHATTISGARH</option>
                                             <option value="GOA">GOA</option>
+                                            <option value="GUJARAT">GUJARAT</option>
+                                            <option value="HARYANA">HARYANA</option>
+                                            <option value="HIMACHAL PRADESH">HIMACHAL PRADESH</option>
+                                            <option value="JHARKHAND">JHARKHAND</option>
+                                            <option value="KARNATAKA">KARNATAKA</option>
+                                            <option value="KERALA">KERALA</option>
+                                            <option value="MADHYA PRADESH">MADHYA PRADESH</option>
+                                            <option value="MAHARASHTRA">MAHARASHTRA</option>
+                                            <option value="MANIPUR">MANIPUR</option>
+                                            <option value="MEGHALAYA">MEGHALAYA</option>
+                                            <option value="MIZORAM">MIZORAM</option>
+                                            <option value="NAGALAND">NAGALAND</option>
+                                            <option value="ODISHA">ODISHA</option>
+                                            <option value="PUNJAB">PUNJAB</option>
+                                            <option value="RAJASTHAN">RAJASTHAN</option>
+                                            <option value="SIKKIM">SIKKIM</option>
+                                            <option value="TAMIL NADU">TAMIL NADU</option>
+                                            <option value="TELANGANA">TELANGANA</option>
+                                            <option value="TRIPURA">TRIPURA</option>
+                                            <option value="UTTAR PRADESH">UTTAR PRADESH</option>
+                                            <option value="UTTARAKHAND">UTTARAKHAND</option>
+                                            <option value="WEST BENGAL">WEST BENGAL</option>
+
                                         </select>
                                     </div>
                                 </div>
