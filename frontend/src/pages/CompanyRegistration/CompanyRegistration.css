@@ -624,38 +624,43 @@
 /* 1920px – 2559px                               */
 /* ============================================= */
 @media screen and (min-width: 1920px) and (max-width: 2559px) {
+    .registration-container {
+        max-width: 1400px;
+    }
+
     .registration-main-title {
-        font-size: 1.7rem;
-        margin-bottom: 30px;
+        font-size: 1.85rem;
+        margin-bottom: 32px;
+        max-width: 1400px;
     }
 
     .registration-header h2 {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
     }
 
     .registration-header {
-        padding: 24px 35px;
+        padding: 26px 38px;
     }
 
     .registration-content {
-        padding: 35px;
-        gap: 24px 50px;
+        padding: 38px;
+        gap: 26px 55px;
     }
 
     .form-section-title {
-        font-size: 13px;
-        padding: 8px 24px;
-        margin-bottom: 24px;
+        font-size: 14px;
+        padding: 8px 26px;
+        margin-bottom: 26px;
     }
 
     .form-group label {
-        font-size: 15px;
+        font-size: 16px;
         margin-bottom: 8px;
     }
 
     .reg-input {
-        height: 46px;
-        font-size: 16px;
+        height: 48px;
+        font-size: 17px;
         padding: 0 18px;
         border-radius: 10px;
     }
@@ -665,39 +670,39 @@
     }
 
     .section-divider {
-        margin: 26px 0 14px 0;
-        padding-bottom: 36px;
+        margin: 28px 0 14px 0;
+        padding-bottom: 38px;
     }
 
     .badge-title {
-        font-size: 13px;
-        padding: 8px 22px;
+        font-size: 14px;
+        padding: 8px 24px;
         border-radius: 8px;
     }
 
     .btn-reg {
-        padding: 10px 18px;
-        font-size: 13px;
+        padding: 10px 20px;
+        font-size: 14px;
         border-radius: 8px;
     }
 
     .btn-minimal {
-        height: 42px;
-        padding: 0 18px;
-        font-size: 13px;
+        height: 44px;
+        padding: 0 20px;
+        font-size: 14px;
     }
 
     .date-field label {
-        font-size: 12px;
+        font-size: 13px;
     }
 
     .logo-upload-area {
-        height: 140px;
+        height: 150px;
         margin-top: 18px;
     }
 
     .logo-upload-area span {
-        font-size: 13px;
+        font-size: 14px;
     }
 
     .logo-upload-area p {
