@@ -70,7 +70,7 @@
 /* 768px – 991px                                 */
 /* ============================================= */
 @media screen and (min-width: 768px) and (max-width: 991px) {
-    .ctr{
+    .ctr {
         font-size: 12px;
     }
 
@@ -81,51 +81,39 @@
 /* Tablets Landscape / Small Laptops             */
 /* 992px – 1199px                                */
 /* ============================================= */
-@media screen and (min-width: 992px) and (max-width: 1199px) {
-
-}
+@media screen and (min-width: 992px) and (max-width: 1199px) {}
 
 
 /* ============================================= */
 /* Standard Desktop                              */
 /* 1200px – 1439px                               */
 /* ============================================= */
-@media screen and (min-width: 1200px) and (max-width: 1439px) {
-
-}
+@media screen and (min-width: 1200px) and (max-width: 1439px) {}
 
 
 /* ============================================= */
 /* Large Desktop                                 */
 /* 1440px – 1919px                               */
 /* ============================================= */
-@media screen and (min-width: 1440px) and (max-width: 1919px) {
-
-}
+@media screen and (min-width: 1440px) and (max-width: 1919px) {}
 
 
 /* ============================================= */
 /* Full HD Screens                               */
 /* 1920px – 2559px                               */
 /* ============================================= */
-@media screen and (min-width: 1920px) and (max-width: 2559px) {
-
-}
+@media screen and (min-width: 1920px) and (max-width: 2559px) {}
 
 
 /* ============================================= */
 /* Ultra Wide Screens (21:9)                     */
 /* 2560px – 3839px                               */
 /* ============================================= */
-@media screen and (min-width: 2560px) and (max-width: 3839px) {
-
-}
+@media screen and (min-width: 2560px) and (max-width: 3839px) {}
 
 
 /* ============================================= */
 /* 4K and Above                                  */
 /* 3840px and above                              */
 /* ============================================= */
-@media screen and (min-width: 3840px) {
-
-}
+@media screen and (min-width: 3840px) {}

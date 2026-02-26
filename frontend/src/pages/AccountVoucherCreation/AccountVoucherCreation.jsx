@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Plus, Printer, ArrowLeft, Edit3, Trash2, Calendar } from 'lucide-react';
+import './AccountVoucherCreation.css';
 import PrintModal from '../../components/PrintModal/PrintModal';
 
 const AccountVoucherCreation = () => {
@@ -69,10 +70,10 @@ const AccountVoucherCreation = () => {
 
 
     return (
-        <div className="h-full w-full bg-[#f0f4f4] flex overflow-hidden">
-            <div className="w-full h-full bg-white border-[2px] border-[#004d40] shadow-2xl rounded-lg overflow-hidden flex flex-col">
+        <div className="av-page h-full w-full bg-[#f0f4f4] flex overflow-hidden">
+            <div className="av-card w-full h-full bg-white border-[2px] border-[#004d40] shadow-2xl rounded-lg overflow-hidden flex flex-col">
                 {/* Header */}
-                <div className="bg-[#004d40] px-6 py-3 text-white flex items-center justify-between flex-shrink-0">
+                <div className="av-header bg-[#004d40] px-6 py-3 text-white flex items-center justify-between flex-shrink-0">
                     <div className="flex items-center gap-4 flex-1">
                         <div className="relative flex-1 max-w-md">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
@@ -83,15 +84,15 @@ const AccountVoucherCreation = () => {
                                 value={searchTerm}
                                 onChange={(e) => handleSearchChange(e.target.value)}
                                 onKeyDown={handleKeyDown}
-                                className="w-full pl-10 pr-4 py-1.5 bg-white/10 border border-white/20 rounded text-sm focus:outline-none focus:bg-yellow-100 focus:text-black focus:placeholder:text-black transition-all placeholder:text-white/40"
+                                className="av-search-input w-full pl-10 pr-4 py-1 bg-white/10 border border-white/20 rounded text-sm focus:outline-none transition-all placeholder:text-white/40"
                             />
                         </div>
-                        <div className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded px-3 py-1.5 transition-all">
+                        <div className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded px-3 py-1 transition-all">
                             <Calendar size={16} className="text-white/80" />
                             <select
                                 value={dateFilter}
                                 onChange={(e) => handleDateFilterChange(e.target.value)}
-                                className="bg-transparent text-sm font-bold uppercase tracking-widest outline-none cursor-pointer appearance-none pr-1"
+                                className="av-filter-select bg-transparent text-sm font-bold uppercase tracking-widest outline-none cursor-pointer appearance-none pr-1"
                             >
                                 <option value="today" className="text-gray-900 bg-white">Today</option>
                                 <option value="yesterday" className="text-gray-900 bg-white">Yesterday</option>
@@ -111,17 +112,17 @@ const AccountVoucherCreation = () => {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-[#004d40] text-white">
-                                    <th className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Bill No</th>
-                                    <th className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Bill Date</th>
-                                    <th className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Party Name</th>
-                                    <th className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Contract</th>
-                                    <th className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">GP</th>
-                                    <th className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Zone</th>
-                                    <th className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Dept</th>
-                                    <th className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Message</th>
-                                    <th className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Amount</th>
-                                    <th className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Status</th>
-                                    <th className="px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e] text-center">Action</th>
+                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Bill No</th>
+                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Bill Date</th>
+                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Party Name</th>
+                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Contract</th>
+                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">GP</th>
+                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Zone</th>
+                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Dept</th>
+                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Message</th>
+                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Amount</th>
+                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Status</th>
+                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e] text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
@@ -129,28 +130,28 @@ const AccountVoucherCreation = () => {
                                     <tr
                                         key={voucher.id}
                                         className={`transition-colors text-[11px] ${index === selectedIndex
-                                            ? 'bg-yellow-100 border-y-2 z-10 relative'
+                                            ? 'av-selected-row'
                                             : 'hover:bg-gray-50'
                                             }`}
                                     >
-                                        <td className="px-3 py-2 border border-gray-200 font-bold whitespace-nowrap">{voucher.billNo}</td>
-                                        <td className="px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.billDate}</td>
-                                        <td className="px-3 py-2 border border-gray-200 font-bold text-[#004d40] max-w-[150px] truncate" title={voucher.partyName}>{voucher.partyName}</td>
-                                        <td className="px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.contract}</td>
-                                        <td className="px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.gp}</td>
-                                        <td className="px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.zone}</td>
-                                        <td className="px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.dept}</td>
-                                        <td className="px-3 py-2 border border-gray-200 text-gray-500 italic max-w-[200px] truncate" title={voucher.message}>{voucher.message}</td>
-                                        <td className="px-3 py-2 border border-gray-200 font-black whitespace-nowrap">₹{voucher.amount.toLocaleString('en-IN')}</td>
-                                        <td className="px-3 py-2 border border-gray-200">
-                                            <span className={`px-2 py-0.5 rounded-full font-bold text-[9px] uppercase ${voucher.status === 'Approved' ? 'bg-green-100 text-green-700' :
+                                        <td className="av-td px-3 py-2 border border-gray-200 font-bold whitespace-nowrap">{voucher.billNo}</td>
+                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.billDate}</td>
+                                        <td className="av-td px-3 py-2 border border-gray-200 font-bold text-[#004d40] max-w-[150px] truncate" title={voucher.partyName}>{voucher.partyName}</td>
+                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.contract}</td>
+                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.gp}</td>
+                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.zone}</td>
+                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.dept}</td>
+                                        <td className="av-td px-3 py-2 border border-gray-200 text-gray-500 italic max-w-[200px] truncate" title={voucher.message}>{voucher.message}</td>
+                                        <td className="av-td px-3 py-2 border border-gray-200 font-black whitespace-nowrap">₹{voucher.amount.toLocaleString('en-IN')}</td>
+                                        <td className="av-td px-3 py-2 border border-gray-200">
+                                            <span className={`av-status-badge px-2 py-0.5 rounded-full font-bold text-[9px] uppercase ${voucher.status === 'Approved' ? 'bg-green-100 text-green-700' :
                                                 voucher.status === 'Rejected' ? 'bg-red-100 text-red-700' :
                                                     'bg-yellow-100 text-yellow-700'
                                                 }`}>
                                                 {voucher.status}
                                             </span>
                                         </td>
-                                        <td className="px-3 py-2 border border-gray-200 text-center">
+                                        <td className="av-td px-3 py-2 border border-gray-200 text-center">
                                             <div className="flex items-center justify-center gap-2">
                                                 <button onClick={() => navigate(`/account/edit/${voucher.id}`, { state: { voucher } })} className="p-1 text-blue-600 hover:bg-blue-50 rounded border border-blue-100 transition-colors" title="Edit">
                                                     <Edit3 size={14} />
@@ -168,28 +169,28 @@ const AccountVoucherCreation = () => {
                 </div>
 
                 {/* Footer */}
-                <div className="bg-[#f0f4f4] border-t border-gray-200 px-6 py-3 flex items-center justify-end gap-3 flex-shrink-0">
+                <div className="av-footer bg-[#f0f4f4] border-t border-gray-200 px-6 py-3 flex items-center justify-end gap-3 flex-shrink-0">
                     <button
                         onClick={() => navigate('/dashboard/1')}
-                        className="h-10 px-6 bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group"
+                        className="av-btn bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group"
                     >
                         <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                        <span className="text-[12px] font-black uppercase tracking-widest">Back</span>
+                        <span className="av-btn-text font-black uppercase tracking-widest">Back</span>
                     </button>
                     <button
                         onClick={handleOpenPrintModal}
                         disabled={filteredVouchers.length === 0}
-                        className="h-10 px-6 bg-[#004d40] hover:bg-[#00332e] disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group"
+                        className="av-btn bg-[#004d40] hover:bg-[#00332e] disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group"
                     >
                         <Printer size={16} className="group-hover:scale-110 transition-transform" />
-                        <span className="text-[12px] font-black uppercase tracking-widest">Print</span>
+                        <span className="av-btn-text font-black uppercase tracking-widest">Print</span>
                     </button>
                     <button
                         onClick={() => navigate('/account/create')}
-                        className="h-10 px-8 bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 group"
+                        className="av-btn bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-2 transition-all shadow-md active:scale-95 group"
                     >
                         <Plus size={18} className="group-hover:rotate-90 transition-transform" />
-                        <span className="text-[13px] font-black uppercase tracking-widest">Create</span>
+                        <span className="av-btn-text font-black uppercase tracking-widest">Create</span>
                     </button>
                 </div>
             </div>

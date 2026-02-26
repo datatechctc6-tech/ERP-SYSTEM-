@@ -1,0 +1,302 @@
+/* ============================================= */
+/* Default / Small Screens                       */
+/* ============================================= */
+.admin-pin-page .ap-header {
+    height: 48px;
+    padding: 0 16px;
+}
+
+.admin-pin-page .ap-title {
+    font-size: 14px;
+}
+
+.admin-pin-page .ap-form-container {
+    padding: 24px;
+}
+
+.admin-pin-page .ap-card {
+    max-width: 512px;
+}
+
+.admin-pin-page .ap-section-title {
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+
+.admin-pin-page .ap-label {
+    font-size: 12px;
+    width: 144px;
+}
+
+.admin-pin-page .ap-input {
+    height: 40px;
+    font-size: 14px;
+    border-width: 2px;
+}
+
+.admin-pin-page .ap-input:focus {
+    background-color: #fdd55ce1 !important;
+}
+
+.admin-pin-page .ap-input-group {
+    margin-bottom: 8px !important;
+}
+
+.admin-pin-page .ap-btn-text {
+    font-size: 11px;
+}
+
+.admin-pin-page .ap-footer-btn {
+    height: 32px;
+    padding: 0 20px;
+}
+
+
+/* ============================================= */
+/* Tablets (Portrait)                            */
+/* 768px – 991px                                 */
+/* ============================================= */
+@media screen and (min-width: 768px) and (max-width: 991px) {
+    .admin-pin-page .ap-header {
+        height: 44px;
+    }
+
+    .admin-pin-page .ap-title {
+        font-size: 12px;
+    }
+
+    .admin-pin-page .ap-section-title {
+        font-size: 12px;
+    }
+
+    .admin-pin-page .ap-label {
+        font-size: 10px;
+        width: 130px;
+    }
+
+    .admin-pin-page .ap-input {
+        height: 36px;
+        font-size: 11px;
+    }
+
+    .admin-pin-page .ap-btn-text {
+        font-size: 10px;
+    }
+
+    .admin-pin-page .ap-footer-btn {
+        height: 28px;
+    }
+}
+
+
+/* ============================================= */
+/* Tablets Landscape / Small Laptops             */
+/* 992px – 1199px                                */
+/* ============================================= */
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+    .admin-pin-page .ap-header {
+        height: 46px;
+    }
+
+    .admin-pin-page .ap-title {
+        font-size: 13px;
+    }
+
+    .admin-pin-page .ap-section-title {
+        font-size: 13px;
+    }
+
+    .admin-pin-page .ap-label {
+        font-size: 11px;
+        width: 140px;
+    }
+
+    .admin-pin-page .ap-input {
+        height: 38px;
+        font-size: 12px;
+    }
+}
+
+
+/* ============================================= */
+/* Large Desktop                                 */
+/* 1440px – 1919px                               */
+/* ============================================= */
+@media screen and (min-width: 1440px) and (max-width: 1919px) {
+    .admin-pin-page .ap-header {
+        height: 52px;
+        padding: 0 24px;
+    }
+
+    .admin-pin-page .ap-title {
+        font-size: 17px;
+    }
+
+    .admin-pin-page .ap-section-title {
+        font-size: 17px;
+        margin-bottom: 24px;
+    }
+
+    .admin-pin-page .ap-label {
+        font-size: 15px;
+        width: 170px;
+    }
+
+    .admin-pin-page .ap-input {
+        height: 48px;
+        font-size: 16px;
+        border-width: 2px;
+    }
+
+    .admin-pin-page .ap-btn-text {
+        font-size: 14px;
+    }
+
+    .admin-pin-page .ap-footer-btn {
+        height: 44px;
+        padding: 0 28px;
+    }
+
+    .admin-pin-page .ap-card {
+        max-width: 600px;
+    }
+}
+
+
+/* ============================================= */
+/* Full HD Screens                               */
+/* 1920px – 2559px                               */
+/* ============================================= */
+@media screen and (min-width: 1920px) and (max-width: 2559px) {
+    .admin-pin-page .ap-header {
+        height: 56px;
+        padding: 0 32px;
+    }
+
+    .admin-pin-page .ap-title {
+        font-size: 19px;
+    }
+
+    .admin-pin-page .ap-section-title {
+        font-size: 19px;
+        margin-bottom: 28px;
+    }
+
+    .admin-pin-page .ap-label {
+        font-size: 17px;
+        width: 190px;
+    }
+
+    .admin-pin-page .ap-input {
+        height: 54px;
+        font-size: 18px;
+        border-radius: 10px;
+    }
+
+    .admin-pin-page .ap-btn-text {
+        font-size: 16px;
+    }
+
+    .admin-pin-page .ap-footer-btn {
+        height: 48px;
+        padding: 0 36px;
+        border-radius: 8px;
+    }
+
+    .admin-pin-page .ap-card {
+        max-width: 680px;
+    }
+}
+
+
+/* ============================================= */
+/* Ultra Wide Screens (21:9)                     */
+/* 2560px – 3839px                               */
+/* ============================================= */
+@media screen and (min-width: 2560px) and (max-width: 3839px) {
+    .admin-pin-page .ap-header {
+        height: 64px;
+        padding: 0 40px;
+    }
+
+    .admin-pin-page .ap-title {
+        font-size: 22px;
+    }
+
+    .admin-pin-page .ap-section-title {
+        font-size: 22px;
+        margin-bottom: 32px;
+    }
+
+    .admin-pin-page .ap-label {
+        font-size: 19px;
+        width: 220px;
+    }
+
+    .admin-pin-page .ap-input {
+        height: 60px;
+        font-size: 22px;
+        border-radius: 12px;
+    }
+
+    .admin-pin-page .ap-btn-text {
+        font-size: 18px;
+    }
+
+    .admin-pin-page .ap-footer-btn {
+        height: 54px;
+        padding: 0 44px;
+        border-radius: 10px;
+    }
+
+    .admin-pin-page .ap-card {
+        max-width: 780px;
+    }
+}
+
+
+/* ============================================= */
+/* 4K and Above                                  */
+/* 3840px and above                              */
+/* ============================================= */
+@media screen and (min-width: 3840px) {
+    .admin-pin-page .ap-header {
+        height: 84px;
+        padding: 0 56px;
+    }
+
+    .admin-pin-page .ap-title {
+        font-size: 32px;
+    }
+
+    .admin-pin-page .ap-section-title {
+        font-size: 30px;
+        margin-bottom: 40px;
+    }
+
+    .admin-pin-page .ap-label {
+        font-size: 26px;
+        width: 280px;
+    }
+
+    .admin-pin-page .ap-input {
+        height: 80px;
+        font-size: 28px;
+        border-radius: 16px;
+        border-width: 3px;
+    }
+
+    .admin-pin-page .ap-btn-text {
+        font-size: 22px;
+    }
+
+    .admin-pin-page .ap-footer-btn {
+        height: 68px;
+        padding: 0 56px;
+        border-radius: 14px;
+    }
+
+    .admin-pin-page .ap-card {
+        max-width: 1000px;
+    }
+}

@@ -20,7 +20,7 @@ const FormInput = forwardRef(({ label, name, type = "text", placeholder, icon: I
                 onKeyDown={onKeyDown}
                 placeholder={placeholder}
                 maxLength={maxLength}
-                className={`party-input w-full bg-[#f8fafc] border ${error ? 'border-red-400 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#004d40] focus:ring-[#004d40]'} focus:ring-1 outline-none px-3 py-2 text-[13px] font-bold text-gray-800 transition-all placeholder:text-gray-300 placeholder:font-normal rounded shadow-sm`}
+                className={`party-input w-full bg-[#f8fafc] border ${error ? 'border-red-400 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#004d40] focus:ring-[#004d40]'} focus:ring-1 outline-none px-3 py-1.5 text-[13px] font-bold text-gray-800 transition-all placeholder:text-gray-300 placeholder:font-normal rounded shadow-sm`}
             />
             {error && <p className="party-error text-[10px] text-red-500 mt-0.5 font-semibold">{error}</p>}
         </div>
@@ -357,7 +357,7 @@ const Party = () => {
                         <div className="flex items-center gap-3">
                             <button
                                 type="submit"
-                                className="party-footer-btn h-10 px-8 bg-[#004d40] hover:bg-[#00332e] text-white rounded-md flex items-center justify-center gap-2 transition-all shadow-md"
+                                className="party-footer-btn bg-[#004d40] hover:bg-[#00332e] text-white rounded-md flex items-center justify-center gap-2 transition-all shadow-md"
                             >
                                 <Save size={18} />
                                 <span className="party-btn-text text-[13px] font-black uppercase tracking-widest">{isEditMode ? 'Update' : 'Save'}</span>
@@ -365,7 +365,7 @@ const Party = () => {
                             <button
                                 type="button"
                                 onClick={() => navigate('/party')}
-                                className="party-footer-btn h-10 px-8 bg-[#004d40] hover:bg-red-600 text-white rounded-md flex items-center justify-center gap-2 transition-all shadow-sm"
+                                className="party-footer-btn bg-[#004d40] hover:bg-red-600 text-white rounded-md flex items-center justify-center gap-2 transition-all shadow-sm"
                             >
                                 <X size={18} />
                                 <span className="party-btn-text text-[13px] font-black uppercase tracking-widest">Exit</span>

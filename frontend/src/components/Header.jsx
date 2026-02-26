@@ -60,8 +60,8 @@ const Header = () => {
                         className={`flex items-center gap-2 pl-2 pr-1 py-1 rounded-xl transition-all ${isMenuOpen ? 'bg-[#00332e] shadow-inner' : 'hover:bg-[#00332e]'}`}
                     >
                         <div className="text-right hidden md:block">
-                            <p className="text-[9px] text-[#80cbc4] font-black uppercase leading-none mb-0.5 tracking-tighter">Administrator</p>
-                            <p className="text-[13px] font-black leading-none">Super User</p>
+                            <p className="text-[9px] text-[#80cbc4] font-light uppercase leading-none mb-0.5 tracking-tighter">Administrator</p>
+                            <p className="text-[13px] font-normal leading-none">Super User</p>
                         </div>
                         <div className="w-9 h-9 rounded-full bg-[#004d40] border-2 border-[#a7ffeb]/20 flex items-center justify-center text-[#a7ffeb] shadow-lg group">
                             <User size={18} className="group-hover:scale-110 transition-transform" />
@@ -70,7 +70,7 @@ const Header = () => {
                     </button>
 
                     {/* Dropdown Menu */}
-                    {isMenuOpen && (
+                    {isMenuOpen && (    
                         <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transform origin-top-right transition-all">
                             <div className="bg-slate-50 p-4 border-b border-slate-100">
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Signed in as</p>
