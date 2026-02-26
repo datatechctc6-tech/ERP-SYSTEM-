@@ -19,6 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 const authRoutes = require('./src/routes/authRoutes');
 const companyRoutes = require('./src/routes/company.routes');
 const partyRoutes = require('./src/routes/party.routes');
+const departmentRoutes = require('./src/routes/department.routes');
 
 // Basic test route (/) to check server is running
 app.get('/', (req, res) => {
@@ -29,5 +30,6 @@ app.get('/', (req, res) => {
 app.use('/api', authRoutes);
 app.use('/api', companyRoutes);
 app.use('/api', partyRoutes);
+app.use('/api', departmentRoutes);
 
 module.exports = app;

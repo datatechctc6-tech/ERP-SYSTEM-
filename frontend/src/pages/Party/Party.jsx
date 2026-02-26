@@ -58,18 +58,20 @@ const Party = () => {
     const getInitialFormData = () => {
         if (isEditMode && editParty) {
             return {
-                name: editParty.name || '',
-                address: editParty.address || '',
+                hold_name: editParty.name || '',
+                address1: editParty.address || '',
                 address2: editParty.address2 || '',
-                pincode: editParty.pincode || '',
+                pincode: editParty.PINCODE || editParty.pincode || '',
                 city: editParty.city || '',
                 state: editParty.state || '',
-                phone: editParty.phone || editParty.mobile || '',
-                whatsapp: editParty.whatsapp || '',
-                email: editParty.email || '',
-                gramPanchayat: editParty.gramPanchayat || '',
-                zone: editParty.zone || '',
-                designation: editParty.designation || ''
+                Mobile_No: editParty.mobile || editParty.phone || '',
+                Whatsapp_No: editParty.whatsapp || '',
+                Gmail_Id: editParty.email || '',
+                gp_Name: editParty.gramPanchayat || '',
+                Zone_Name: editParty.zone || '',
+                designation: editParty.designation || '',
+                Sl_No: editParty.Sl_No || '',
+                t_v_date: editParty.t_v_date || ''
             };
         }
 
@@ -237,8 +239,11 @@ const Party = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:5000/api/party', {
-                method: 'POST',
+            const url = isEditMode ? `http://localhost:5000/api/party/${id}` : 'http://localhost:5000/api/party';
+            const method = isEditMode ? 'PUT' : 'POST';
+
+            const res = await fetch(url, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`

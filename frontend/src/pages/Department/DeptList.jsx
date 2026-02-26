@@ -29,19 +29,31 @@ const DeptList = () => {
         }
     }, [isAddMode]);
 
-    // Mock data
-    const [departments, setDepartments] = useState([
-        { id: '01', code: 'D01', name: 'CRUSHER QUARRY ADI' },
-        { id: '02', code: 'D02', name: 'CRUSHER' },
-        { id: '03', code: 'D03', name: 'RAISING' },
-        { id: '04', code: 'D04', name: "CRUSHER'MORRUM & SOIL" },
-        { id: '05', code: 'D05', name: 'RAMCO' },
-        { id: '06', code: 'D06', name: 'R&B' },
-    ]);
+    const [departments, setDepartments] = useState([]);
+    const [editId, setEditId] = useState(null);
+
+    const fetchDepartments = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch('http://localhost:5000/api/departments', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setDepartments(data);
+            }
+        } catch (err) {
+            console.error('Error fetching departments:', err);
+        }
+    };
+
+    useEffect(() => {
+        fetchDepartments();
+    }, []);
 
     const filteredDepartments = departments.filter(dept =>
-        dept.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        dept.code.toLowerCase().includes(searchTerm.toLowerCase())
+        (dept.DEPT_NAME || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (dept.DEPT_CODE || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleSearchChange = (value) => {
@@ -66,19 +78,22 @@ const DeptList = () => {
 
     const handleAction = (type) => {
         if (type === 'ADD') {
-            const nextSlNo = departments.length + 1;
-            const today = new Date().toISOString().split('T')[0];
             setFormData({
-                Sl_No: nextSlNo,
-                t_v_date: today,
+                Sl_No: '',
+                t_v_date: new Date().toISOString().split('T')[0],
                 dept_Name: '',
                 desc: '',
                 dept_code: ''
             });
+            setEditId(null);
             setIsAddMode(true);
         } else if (type === 'EXIT' || type === 'CLOSE') {
-            if (isAddMode) setIsAddMode(false);
-            else navigate(-1);
+            if (isAddMode) {
+                setIsAddMode(false);
+                setEditId(null);
+            } else {
+                navigate(-1);
+            }
         }
     };
 
@@ -88,27 +103,65 @@ const DeptList = () => {
             return;
         }
         try {
-            const res = await fetch('http://localhost:4000/create/dep', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
+            const token = localStorage.getItem('token');
+            const url = editId ? `http://localhost:5000/api/department/${editId}` : 'http://localhost:5000/api/department';
+            const method = editId ? 'PUT' : 'POST';
+
+            const payload = {
+                DEPT_NAME: formData.dept_Name,
+                DESCRIPTION: formData.desc
+            };
+
+            const res = await fetch(url, {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
             });
             const data = await res.json();
             if (res.ok) {
-                toast.success('Department created successfully!');
-                setDepartments(prev => [...prev, {
-                    id: String(formData.Sl_No).padStart(2, '0'),
-                    code: formData.dept_code,
-                    name: formData.dept_Name
-                }]);
+                alert(editId ? 'Department updated successfully!' : 'Department created successfully!');
+                fetchDepartments();
                 setFormData({ Sl_No: '', t_v_date: '', dept_Name: '', desc: '', dept_code: '' });
                 setIsAddMode(false);
+                setEditId(null);
             } else {
-                toast.error(data.message || 'Failed to create department');
+                alert(data.error || 'Failed to save department');
             }
         } catch (err) {
             console.error(err);
-            toast.error('Server error. Is backend running on port 5000?');
+            alert('Server error. Backend is not responding.');
+        }
+    };
+
+    const handleEdit = (dept) => {
+        setFormData({
+            ...formData,
+            dept_Name: dept.DEPT_NAME,
+            desc: dept.DESCRIPTION,
+            dept_code: dept.DEPT_CODE
+        });
+        setEditId(dept.SL_NO);
+        setIsAddMode(true);
+    };
+
+    const handleDelete = async (slNo) => {
+        if (!window.confirm('Are you sure you want to delete this department?')) return;
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`http://localhost:5000/api/department/${slNo}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                fetchDepartments();
+            } else {
+                alert('Failed to delete department');
+            }
+        } catch (err) {
+            console.error('Error deleting department:', err);
         }
     };
 
@@ -141,16 +194,7 @@ const DeptList = () => {
                                         value={formData.dept_Name}
                                         onChange={(e) => {
                                             const name = e.target.value;
-                                            let code = formData.dept_code;
-                                            if (name.trim() && !formData.dept_code) {
-                                                const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                                                let randomCode = '';
-                                                for (let i = 0; i < 4; i++) randomCode += chars.charAt(Math.floor(Math.random() * chars.length));
-                                                code = 'DEP' + randomCode;
-                                            } else if (!name.trim()) {
-                                                code = '';
-                                            }
-                                            setFormData({ ...formData, dept_Name: name, dept_code: code });
+                                            setFormData({ ...formData, dept_Name: name });
                                         }}
                                         className="flex-1 border border-gray-300 px-2 py-1 text-sm bg-white focus:bg-[#fdd55ce1] focus:text-black focus:outline-none focus:border-[#00695c]"
                                         onKeyDown={(e) => {
@@ -219,12 +263,12 @@ const DeptList = () => {
                                         className={`text-[12px] ${index === selectedIndex ? 'bg-[#fdd55ce1] border-y border-[#00695c]' : 'hover:bg-gray-50'}`}
                                         onClick={() => setSelectedIndex(index)}
                                     >
-                                        <td className="border border-gray-100 px-2 py-1.5 font-medium">{dept.code}</td>
-                                        <td className="border border-gray-100 px-3 py-1.5 font-bold">{dept.name}</td>
+                                        <td className="border border-gray-100 px-2 py-1.5 font-medium">{dept.DEPT_CODE}</td>
+                                        <td className="border border-gray-100 px-3 py-1.5 font-bold">{dept.DEPT_NAME}</td>
                                         <td className="border border-gray-100 px-2 py-1.5">
                                             <div className="flex justify-center gap-1">
-                                                <button className="p-1 text-[#00695c] hover:bg-[#e0f2f1] rounded"><Edit2 size={12} /></button>
-                                                <button className="p-1 text-red-500 hover:bg-red-50 rounded"><Trash2 size={12} /></button>
+                                                <button onClick={(e) => { e.stopPropagation(); handleEdit(dept); }} className="p-1 text-[#00695c] hover:bg-[#e0f2f1] rounded"><Edit2 size={12} /></button>
+                                                <button onClick={(e) => { e.stopPropagation(); handleDelete(dept.SL_NO); }} className="p-1 text-red-500 hover:bg-red-50 rounded"><Trash2 size={12} /></button>
                                             </div>
                                         </td>
                                     </tr>
