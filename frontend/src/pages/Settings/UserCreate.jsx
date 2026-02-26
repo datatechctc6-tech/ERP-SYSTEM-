@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 import { UserPlus, X, User, Lock, KeyRound, Eye, EyeOff, RefreshCw } from 'lucide-react';
 
 const UserCreate = () => {
@@ -10,6 +11,13 @@ const UserCreate = () => {
         password: '',
         pin: ''
     });
+    const usernameRef = useRef(null);
+
+    useEffect(() => {
+        if (usernameRef.current) {
+            usernameRef.current.focus();
+        }
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -25,19 +33,19 @@ const UserCreate = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (!formData.username.trim()) {
-            alert('Please enter a username');
+            toast.error('Please enter a username');
             return;
         }
         if (!formData.password.trim()) {
-            alert('Please enter a password');
+            toast.error('Please enter a password');
             return;
         }
         if (formData.pin.length !== 4) {
-            alert('Please enter a valid 4-digit PIN');
+            toast.error('Please enter a valid 4-digit PIN');
             return;
         }
         console.log('User Created:', formData);
-        alert('User created successfully!');
+        toast.success('User created successfully!');
         navigate('/settings/user-list');
     };
 
@@ -47,6 +55,7 @@ const UserCreate = () => {
 
     return (
         <div className="h-full w-full bg-[#f0f4f4] flex overflow-hidden">
+            <Toaster position="top-right" />
             <div className="w-full h-full bg-white border-[2px] border-[#004d40] shadow-2xl rounded-lg overflow-hidden flex flex-col">
 
                 {/* Header */}
@@ -74,8 +83,8 @@ const UserCreate = () => {
                                 </h2>
 
                                 {/* Username */}
-                                <div className="flex items-center gap-3 mb-4">
-                                    <label className="w-32 flex-shrink-0 flex items-center gap-2 text-[12px] font-black text-[#004d40] uppercase tracking-tight">
+                                <div className="flex items-center gap-1 mb-4">
+                                    <label className="w-28 flex-shrink-0 flex items-center gap-2 text-[12px] font-black text-[#004d40] uppercase tracking-tight">
                                         <User size={14} className="text-[#00695c]" />
                                         Username
                                     </label>
@@ -86,15 +95,15 @@ const UserCreate = () => {
                                             value={formData.username}
                                             onChange={handleInputChange}
                                             placeholder="Enter username..."
-                                            autoFocus
-                                            className="w-full bg-[#f8fafc] border border-gray-300 focus:border-[#004d40] focus:ring-1 focus:ring-[#004d40] outline-none px-3 py-2 text-[13px] font-bold text-gray-800 transition-all placeholder:text-gray-300 placeholder:font-normal rounded shadow-sm"
+                                            ref={usernameRef}
+                                            className="w-full bg-[#f8fafc] border border-gray-300 focus:border-[#004d40] focus:bg-[#fdd55ce1] outline-none px-3 py-2 text-[13px] font-bold text-gray-800 transition-all placeholder:text-gray-300 placeholder:font-normal rounded shadow-sm"
                                         />
                                     </div>
                                 </div>
 
                                 {/* Password */}
-                                <div className="flex items-center gap-3 mb-4">
-                                    <label className="w-32 flex-shrink-0 flex items-center gap-2 text-[12px] font-black text-[#004d40] uppercase tracking-tight">
+                                <div className="flex items-center gap-1 mb-4">
+                                    <label className="w-28 flex-shrink-0 flex items-center gap-2 text-[12px] font-black text-[#004d40] uppercase tracking-tight">
                                         <Lock size={14} className="text-[#00695c]" />
                                         Password
                                     </label>
@@ -105,7 +114,7 @@ const UserCreate = () => {
                                             value={formData.password}
                                             onChange={handleInputChange}
                                             placeholder="Enter password..."
-                                            className="w-full bg-[#f8fafc] border border-gray-300 focus:border-[#004d40] focus:ring-1 focus:ring-[#004d40] outline-none px-3 py-2 pr-10 text-[13px] font-bold text-gray-800 transition-all placeholder:text-gray-300 placeholder:font-normal rounded shadow-sm"
+                                            className="w-full bg-[#f8fafc] border border-gray-300 focus:border-[#004d40] focus:bg-[#fdd55ce1] outline-none px-3 py-2 pr-10 text-[13px] font-bold text-gray-800 transition-all placeholder:text-gray-300 placeholder:font-normal rounded shadow-sm"
                                         />
                                         <button
                                             type="button"
@@ -118,8 +127,8 @@ const UserCreate = () => {
                                 </div>
 
                                 {/* 4-Digit PIN */}
-                                <div className="flex items-center gap-3 mb-2">
-                                    <label className="w-32 flex-shrink-0 flex items-center gap-2 text-[12px] font-black text-[#004d40] uppercase tracking-tight">
+                                <div className="flex items-center gap-1 mb-2">
+                                    <label className="w-28 flex-shrink-0 flex items-center gap-2 text-[12px] font-black text-[#004d40] uppercase tracking-tight">
                                         <KeyRound size={14} className="text-[#00695c]" />
                                         4-Digit Pin
                                     </label>
@@ -149,7 +158,7 @@ const UserCreate = () => {
                                                         if (prev) prev.focus();
                                                     }
                                                 }}
-                                                className="w-12 h-12 bg-[#f8fafc] border-2 border-gray-300 focus:border-[#004d40] focus:ring-1 focus:ring-[#004d40] outline-none text-center text-[20px] font-black text-[#004d40] transition-all rounded-lg shadow-sm"
+                                                className="w-12 h-12 bg-[#f8fafc] border-2 border-gray-300 focus:border-[#004d40] focus:bg-[#fdd55ce1] outline-none text-center text-[20px] font-black text-[#004d40] transition-all rounded-lg shadow-sm"
                                             />
                                         ))}
                                     </div>
@@ -159,18 +168,18 @@ const UserCreate = () => {
                                 <div className="flex items-center justify-end gap-2 mt-5">
                                     <button
                                         type="submit"
-                                        className="h-8 px-5 bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                                        className="h-7 px-4 bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-1.5 transition-all shadow-sm"
                                     >
                                         <UserPlus size={14} />
-                                        <span className="text-[11px] font-black uppercase tracking-widest">Create</span>
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Create</span>
                                     </button>
                                     <button
                                         type="button"
                                         onClick={handleClear}
-                                        className="h-8 px-5 bg-white border border-gray-300 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                                        className="h-7 px-4 bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-1.5 transition-all shadow-sm"
                                     >
                                         <RefreshCw size={14} />
-                                        <span className="text-[11px] font-black uppercase tracking-widest">Clear</span>
+                                        <span className="text-[10px] font-black uppercase tracking-widest">Clear</span>
                                     </button>
                                 </div>
                             </div>

@@ -144,8 +144,8 @@
     }
 
     .ac-page .ac-input {
-        font-size: 17px !important;
-        height: 32px !important;
+        font-size: 15px !important;
+        height: 26px !important;
     }
 
     .ac-page .ac-textarea {
@@ -156,7 +156,7 @@
     .ac-page .ac-amount-box {
         font-size: 26px !important;
         width: 240px !important;
-        padding: 12px 0 !important;
+        padding: 6px 0 !important;
     }
 
     .ac-page .ac-btn {
@@ -200,7 +200,7 @@
     .ac-page .ac-amount-box {
         font-size: 32px !important;
         width: 280px !important;
-        padding: 14px 0 !important;
+        padding: 8px 0 !important;
     }
 
     .ac-page .ac-btn {
@@ -244,7 +244,7 @@
     .ac-page .ac-amount-box {
         font-size: 42px !important;
         width: 360px !important;
-        padding: 18px 0 !important;
+        padding: 10px 0 !important;
     }
 
     .ac-page .ac-btn {
@@ -288,7 +288,7 @@
     .ac-page .ac-amount-box {
         font-size: 64px !important;
         width: 550px !important;
-        padding: 30px 0 !important;
+        padding: 16px 0 !important;
         border-width: 4px !important;
     }
 

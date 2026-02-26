@@ -29,7 +29,7 @@ const NavItem = ({ item, isSidebarOpen, openMenus, toggleMenu, handleNavigate, d
     return (
         <div className="w-full">
             <button
-                onClick={() => hasSubItems ? toggleMenu(item.label) : handleNavigate(item.path)}
+                onClick={() => hasSubItems ? toggleMenu(item.label, depth) : handleNavigate(item.path)}
                 className={`
                     group relative w-full flex items-center justify-between p-2 rounded-lg transition-all
                     ${item.id === 'dashboard' ? 'bg-[#004d40] text-white shadow-lg' : 'text-white hover:bg-[#004d404d] hover:text-white'}
@@ -96,10 +96,14 @@ const Sidebar = () => {
         }
     }, [isSidebarOpen]);
 
-    const toggleMenu = (name) => {
-        setOpenMenus(prev =>
-            prev.includes(name) ? prev.filter(m => m !== name) : [...prev, name]
-        );
+    const toggleMenu = (name, depth) => {
+        setOpenMenus(prev => {
+            if (prev[depth] === name) {
+                return prev.slice(0, depth);
+            } else {
+                return [...prev.slice(0, depth), name];
+            }
+        });
     };
 
     const handleNavigate = (path) => {
@@ -107,7 +111,7 @@ const Sidebar = () => {
     };
 
     const menuItems = [
-        { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard' },
+        { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} />, path: '/dashboard/1 ' },
         {
             id: 'master',
             label: 'Master',

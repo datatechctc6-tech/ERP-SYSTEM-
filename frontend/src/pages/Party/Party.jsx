@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { X, Save, Upload, User, MapPin, Phone, Mail, Map, Briefcase, Camera } from 'lucide-react';
+import toast, { Toaster } from 'react-hot-toast';
 import './Party.css';
 
 const FormInput = forwardRef(({ label, name, type = "text", placeholder, icon: Icon, isFullWidth = false, value, onChange, onKeyDown, maxLength, error, required }, ref) => (
-    <div className={`flex items-center gap-3 mb-2 ${isFullWidth ? 'col-span-full' : ''}`}>
+    <div className={`flex items-center gap-3 mb-1 ${isFullWidth ? 'col-span-full' : ''}`}>
         <label className="party-label w-32 flex-shrink-0 flex items-center gap-2 text-[12px] font-black text-[#004d40] uppercase tracking-tight">
             {Icon && <Icon size={14} className="text-[#00695c]" />}
             {label}
@@ -20,7 +21,7 @@ const FormInput = forwardRef(({ label, name, type = "text", placeholder, icon: I
                 onKeyDown={onKeyDown}
                 placeholder={placeholder}
                 maxLength={maxLength}
-                className={`party-input w-full bg-[#f8fafc] border ${error ? 'border-red-400 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-[#004d40] focus:ring-[#004d40]'} focus:ring-1 outline-none px-3 py-1.5 text-[13px] font-bold text-gray-800 transition-all placeholder:text-gray-300 placeholder:font-normal rounded shadow-sm`}
+                className={`party-input w-full bg-[#f8fafc] border ${error ? 'border-red-400 focus:border-red-500 focus:bg-[#fdd55ce1]' : 'border-gray-300 focus:border-[#004d40] focus:bg-[#fdd55ce1]'} outline-none px-3 py-1.5 text-[13px] font-bold text-gray-800 transition-all placeholder:text-gray-400 placeholder:font-normal focus:text-black focus:placeholder:text-gray-600 rounded shadow-sm`}
             />
             {error && <p className="party-error text-[10px] text-red-500 mt-0.5 font-semibold">{error}</p>}
         </div>
@@ -247,19 +248,20 @@ const Party = () => {
             const data = await res.json();
             if (res.ok) {
                 localStorage.removeItem(DRAFT_KEY);
-                alert(isEditMode ? 'Party updated successfully!' : 'Party created successfully!');
+                toast.success(isEditMode ? 'Party updated successfully!' : 'Party created successfully!');
                 navigate('/party');
             } else {
-                alert(data.message || 'Failed to save party');
+                toast.error(data.message || 'Failed to save party');
             }
         } catch (err) {
             console.error(err);
-            alert('Server error. Backend is not responding.');
+            toast.error('Server error. Backend is not responding.');
         }
     };
 
     return (
         <div className="party-page h-full w-full bg-[#f0f4f4] flex overflow-hidden">
+            <Toaster position="top-right" />
             {/* Full-Screen Form Container */}
             <div className="w-full h-full bg-white border-[2px] border-[#004d40] shadow-2xl rounded-lg overflow-hidden flex flex-col">
 

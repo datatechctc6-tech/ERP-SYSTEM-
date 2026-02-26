@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 import { Shield, X, User, Check, RefreshCw, Database, RefreshCcw, ChevronRight } from 'lucide-react';
 
 const RoleAssign = () => {
@@ -83,15 +84,16 @@ const RoleAssign = () => {
 
     const handleAssign = () => {
         if (!selectedUser) {
-            alert('Please select a user');
+            toast.error('Please select a user');
             return;
         }
         console.log('Assigning Permissions:', { user: selectedUser, permissions });
-        alert(`Permissions assigned to ${selectedUser} successfully!`);
+        toast.success(`Permissions assigned to ${selectedUser} successfully!`);
     };
 
     return (
         <div className="h-full w-full bg-[#f0f4f4] flex overflow-hidden">
+            <Toaster position="top-right" />
             <div className="w-full h-full bg-white border-[2px] border-[#004d40] shadow-2xl rounded-lg overflow-hidden flex flex-col">
 
                 {/* Header */}
@@ -262,20 +264,20 @@ const RoleAssign = () => {
                     </div>
 
                     {/* Footer Actions */}
-                    <div className="mt-6 flex items-center justify-end gap-3 pt-4 border-t border-gray-100">
+                    <div className="mt-6 flex items-center justify-end gap-2 pt-4 border-t border-gray-100">
                         <button
                             onClick={handleAssign}
-                            className="h-10 px-8 bg-[#004d40] hover:bg-[#00332e] text-white rounded-md flex items-center justify-center gap-2 transition-all shadow-md active:scale-95"
+                            className="h-7 px-4 bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-1.5 transition-all shadow-sm active:scale-95"
                         >
-                            <Check size={18} />
-                            <span className="text-[13px] font-black uppercase tracking-widest">Create</span>
+                            <Check size={14} />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Create</span>
                         </button>
                         <button
                             onClick={handleClear}
-                            className="h-10 px-8 bg-white border border-gray-300 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-md flex items-center justify-center gap-2 transition-all shadow-sm active:scale-95"
+                            className="h-7 px-4 bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-1.5 transition-all shadow-sm active:scale-95"
                         >
-                            <RefreshCw size={18} />
-                            <span className="text-[13px] font-black uppercase tracking-widest">Clear</span>
+                            <RefreshCw size={14} />
+                            <span className="text-[10px] font-black uppercase tracking-widest">Clear</span>
                         </button>
                     </div>
                 </div>

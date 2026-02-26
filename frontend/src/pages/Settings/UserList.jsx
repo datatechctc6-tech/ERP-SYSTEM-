@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Users, X, Search, RotateCcw, Trash2, Key, User, Calendar, ShieldCheck, Eye, EyeOff, ChevronRight, Activity, Mail, Phone, Info } from 'lucide-react';
 import './UserList.css';
@@ -18,13 +18,22 @@ const UserList = () => {
     const [selectedUserId, setSelectedUserId] = useState(1);
     const [showPin, setShowPin] = useState(false);
 
+    const searchRef = useRef(null);
+
+    useEffect(() => {
+        if (searchRef.current) {
+            searchRef.current.focus();
+        }
+    }, [selectedUserId]); // refocused when user changes or on mount
+
     // Filtered users for the sidebar
     const filteredUsers = userList.filter(u =>
         u.username.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     // Get the currently selected user object
-    const selectedUser = userList.find(u => u.id === selectedUserId) || userList[0];
+    const selectedUser = userList.find(u => u.id === selectedUserId) ||
+        userList[0];
 
     const handleResetPin = (user) => {
         if (window.confirm(`Are you sure you want to reset PIN for "${user.username}"?`)) {
@@ -67,7 +76,9 @@ const UserList = () => {
                             placeholder="Quick search..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="ul-search-input w-full pl-9 pr-3 py-2 bg-white border border-slate-200 focus:border-[#004d40] focus:ring-2 focus:ring-[#004d40]/10 outline-none text-[12px] font-bold text-slate-700 transition-all placeholder:text-slate-300 placeholder:font-normal rounded-xl shadow-sm"
+                            ref={searchRef}
+                            autoFocus
+                            className="ul-search-input w-full pl-9 pr-3 py-2 bg-[#cff2f3e1] border border-slate-200 focus:border-[#004d40] focus:ring-2 focus:ring-[#004d40]/10 focus:bg-[#cff2f3e1] focus:text-black outline-none text-[12px] font-bold text-slate-700 transition-all placeholder:text-slate-500 placeholder:font-normal rounded-xl shadow-sm"
                         />
                     </div>
                 </div>
@@ -226,14 +237,14 @@ const UserList = () => {
                                 <div className="ul-actions-flex flex flex-wrap gap-4">
                                     <button
                                         onClick={() => handleResetPin(selectedUser)}
-                                        className="ul-action-btn h-10 px-6 bg-slate-100 hover:bg-[#004d40] text-slate-700 hover:text-white rounded-xl flex items-center justify-center gap-2 transition-all text-[11px] font-black uppercase tracking-widest shadow-sm active:scale-95"
+                                        className="ul-action-btn h-10 px-6 bg-[#004d40] hover:bg-[#00332e] text-white rounded-xl flex items-center justify-center gap-2 transition-all text-[11px] font-black uppercase tracking-widest shadow-sm active:scale-95"
                                     >
                                         <RotateCcw size={14} />
                                         Reset PIN
                                     </button>
                                     <button
                                         onClick={() => handleDelete(selectedUser)}
-                                        className="ul-action-btn h-10 px-6 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white border border-rose-100 rounded-xl flex items-center justify-center gap-2 transition-all text-[11px] font-black uppercase tracking-widest shadow-sm active:scale-95"
+                                        className="ul-action-btn h-10 px-6 bg-red-600 hover:bg-red-700 text-white rounded-xl flex items-center justify-center gap-2 transition-all text-[11px] font-black uppercase tracking-widest shadow-sm active:scale-95"
                                     >
                                         <Trash2 size={14} />
                                         Terminate Account

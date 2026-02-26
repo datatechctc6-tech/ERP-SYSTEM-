@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 import { ShieldCheck, X, KeyRound, RefreshCw, Save } from 'lucide-react';
 import './AdminPin.css';
 
@@ -14,19 +15,19 @@ const AdminPin = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (formData.currentPin.length !== 4) {
-            alert('Please enter current 4-digit PIN');
+            toast.error('Please enter current 4-digit PIN');
             return;
         }
         if (formData.newPin.length !== 4) {
-            alert('Please enter a valid new 4-digit PIN');
+            toast.error('Please enter a valid new 4-digit PIN');
             return;
         }
         if (formData.newPin !== formData.confirmPin) {
-            alert('New PIN and Confirm PIN do not match');
+            toast.error('New PIN and Confirm PIN do not match');
             return;
         }
         console.log('Admin PIN Updated:', formData);
-        alert('Admin PIN updated successfully!');
+        toast.success('Admin PIN updated successfully!');
         navigate('/dashboard/1');
     };
 
@@ -50,13 +51,14 @@ const AdminPin = () => {
                     setFormData(prev => ({ ...prev, [name]: val }));
                 }}
                 placeholder="Enter 4-digit PIN"
-                className="ap-input flex-1 h-10 bg-[#f8fafc] border-2 border-gray-300 focus:border-[#004d40] focus:ring-1 focus:ring-[#004d40] outline-none px-3 text-[14px] font-bold text-[#004d40] transition-all rounded-lg shadow-sm"
+                className="ap-input flex-1 h-10 bg-[#f8fafc] border-2 border-gray-300 focus:border-[#004d40] focus:ring-1 focus:ring-[#004d40] outline-none px-3 text-[14px] font-bold text-[#004d40] transition-all placeholder:font-normal rounded-lg shadow-sm"
             />
         </div>
     );
 
     return (
         <div className="admin-pin-page h-full w-full bg-[#f0f4f4] flex overflow-hidden">
+            <Toaster position="top-right" />
             <div className="w-full h-full bg-white border-[2px] border-[#004d40] shadow-2xl rounded-lg overflow-hidden flex flex-col">
 
                 {/* Header */}
@@ -91,18 +93,18 @@ const AdminPin = () => {
                                 <div className="flex items-center justify-end gap-2 mt-5">
                                     <button
                                         type="submit"
-                                        className="ap-footer-btn h-8 px-5 bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                                        className="ap-footer-btn h-7 px-4 bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-1.5 transition-all shadow-sm"
                                     >
                                         <Save size={14} />
-                                        <span className="ap-btn-text text-[11px] font-black uppercase tracking-widest">Save</span>
+                                        <span className="ap-btn-text text-[10px] font-black uppercase tracking-widest">Save</span>
                                     </button>
                                     <button
                                         type="button"
                                         onClick={handleClear}
-                                        className="ap-footer-btn h-8 px-5 bg-white border border-gray-300 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                                        className="ap-footer-btn h-7 px-4 bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-1.5 transition-all shadow-sm"
                                     >
                                         <RefreshCw size={14} />
-                                        <span className="ap-btn-text text-[11px] font-black uppercase tracking-widest">Clear</span>
+                                        <span className="ap-btn-text text-[10px] font-black uppercase tracking-widest">Clear</span>
                                     </button>
                                 </div>
                             </div>

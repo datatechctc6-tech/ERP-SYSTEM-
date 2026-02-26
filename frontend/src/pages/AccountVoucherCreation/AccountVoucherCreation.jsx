@@ -10,7 +10,18 @@ const AccountVoucherCreation = () => {
     const [dateFilter, setDateFilter] = useState('today');
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
     const searchInputRef = useRef(null);
+
+    const filterOptions = [
+        { value: 'today', label: 'TODAY' },
+        { value: 'yesterday', label: 'YESTERDAY' },
+        { value: '7days', label: '7 DAYS' },
+        { value: '14days', label: '14 DAYS' },
+        { value: 'weekly', label: 'WEEKLY' },
+        { value: 'quarterly', label: 'QUARTERLY' },
+        { value: 'yearly', label: 'YEARLY' },
+    ];
 
     useEffect(() => {
         if (searchInputRef.current) {
@@ -84,24 +95,39 @@ const AccountVoucherCreation = () => {
                                 value={searchTerm}
                                 onChange={(e) => handleSearchChange(e.target.value)}
                                 onKeyDown={handleKeyDown}
-                                className="av-search-input w-full pl-10 pr-4 py-1 bg-white/10 border border-white/20 rounded text-sm focus:outline-none transition-all placeholder:text-white/40"
+                                className="av-search-input w-full h-8 pl-10 pr-4 bg-white/10 border border-white/20 rounded text-sm focus:outline-none transition-all placeholder:text-white/40"
                             />
                         </div>
-                        <div className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded px-3 py-1 transition-all">
-                            <Calendar size={16} className="text-white/80" />
-                            <select
-                                value={dateFilter}
-                                onChange={(e) => handleDateFilterChange(e.target.value)}
-                                className="av-filter-select bg-transparent text-sm font-bold uppercase tracking-widest outline-none cursor-pointer appearance-none pr-1"
+                        <div className="relative">
+                            <button
+                                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                                className="flex items-center gap-2 h-8 bg-white/10 hover:bg-white/20 border border-white/20 rounded px-3 transition-all"
                             >
-                                <option value="today" className="text-gray-900 bg-white">Today</option>
-                                <option value="yesterday" className="text-gray-900 bg-white">Yesterday</option>
-                                <option value="7days" className="text-gray-900 bg-white">7 Days</option>
-                                <option value="14days" className="text-gray-900 bg-white">14 Days</option>
-                                <option value="weekly" className="text-gray-900 bg-white">Weekly</option>
-                                <option value="quarterly" className="text-gray-900 bg-white">Quarterly</option>
-                                <option value="yearly" className="text-gray-900 bg-white">Yearly</option>
-                            </select>
+                                <Calendar size={16} className="text-white/80" />
+                                <span className="text-[11px] font-black uppercase tracking-widest text-white">
+                                    {filterOptions.find(opt => opt.value === dateFilter)?.label || 'TODAY'}
+                                </span>
+                            </button>
+
+                            {isFilterOpen && (
+                                <>
+                                    <div className="fixed inset-0 z-10" onClick={() => setIsFilterOpen(false)}></div>
+                                    <div className="absolute right-0 mt-2 w-24 bg-white rounded-md shadow-2xl z-20 overflow-hidden flex flex-col">
+                                        {filterOptions.map((opt) => (
+                                            <button
+                                                key={opt.value}
+                                                onClick={() => {
+                                                    handleDateFilterChange(opt.value);
+                                                    setIsFilterOpen(false);
+                                                }}
+                                                className={`w-full text-left px-4 py-2 text-[11px] font-black uppercase tracking-widest hover:bg-[#fdd55ce1] hover:text-[#004d40] transition-colors border-b border-gray-100 last:border-none ${dateFilter === opt.value ? 'bg-[#e0f2f1] text-[#004d40]' : 'text-gray-700'}`}
+                                            >
+                                                {opt.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                 </div>

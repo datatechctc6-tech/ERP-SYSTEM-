@@ -37,7 +37,7 @@ const Header = () => {
                 <Menu size={20} />
             </button>
 
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/dashboard')}>
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/dashboard/1')}>
                 <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
                     <span className="text-[#004d40] font-black italic text-xs">DT</span>
                 </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 import { ArrowLeft, Search, Edit2, Trash2 } from 'lucide-react';
 
 const DeptList = () => {
@@ -83,7 +84,7 @@ const DeptList = () => {
 
     const handleSave = async () => {
         if (!formData.dept_Name.trim()) {
-            alert('Please enter Department Name');
+            toast.error('Please enter Department Name');
             return;
         }
         try {
@@ -94,7 +95,7 @@ const DeptList = () => {
             });
             const data = await res.json();
             if (res.ok) {
-                alert('Department created successfully!');
+                toast.success('Department created successfully!');
                 setDepartments(prev => [...prev, {
                     id: String(formData.Sl_No).padStart(2, '0'),
                     code: formData.dept_code,
@@ -103,16 +104,17 @@ const DeptList = () => {
                 setFormData({ Sl_No: '', t_v_date: '', dept_Name: '', desc: '', dept_code: '' });
                 setIsAddMode(false);
             } else {
-                alert(data.message || 'Failed to create department');
+                toast.error(data.message || 'Failed to create department');
             }
         } catch (err) {
             console.error(err);
-            alert('Server error. Is backend running on port 5000?');
+            toast.error('Server error. Is backend running on port 5000?');
         }
     };
 
     return (
         <div className="fixed inset-0 bg-white flex items-center justify-center p-4">
+            <Toaster position="top-right" />
             <div className={`bg-white border-2 border-[#00695c] shadow-2xl rounded-lg overflow-hidden flex flex-col transition-all duration-300 ${isAddMode ? 'w-[750px]' : 'w-[650px]'}`}>
 
                 {/* Header */}
@@ -150,7 +152,7 @@ const DeptList = () => {
                                             }
                                             setFormData({ ...formData, dept_Name: name, dept_code: code });
                                         }}
-                                        className="flex-1 border border-gray-300 px-2 py-1 text-sm bg-yellow-100 focus:outline-none focus:border-[#00695c]"
+                                        className="flex-1 border border-gray-300 px-2 py-1 text-sm bg-white focus:bg-[#fdd55ce1] focus:text-black focus:outline-none focus:border-[#00695c]"
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter') { e.preventDefault(); descInputRef.current?.focus(); }
                                         }}
@@ -172,7 +174,7 @@ const DeptList = () => {
                                         value={formData.desc}
                                         onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
                                         placeholder="Description..."
-                                        className="flex-1 border border-gray-300 px-2 py-1 text-sm bg-yellow-100 focus:outline-none focus:border-[#00695c]"
+                                        className="flex-1 border border-gray-300 px-2 py-1 text-sm bg-white focus:bg-[#fdd55ce1] focus:text-black focus:outline-none focus:border-[#00695c]"
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter') { e.preventDefault(); saveBtnRef.current?.focus(); }
                                             if (e.key === 'ArrowUp') { e.preventDefault(); nameInputRef.current?.focus(); }
@@ -194,7 +196,7 @@ const DeptList = () => {
                                     value={searchTerm}
                                     onChange={(e) => handleSearchChange(e.target.value)}
                                     onKeyDown={handleKeyDown}
-                                    className="w-full border border-[#b2dfdb] px-3 py-1.5 text-sm focus:outline-none focus:bg-yellow-100 placeholder:italic bg-white"
+                                    className="w-full border border-[#b2dfdb] px-3 py-1.5 text-[12px] font-bold text-slate-700 transition-all focus:outline-none focus:bg-[#cff2f3e1] focus:text-black placeholder:italic placeholder:text-slate-500 placeholder:font-normal bg-[#cff2f3e1]"
                                 />
                             </div>
                         </div>
@@ -214,7 +216,7 @@ const DeptList = () => {
                                 {filteredDepartments.map((dept, index) => (
                                     <tr
                                         key={dept.id}
-                                        className={`text-[12px] ${index === selectedIndex ? 'bg-yellow-50 border-y border-[#00695c]' : 'hover:bg-gray-50'}`}
+                                        className={`text-[12px] ${index === selectedIndex ? 'bg-[#fdd55ce1] border-y border-[#00695c]' : 'hover:bg-gray-50'}`}
                                         onClick={() => setSelectedIndex(index)}
                                     >
                                         <td className="border border-gray-100 px-2 py-1.5 font-medium">{dept.code}</td>

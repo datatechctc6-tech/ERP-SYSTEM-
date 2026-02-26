@@ -87,7 +87,7 @@ const AccountCreation = () => {
                             <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-r border-[#00332e] flex-1">Department</th>
                             <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-r border-[#00332e] flex-1 text-right">Amount</th>
                             <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-[#00332e] w-32">Status</th>
-                            <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-l border-[#00332e] w-20 text-center">Action</th>
+                            <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-l border-[#00332e] w-24 text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 flex-1 overflow-y-auto custom-scrollbar">
@@ -101,8 +101,9 @@ const AccountCreation = () => {
                                         value={account.partyName}
                                         onChange={(e) => handleInputChange(index, 'partyName', e.target.value)}
                                         onKeyDown={(e) => handleKeyDown(e, index, 0)}
-                                        className="ac-input w-full h-full px-3 font-bold text-[#004d40] bg-transparent focus:outline-none focus:bg-yellow-100"
+                                        className="ac-input w-full h-full px-3 font-bold text-[#004d40] bg-transparent focus:outline-none focus:bg-[#fdd55ce1]"
                                         placeholder={index === 0 ? "Enter party name..." : ""}
+                                        autoFocus={index === 0}
                                     />
                                 </td>
                                 <td className="border-r border-gray-200 flex-1">
@@ -113,7 +114,7 @@ const AccountCreation = () => {
                                         value={account.department}
                                         onChange={(e) => handleInputChange(index, 'department', e.target.value)}
                                         onKeyDown={(e) => handleKeyDown(e, index, 1)}
-                                        className="ac-input w-full h-full px-3 bg-transparent focus:outline-none focus:bg-yellow-100"
+                                        className="ac-input w-full h-full px-3 bg-transparent focus:outline-none focus:bg-[#fdd55ce1]"
                                         placeholder={index === 0 ? "Enter dept..." : ""}
                                     />
                                 </td>
@@ -125,7 +126,7 @@ const AccountCreation = () => {
                                         value={account.amount}
                                         onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
                                         onKeyDown={(e) => handleKeyDown(e, index, 2)}
-                                        className="ac-input w-full h-full px-3 text-right font-black bg-transparent focus:outline-none focus:bg-yellow-100"
+                                        className="ac-input w-full h-full px-3 text-right font-black bg-transparent focus:outline-none focus:bg-[#fdd55ce1]"
                                         placeholder={index === 0 ? "0.00" : ""}
                                     />
                                 </td>
@@ -137,11 +138,11 @@ const AccountCreation = () => {
                                         value={account.status}
                                         onChange={(e) => handleInputChange(index, 'status', e.target.value)}
                                         onKeyDown={(e) => handleKeyDown(e, index, 3)}
-                                        className="ac-input w-full h-full px-3 bg-transparent focus:outline-none focus:bg-yellow-100 uppercase font-bold text-gray-600"
+                                        className="ac-input w-full h-full px-3 bg-transparent focus:outline-none focus:bg-[#fdd55ce1] uppercase font-bold text-gray-600"
                                         placeholder={index === 0 ? "Status" : ""}
                                     />
                                 </td>
-                                <td className="border-l border-gray-200 w-20 flex items-center justify-center">
+                                <td className="border-l border-gray-200 w-24 flex items-center justify-center bg-white z-10">
                                     {totalRecords > 1 && (account.partyName.trim() || account.department.trim() || account.amount.trim()) && (
                                         <button
                                             type="button"
@@ -168,7 +169,7 @@ const AccountCreation = () => {
                                     onChange={(e) => setMessage(e.target.value)}
                                     placeholder="Enter your message here..."
                                     rows={3}
-                                    className="ac-textarea w-96 bg-white border border-gray-300 px-4 py-2 rounded text-[12px] font-bold text-gray-700 focus:outline-none focus:border-[#004d40] focus:bg-yellow-100 transition-colors shadow-sm resize-none"
+                                    className="ac-textarea w-96 bg-white border border-gray-300 px-4 py-2 rounded text-[12px] font-bold text-gray-700 focus:outline-none focus:border-[#004d40] focus:bg-[#fdd55ce1] transition-colors shadow-sm resize-none"
                                 />
                             </td>
                             <td className="px-4 py-3 text-[13px] font-black text-[#004d40] uppercase tracking-widest flex items-center gap-4">
@@ -177,7 +178,7 @@ const AccountCreation = () => {
                                     type="text"
                                     readOnly
                                     value={`₹${netAmount.toLocaleString('en-IN')}`}
-                                    className="ac-amount-box text-[18px] bg-transparent text-[#004d40] w-48 py-2 rounded shadow-sm text-center border-2 border-[#004d40] focus:outline-none font-black cursor-default"
+                                    className="ac-amount-box text-[18px] bg-transparent text-[#004d40] w-48 py-1 rounded shadow-sm text-center border-2 border-[#004d40] focus:outline-none font-black cursor-default"
                                 />
                             </td>
                         </tr>
