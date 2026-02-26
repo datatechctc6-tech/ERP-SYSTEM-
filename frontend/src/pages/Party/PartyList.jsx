@@ -7,7 +7,27 @@ const PartyList = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedIndex, setSelectedIndex] = useState(0);
+    const [parties, setParties] = useState([]);
     const searchInputRef = useRef(null);
+
+    const fetchParties = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:5000/api/parties', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setParties(data);
+            }
+        } catch (error) {
+            console.error('Error fetching parties:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchParties();
+    }, []);
 
     // Always keep focus on the search bar
     useEffect(() => {
@@ -52,16 +72,27 @@ const PartyList = () => {
         }
     };
 
-    // Mock data for demonstration
-    const parties = [
-        { id: 1, name: 'Sample Party 1', address: 'Bhubaneswar, Odisha', mobile: '9876543210' },
-        { id: 2, name: 'Sample Party 2', address: 'Cuttack, Odisha', mobile: '9123456789' },
-        { id: 3, name: 'Sample Party 3', address: 'Rourkela, Odisha', mobile: '8877665544' },
-    ];
+    const handleDelete = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this party?')) return;
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`http://localhost:5000/api/party/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                fetchParties();
+            } else {
+                alert('Failed to delete party');
+            }
+        } catch (error) {
+            console.error('Error deleting party:', error);
+        }
+    };
 
     const filteredParties = parties.filter(party =>
-        party.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        party.mobile.includes(searchTerm)
+        (party.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (party.mobile || '').includes(searchTerm)
     );
 
     return (
@@ -120,9 +151,9 @@ const PartyList = () => {
                                         <td className="pl-td px-3 py-2 border border-gray-200">
                                             <div className="flex items-center gap-2">
                                                 <div className="pl-avatar w-6 h-6 rounded-full bg-[#004d401a] flex items-center justify-center text-[#004d40] font-bold text-[10px] uppercase">
-                                                    {party.name.charAt(0)}
+                                                    {party.name ? party.name.charAt(0) : '?'}
                                                 </div>
-                                                <span className="pl-td-name text-[12px] font-bold text-gray-800">{party.name}</span>
+                                                <span className="pl-td-name text-[12px] font-bold text-gray-800">{party.name || 'Unknown'}</span>
                                             </div>
                                         </td>
                                         <td className="pl-td px-3 py-2 pl-td-text text-[11px] text-gray-600 font-medium border border-gray-200">
@@ -142,7 +173,7 @@ const PartyList = () => {
                                                 <button onClick={() => navigate(`/party/edit/${party.id}`, { state: { party } })} className="p-1 text-blue-600 hover:bg-blue-50 rounded border border-blue-100 transition-colors" title="Edit">
                                                     <Edit2 size={14} />
                                                 </button>
-                                                <button className="p-1 text-red-600 hover:bg-red-50 rounded border border-red-100 transition-colors" title="Delete">
+                                                <button onClick={() => handleDelete(party.id)} className="p-1 text-red-600 hover:bg-red-50 rounded border border-red-100 transition-colors" title="Delete">
                                                     <Trash2 size={14} />
                                                 </button>
                                                 {/* <button className="p-1 text-gray-600 hover:bg-gray-50 rounded border border-gray-100 transition-colors">
