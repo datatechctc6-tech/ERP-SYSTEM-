@@ -15,6 +15,7 @@ const AccountCreation = () => {
             id: i + 1,
             partyName: '',
             department: '',
+            work: '',
             amount: '',
             status: ''
         }));
@@ -23,6 +24,7 @@ const AccountCreation = () => {
                 id: 1,
                 partyName: editVoucher.partyName || '',
                 department: editVoucher.dept || '',
+                work: editVoucher.work || '',
                 amount: editVoucher.amount ? String(editVoucher.amount) : '',
                 status: editVoucher.status || ''
             };
@@ -47,7 +49,7 @@ const AccountCreation = () => {
         } else if (e.key === 'ArrowLeft') {
             targetCol = Math.max(0, colIndex - 1);
         } else if (e.key === 'ArrowRight' || e.key === 'Enter') {
-            if (colIndex < 3) {
+            if (colIndex < 4) {
                 targetCol = colIndex + 1;
             } else {
                 targetRow = Math.min(accounts.length - 1, rowIndex + 1);
@@ -69,6 +71,7 @@ const AccountCreation = () => {
     const totalRecords = accounts.filter(acc =>
         acc.partyName.trim() !== '' ||
         acc.department.trim() !== '' ||
+        acc.work.trim() !== '' ||
         acc.amount.trim() !== ''
     ).length;
 
@@ -85,6 +88,7 @@ const AccountCreation = () => {
                         <tr className="flex w-full">
                             <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-r border-[#00332e] flex-1">Party Name</th>
                             <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-r border-[#00332e] flex-1">Department</th>
+                            <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-r border-[#00332e] flex-1">Work</th>
                             <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-r border-[#00332e] flex-1 text-right">Amount</th>
                             <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-[#00332e] w-32">Status</th>
                             <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-l border-[#00332e] w-24 text-center">Action</th>
@@ -123,9 +127,21 @@ const AccountCreation = () => {
                                         type="text"
                                         data-row={index}
                                         data-col={2}
+                                        value={account.work}
+                                        onChange={(e) => handleInputChange(index, 'work', e.target.value)}
+                                        onKeyDown={(e) => handleKeyDown(e, index, 2)}
+                                        className="ac-input w-full h-full px-3 bg-transparent focus:outline-none focus:bg-[#fdd55ce1]"
+                                        placeholder={index === 0 ? "Enter work..." : ""}
+                                    />
+                                </td>
+                                <td className="border-r border-gray-200 flex-1">
+                                    <input
+                                        type="text"
+                                        data-row={index}
+                                        data-col={3}
                                         value={account.amount}
                                         onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
-                                        onKeyDown={(e) => handleKeyDown(e, index, 2)}
+                                        onKeyDown={(e) => handleKeyDown(e, index, 3)}
                                         className="ac-input w-full h-full px-3 text-right font-black bg-transparent focus:outline-none focus:bg-[#fdd55ce1]"
                                         placeholder={index === 0 ? "0.00" : ""}
                                     />
@@ -134,21 +150,21 @@ const AccountCreation = () => {
                                     <input
                                         type="text"
                                         data-row={index}
-                                        data-col={3}
+                                        data-col={4}
                                         value={account.status}
                                         onChange={(e) => handleInputChange(index, 'status', e.target.value)}
-                                        onKeyDown={(e) => handleKeyDown(e, index, 3)}
+                                        onKeyDown={(e) => handleKeyDown(e, index, 4)}
                                         className="ac-input w-full h-full px-3 bg-transparent focus:outline-none focus:bg-[#fdd55ce1] uppercase font-bold text-gray-600"
                                         placeholder={index === 0 ? "Status" : ""}
                                     />
                                 </td>
                                 <td className="border-l border-gray-200 w-24 flex items-center justify-center bg-white z-10">
-                                    {totalRecords > 1 && (account.partyName.trim() || account.department.trim() || account.amount.trim()) && (
+                                    {totalRecords > 1 && (account.partyName.trim() || account.department.trim() || account.work.trim() || account.amount.trim()) && (
                                         <button
                                             type="button"
                                             onClick={() => {
                                                 const newAccounts = [...accounts];
-                                                newAccounts[index] = { id: account.id, partyName: '', department: '', amount: '', status: '' };
+                                                newAccounts[index] = { id: account.id, partyName: '', department: '', work: '', amount: '', status: '' };
                                                 setAccounts(newAccounts);
                                             }}
                                             className="p-1.5 text-red-400 hover:text-white hover:bg-red-500 rounded transition-all"

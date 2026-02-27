@@ -273,7 +273,7 @@
 /* ============================================= */
 /* Ultra Wide Screens (21:9)                     */
 /* 2560px – 3839px                               */
-/* ============================================= */
+/* ============================================= */ 
 @media screen and (min-width: 2560px) and (max-width: 3839px) {
     .party-page .party-header {
         height: 64px;
@@ -364,7 +364,7 @@
         font-size: 24px;
         padding: 14px 26px;
         border-radius: 14px;
-        border-width: 2px;       
+        border-width: 2px;         
     }
 
     .party-page .party-error {

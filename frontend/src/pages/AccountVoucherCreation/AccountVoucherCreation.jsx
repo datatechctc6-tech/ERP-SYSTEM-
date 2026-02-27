@@ -49,11 +49,10 @@ const AccountVoucherCreation = () => {
         }
     };
 
-    // Mock data for the table
     const [vouchers, setVouchers] = useState([
-        { id: 1, billNo: 'VOU-001', billDate: '2024-03-20', partyName: 'Sample Party A', contract: 'C-101', gp: 'GP-01', zone: 'Zone-1', dept: 'Sales', message: 'First installment First installment First installment First installment First installment First installment', amount: 5000, status: 'Pending' },
-        { id: 2, billNo: 'VOU-002', billDate: '2024-03-21', partyName: 'Sample Party B', contract: 'C-102', gp: 'GP-02', zone: 'Zone-2', dept: 'Ops', message: 'Material supply', amount: 12500, status: 'Approved' },
-        { id: 3, billNo: 'VOU-003', billDate: '2024-03-21', partyName: 'Sample Party C', contract: 'C-103', gp: 'GP-03', zone: 'Zone-3', dept: 'Finance', message: 'Service fee', amount: 3200, status: 'Rejected' },
+        { id: 1, billNo: 'VOU-001', billDate: '2024-03-20', partyName: 'Sample Party A', contract: 'C-101', gp: 'GP-01', zone: 'Zone-1', dept: 'Sales', work: 'Civil Work', message: 'First installment First installment First installment First installment First installment First installment', amount: 5000, status: 'Pending' },
+        { id: 2, billNo: 'VOU-002', billDate: '2024-03-21', partyName: 'Sample Party B', contract: 'C-102', gp: 'GP-02', zone: 'Zone-2', dept: 'Ops', work: 'Electrical', message: 'Material supply', amount: 12500, status: 'Approved' },
+        { id: 3, billNo: 'VOU-003', billDate: '2024-03-21', partyName: 'Sample Party C', contract: 'C-103', gp: 'GP-03', zone: 'Zone-3', dept: 'Finance', work: 'Plumbing', message: 'Service fee', amount: 3200, status: 'Rejected' },
     ]);
 
     const handleDelete = (voucher) => {
@@ -145,6 +144,7 @@ const AccountVoucherCreation = () => {
                                     <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">GP</th>
                                     <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Zone</th>
                                     <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Dept</th>
+                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Work</th>
                                     <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Message</th>
                                     <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Amount</th>
                                     <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Status</th>
@@ -167,6 +167,7 @@ const AccountVoucherCreation = () => {
                                         <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.gp}</td>
                                         <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.zone}</td>
                                         <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.dept}</td>
+                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.work}</td>
                                         <td className="av-td px-3 py-2 border border-gray-200 text-gray-500 italic max-w-[200px] truncate" title={voucher.message}>{voucher.message}</td>
                                         <td className="av-td px-3 py-2 border border-gray-200 font-black whitespace-nowrap">₹{voucher.amount.toLocaleString('en-IN')}</td>
                                         <td className="av-td px-3 py-2 border border-gray-200">
