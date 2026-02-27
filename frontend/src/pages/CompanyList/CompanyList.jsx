@@ -13,7 +13,7 @@ const CompanyList = () => {
     }, [selectedRow]);
 
     const columns = [
-        "COMPANY NAME", "CODE", "F-DATE", "L-DATE", "ADDRESS 1", "ADDRESS 2", "COMP", "DRIVE", "REGD NO"
+        "CONSTITUENCY", "CODE", "F-DATE", "L-DATE", "ADDRESS 1", "ADDRESS 2", "COMP", "DRIVE", "REGD NO"
     ];
 
     const [companies, setCompanies] = useState([]);
@@ -124,7 +124,7 @@ const CompanyList = () => {
                         <input
                             type="text"
                             placeholder="SEARCH COMPANY..."
-                            className="bg-transparent border-none outline-none text-[12px] text-white font-bold w-full placeholder:text-[#00695c]"
+                            className="bg-transparent border-none outline-none text-[12px] text-white font-bold w-full placeholder:text-white"
                         />
                     </div>
 
