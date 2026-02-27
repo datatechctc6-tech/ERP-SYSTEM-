@@ -81,3 +81,12 @@ export const getDepartments = async () => {
     if (!res.ok) throw new Error('Failed to fetch departments');
     return res.json();
 };
+
+export const getWorks = async () => {
+    const res = await fetch(`http://localhost:5000/api/works`, {
+        method: 'GET',
+        headers: getHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to fetch works');
+    return res.json();
+};

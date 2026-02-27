@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Save, Edit3, XCircle, ArrowLeft, Trash2 } from 'lucide-react';
 import './AccountCreation.css';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import { createTransaction, updateTransaction, searchGps, getGpById, getDepartments } from '../../services/transaction.service';
+import { createTransaction, updateTransaction, searchGps, getGpById, getDepartments, getWorks } from '../../services/transaction.service';
 
 const AccountCreation = () => {
     const navigate = useNavigate();
@@ -14,9 +14,12 @@ const AccountCreation = () => {
     const [loading, setLoading] = useState(false);
     const [suggestions, setSuggestions] = useState([]);
     const [departmentList, setDepartmentList] = useState([]);
+    const [workList, setWorkList] = useState([]);
     const [activeRowIndex, setActiveRowIndex] = useState(null);
     const [activeDeptRowIndex, setActiveDeptRowIndex] = useState(null);
+    const [activeWorkRowIndex, setActiveWorkRowIndex] = useState(null);
     const [activeStatusRowIndex, setActiveStatusRowIndex] = useState(null);
+    const [focusedSuggestionIndex, setFocusedSuggestionIndex] = useState(-1);
     const statusOptions = ['Pending', 'Ongoing', 'Not Started', 'Completed'];
     const [accounts, setAccounts] = useState(() => {
         const rows = [...Array(20)].map((_, i) => ({
@@ -55,7 +58,16 @@ const AccountCreation = () => {
                 console.error('Failed to fetch departments:', error);
             }
         };
+        const fetchWorks = async () => {
+            try {
+                const fetchedWorks = await getWorks();
+                setWorkList(fetchedWorks);
+            } catch (error) {
+                console.error('Failed to fetch works:', error);
+            }
+        };
         fetchDepts();
+        fetchWorks();
     }, []);
 
     const handlePartyChange = async (index, value) => {
@@ -63,6 +75,7 @@ const AccountCreation = () => {
         newAccounts[index].partyName = value;
         newAccounts[index].gp_id = null;
         setAccounts(newAccounts);
+        setFocusedSuggestionIndex(-1);
 
         if (value.trim().length > 0) {
             try {
@@ -93,6 +106,7 @@ const AccountCreation = () => {
             setAccounts(newAccounts);
             setSuggestions([]);
             setActiveRowIndex(null);
+            setFocusedSuggestionIndex(-1);
         } catch (error) {
             console.error('Failed to fetch full GP details:', error);
         }
@@ -100,6 +114,7 @@ const AccountCreation = () => {
 
     const handleInputChange = (index, field, value) => {
         const newAccounts = [...accounts];
+        setFocusedSuggestionIndex(-1);
         if (field === 'department') {
             newAccounts[index].department = value;
             const selectedDept = departmentList.find(d => String(d.DEPT_NAME).toLowerCase() === String(value).toLowerCase());
@@ -108,6 +123,16 @@ const AccountCreation = () => {
             } else {
                 newAccounts[index].dept_code = null;
             }
+        } else if (field === 'work') {
+            newAccounts[index].work = value;
+            const selectedWork = workList.find(w => String(w.WORK_NAME).toLowerCase() === String(value).toLowerCase());
+            if (selectedWork) {
+                newAccounts[index].work_code = selectedWork.WORK_CODE
+                    ? parseInt(String(selectedWork.WORK_CODE).replace('WRK', ''), 10)
+                    : null;
+            } else {
+                newAccounts[index].work_code = null;
+            }
         } else {
             newAccounts[index][field] = value;
         }
@@ -115,6 +140,59 @@ const AccountCreation = () => {
     };
 
     const handleKeyDown = (e, rowIndex, colIndex) => {
+        let isDropdownOpen = false;
+        let currentOptions = [];
+        let handleSelect = null;
+
+        if (colIndex === 0 && activeRowIndex === rowIndex && suggestions.length > 0) {
+            isDropdownOpen = true;
+            currentOptions = suggestions;
+            handleSelect = (gp) => handleSelectSuggestion(rowIndex, gp);
+        } else if (colIndex === 1 && activeDeptRowIndex === rowIndex) {
+            currentOptions = departmentList.filter(dept => dept.DEPT_NAME.toLowerCase().includes((accounts[rowIndex].department || '').toLowerCase()));
+            isDropdownOpen = currentOptions.length > 0;
+            handleSelect = (dept) => {
+                handleInputChange(rowIndex, 'department', dept.DEPT_NAME);
+                setActiveDeptRowIndex(null);
+                setFocusedSuggestionIndex(-1);
+            };
+        } else if (colIndex === 2 && activeWorkRowIndex === rowIndex) {
+            currentOptions = workList.filter(work => (work.WORK_NAME || '').toLowerCase().includes((accounts[rowIndex].work || '').toLowerCase()));
+            isDropdownOpen = currentOptions.length > 0;
+            handleSelect = (work) => {
+                handleInputChange(rowIndex, 'work', work.WORK_NAME);
+                setActiveWorkRowIndex(null);
+                setFocusedSuggestionIndex(-1);
+            };
+        } else if (colIndex === 4 && activeStatusRowIndex === rowIndex) {
+            currentOptions = statusOptions.filter(opt => opt.toLowerCase().includes((accounts[rowIndex].status || '').toLowerCase()));
+            isDropdownOpen = currentOptions.length > 0;
+            handleSelect = (opt) => {
+                handleInputChange(rowIndex, 'status', opt);
+                setActiveStatusRowIndex(null);
+                setFocusedSuggestionIndex(-1);
+            };
+        }
+
+        if (isDropdownOpen) {
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                setFocusedSuggestionIndex(prev => Math.min(prev + 1, currentOptions.length - 1));
+                return;
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                setFocusedSuggestionIndex(prev => Math.max(0, prev - 1));
+                return;
+            } else if (e.key === 'Enter') {
+                if (focusedSuggestionIndex >= 0 && focusedSuggestionIndex < currentOptions.length) {
+                    e.preventDefault();
+                    handleSelect(currentOptions[focusedSuggestionIndex]);
+                    setFocusedSuggestionIndex(-1);
+                    return;
+                }
+            }
+        }
+
         let targetRow = rowIndex;
         let targetCol = colIndex;
 
@@ -122,9 +200,7 @@ const AccountCreation = () => {
             targetRow = Math.max(0, rowIndex - 1);
         } else if (e.key === 'ArrowDown') {
             targetRow = Math.min(accounts.length - 1, rowIndex + 1);
-        } else if (e.key === 'ArrowLeft') {
-            targetCol = Math.max(0, colIndex - 1);
-        } else if (e.key === 'ArrowRight' || e.key === 'Enter') {
+        } else if (e.key === 'Enter') {
             if (colIndex < 4) {
                 targetCol = colIndex + 1;
             } else {
@@ -222,8 +298,8 @@ const AccountCreation = () => {
                             <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-r border-[#00332e] flex-1">Department</th>
                             <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-r border-[#00332e] flex-1">Work</th>
                             <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-r border-[#00332e] flex-1 text-right">Amount</th>
-                            <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-[#00332e] w-32">Status</th>
-                            <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-l border-[#00332e] w-24 text-center">Action</th>
+                            <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-[#00332e] w-32 flex-shrink-0">Status</th>
+                            <th className="ac-th px-3 py-3 font-black uppercase tracking-widest border-l border-[#00332e] w-28 flex-shrink-0 text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200 flex-1 overflow-y-auto custom-scrollbar">
@@ -237,18 +313,18 @@ const AccountCreation = () => {
                                         value={account.partyName}
                                         onChange={(e) => handlePartyChange(index, e.target.value)}
                                         onKeyDown={(e) => handleKeyDown(e, index, 0)}
-                                        onBlur={() => setTimeout(() => setActiveRowIndex(null), 200)}
+                                        onBlur={() => setTimeout(() => { setActiveRowIndex(null); setFocusedSuggestionIndex(-1); }, 200)}
                                         className="ac-input w-full h-full px-3 font-bold text-[#004d40] bg-transparent focus:outline-none focus:bg-[#fdd55ce1]"
                                         placeholder={index === 0 ? "Search existing GP..." : ""}
                                         autoFocus={index === 0}
                                     />
                                     {activeRowIndex === index && suggestions.length > 0 && (
                                         <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-gray-300 shadow-2xl rounded max-h-48 overflow-y-auto animate-dropdown">
-                                            {suggestions.map((gp) => (
+                                            {suggestions.map((gp, idx) => (
                                                 <div
                                                     key={gp.id}
                                                     onClick={() => handleSelectSuggestion(index, gp)}
-                                                    className="px-3 py-2 hover:bg-[#fdd55ce1] cursor-pointer text-[#004d40] font-bold text-[12px] border-b border-gray-100 last:border-b-0"
+                                                    className={`px-3 py-2 cursor-pointer text-[#004d40] font-bold text-[12px] border-b border-gray-100 last:border-b-0 ${focusedSuggestionIndex === idx ? 'bg-[#fdd55ce1]' : 'hover:bg-[#fdd55ce1]'}`}
                                                 >
                                                     {gp.name}
                                                 </div>
@@ -263,22 +339,23 @@ const AccountCreation = () => {
                                         data-col={1}
                                         value={account.department}
                                         onChange={(e) => handleInputChange(index, 'department', e.target.value)}
-                                        onFocus={() => setActiveDeptRowIndex(index)}
-                                        onBlur={() => setTimeout(() => setActiveDeptRowIndex(null), 200)}
+                                        onFocus={() => { setActiveDeptRowIndex(index); setFocusedSuggestionIndex(-1); }}
+                                        onBlur={() => setTimeout(() => { setActiveDeptRowIndex(null); setFocusedSuggestionIndex(-1); }, 200)}
                                         onKeyDown={(e) => handleKeyDown(e, index, 1)}
                                         className="ac-input w-full h-full px-3 bg-transparent focus:outline-none focus:bg-[#fdd55ce1]"
                                         placeholder={index === 0 ? "Enter dept..." : ""}
                                     />
                                     {activeDeptRowIndex === index && (
                                         <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-gray-300 shadow-2xl rounded max-h-48 overflow-y-auto animate-dropdown">
-                                            {departmentList.filter(dept => dept.DEPT_NAME.toLowerCase().includes((account.department || '').toLowerCase())).map((dept) => (
+                                            {departmentList.filter(dept => dept.DEPT_NAME.toLowerCase().includes((account.department || '').toLowerCase())).map((dept, idx) => (
                                                 <div
                                                     key={dept.SL_NO}
                                                     onClick={() => {
                                                         handleInputChange(index, 'department', dept.DEPT_NAME);
                                                         setActiveDeptRowIndex(null);
+                                                        setFocusedSuggestionIndex(-1);
                                                     }}
-                                                    className="px-3 py-2 hover:bg-[#fdd55ce1] cursor-pointer text-gray-800 font-bold text-[12px] border-b border-gray-100 last:border-b-0 uppercase"
+                                                    className={`px-3 py-2 cursor-pointer text-gray-800 font-bold text-[12px] border-b border-gray-100 last:border-b-0 uppercase ${focusedSuggestionIndex === idx ? 'bg-[#fdd55ce1]' : 'hover:bg-[#fdd55ce1]'}`}
                                                 >
                                                     {dept.DEPT_NAME}
                                                 </div>
@@ -286,17 +363,36 @@ const AccountCreation = () => {
                                         </div>
                                     )}
                                 </td>
-                                <td className="border-r border-gray-200 flex-1">
+                                <td className="border-r border-gray-200 flex-1 relative">
                                     <input
                                         type="text"
                                         data-row={index}
                                         data-col={2}
                                         value={account.work}
                                         onChange={(e) => handleInputChange(index, 'work', e.target.value)}
+                                        onFocus={() => { setActiveWorkRowIndex(index); setFocusedSuggestionIndex(-1); }}
+                                        onBlur={() => setTimeout(() => { setActiveWorkRowIndex(null); setFocusedSuggestionIndex(-1); }, 200)}
                                         onKeyDown={(e) => handleKeyDown(e, index, 2)}
                                         className="ac-input w-full h-full px-3 bg-transparent focus:outline-none focus:bg-[#fdd55ce1]"
                                         placeholder={index === 0 ? "Enter work..." : ""}
                                     />
+                                    {activeWorkRowIndex === index && (
+                                        <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-gray-300 shadow-2xl rounded max-h-48 overflow-y-auto animate-dropdown">
+                                            {workList.filter(work => (work.WORK_NAME || '').toLowerCase().includes((account.work || '').toLowerCase())).map((work, idx) => (
+                                                <div
+                                                    key={work.SL_NO || work.ID || idx}
+                                                    onClick={() => {
+                                                        handleInputChange(index, 'work', work.WORK_NAME);
+                                                        setActiveWorkRowIndex(null);
+                                                        setFocusedSuggestionIndex(-1);
+                                                    }}
+                                                    className={`px-3 py-2 cursor-pointer text-gray-800 font-bold text-[12px] border-b border-gray-100 last:border-b-0 uppercase ${focusedSuggestionIndex === idx ? 'bg-[#fdd55ce1]' : 'hover:bg-[#fdd55ce1]'}`}
+                                                >
+                                                    {work.WORK_NAME}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </td>
                                 <td className="border-r border-gray-200 flex-1">
                                     <input
@@ -310,29 +406,30 @@ const AccountCreation = () => {
                                         placeholder={index === 0 ? "0.00" : ""}
                                     />
                                 </td>
-                                <td className="border-gray-200 w-32 relative">
+                                <td className="border-gray-200 w-32 flex-shrink-0 relative">
                                     <input
                                         type="text"
                                         data-row={index}
                                         data-col={4}
                                         value={account.status}
                                         onChange={(e) => handleInputChange(index, 'status', e.target.value)}
-                                        onFocus={() => setActiveStatusRowIndex(index)}
-                                        onBlur={() => setTimeout(() => setActiveStatusRowIndex(null), 200)}
+                                        onFocus={() => { setActiveStatusRowIndex(index); setFocusedSuggestionIndex(-1); }}
+                                        onBlur={() => setTimeout(() => { setActiveStatusRowIndex(null); setFocusedSuggestionIndex(-1); }, 200)}
                                         onKeyDown={(e) => handleKeyDown(e, index, 4)}
                                         className="ac-input w-full h-full px-3 bg-transparent focus:outline-none focus:bg-[#fdd55ce1] uppercase font-bold text-gray-600"
                                         placeholder={index === 0 ? "Status" : ""}
                                     />
                                     {activeStatusRowIndex === index && (
                                         <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-gray-300 shadow-2xl rounded max-h-48 overflow-y-auto animate-dropdown">
-                                            {statusOptions.filter(opt => opt.toLowerCase().includes((account.status || '').toLowerCase())).map((opt) => (
+                                            {statusOptions.filter(opt => opt.toLowerCase().includes((account.status || '').toLowerCase())).map((opt, idx) => (
                                                 <div
                                                     key={opt}
                                                     onClick={() => {
                                                         handleInputChange(index, 'status', opt);
                                                         setActiveStatusRowIndex(null);
+                                                        setFocusedSuggestionIndex(-1);
                                                     }}
-                                                    className="px-3 py-2 hover:bg-[#fdd55ce1] cursor-pointer text-gray-600 font-bold text-[11px] border-b border-gray-100 last:border-b-0 uppercase"
+                                                    className={`px-3 py-2 cursor-pointer text-gray-600 font-bold text-[11px] border-b border-gray-100 last:border-b-0 uppercase ${focusedSuggestionIndex === idx ? 'bg-[#fdd55ce1]' : 'hover:bg-[#fdd55ce1]'}`}
                                                 >
                                                     {opt}
                                                 </div>
@@ -340,7 +437,7 @@ const AccountCreation = () => {
                                         </div>
                                     )}
                                 </td>
-                                <td className="border-l border-gray-200 w-24 flex items-center justify-center bg-white z-10">
+                                <td className="border-l border-gray-200 w-28 flex-shrink-0 flex items-center justify-center bg-white z-10">
                                     {totalRecords > 1 && (account.partyName.trim() || account.department.trim() || account.work.trim() || account.amount.trim()) && (
                                         <button
                                             type="button"
