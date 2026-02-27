@@ -42,8 +42,9 @@ const AccountVoucherCreation = () => {
                 contract: item.WORK_CODE || '-',
                 gp: item.panchayat || '-',
                 zone: item.zone || '-',
-                dept: item.department || '',
+                dept: item.department_name || '',
                 dept_code: item.dept_code || null,
+                work: item.work_name || '',
                 message: item.message || '',
                 amount: item.amount || 0,
                 status: item.status || 'Pending'

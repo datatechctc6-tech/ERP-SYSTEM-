@@ -1,16 +1,39 @@
 const db = require('../config/db');
 
+exports.getDashboardStats = async () => {
+    try {
+        const query = `
+            SELECT 
+                COUNT(DISTINCT HOLD_CODE) AS totalGP,
+                COUNT(DISTINCT CASE WHEN STATUS = 'Ongoing' THEN HOLD_CODE END) AS activeGP,
+                COUNT(CASE WHEN STATUS = 'Pending' THEN 1 END) AS unprocess,
+                COUNT(CASE WHEN STATUS = 'Completed' THEN 1 END) AS complete
+            FROM trans
+        `;
+        const [rows] = await db.execute(query);
+        return {
+            totalGP: rows[0].totalGP || 0,
+            activeGP: rows[0].activeGP || 0,
+            unprocess: rows[0].unprocess || 0,
+            complete: rows[0].complete || 0
+        };
+    } catch (error) {
+        throw error;
+    }
+};
+
 exports.getAllTransactions = async () => {
     try {
         const query = `
             SELECT 
                 t.SL_NO AS id,
-                d.DEPT_NAME AS department,
+                d.DEPT_NAME AS department_name,
                 t.DEPT_CODE AS dept_code,
                 t.T_V_NO AS amount,
                 t.TRANS_DESC AS message,
                 t.STATUS AS status,
                 t.WORK_CODE,
+                w.WORK_NAME AS work_name,
                 t.T_V_DATE AS date,
                 p.HOLD_NAME AS partyName,
                 p.GP_NAME AS panchayat,
@@ -18,6 +41,7 @@ exports.getAllTransactions = async () => {
             FROM trans t
             LEFT JOIN gpholdms p ON t.HOLD_CODE = p.HOLD_CODE
             LEFT JOIN deptms d ON t.DEPT_CODE = d.DEPT_CODE
+            LEFT JOIN workms w ON t.WORK_CODE = w.WORK_CODE
             ORDER BY t.SL_NO DESC
         `;
         const [rows] = await db.execute(query);
@@ -32,12 +56,13 @@ exports.getTransactionById = async (id) => {
         const query = `
             SELECT 
                 t.SL_NO AS id,
-                d.DEPT_NAME AS department,
+                d.DEPT_NAME AS department_name,
                 t.DEPT_CODE AS dept_code,
                 t.T_V_NO AS amount,
                 t.TRANS_DESC AS message,
                 t.STATUS AS status,
                 t.WORK_CODE,
+                w.WORK_NAME AS work_name,
                 t.T_V_DATE AS date,
                 p.HOLD_NAME AS partyName,
                 p.GP_NAME AS panchayat,
@@ -45,6 +70,7 @@ exports.getTransactionById = async (id) => {
             FROM trans t
             LEFT JOIN gpholdms p ON t.HOLD_CODE = p.HOLD_CODE
             LEFT JOIN deptms d ON t.DEPT_CODE = d.DEPT_CODE
+            LEFT JOIN workms w ON t.WORK_CODE = w.WORK_CODE
             WHERE t.SL_NO = ?
         `;
         const [rows] = await db.execute(query, [id]);

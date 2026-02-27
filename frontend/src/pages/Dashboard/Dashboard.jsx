@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useLocation } from 'react-router-dom';
+import { getDashboardStats } from '../../services/transaction.service';
 import {
   TrendingUp,
   Database,
@@ -65,6 +66,29 @@ function Dashboard() {
   const location = useLocation();
   const cameFromLogin = location.state?.fromLogin && !sessionStorage.getItem('welcomeShown');
   const [showWelcome, setShowWelcome] = useState(cameFromLogin);
+  const [stats, setStats] = useState({
+    totalGP: 0,
+    activeGP: 0,
+    unprocess: 0,
+    complete: 0
+  });
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const data = await getDashboardStats();
+        setStats({
+          totalGP: data.totalGP || 0,
+          activeGP: data.activeGP || 0,
+          unprocess: data.unprocess || 0,
+          complete: data.complete || 0
+        });
+      } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+      }
+    };
+    fetchStats();
+  }, []);
 
   const handleCloseWelcome = () => {
     setShowWelcome(false);
@@ -123,10 +147,10 @@ function Dashboard() {
 
       {/* Stats Row */}
       <div className="flex gap-3 flex-shrink-0 overflow-x-auto no-scrollbar">
-        <StatCard label="Total Grampanchayat" value="542" trend={3} icon={<Database size={16} />} color="bg-indigo-600" />
-        <StatCard label="Active Grampanchayat" value="486" trend={12} icon={<Activity size={16} />} color="bg-emerald-600" />
-        <StatCard label="Unprocess" value="58" trend={-5} icon={<Clock size={16} />} color="bg-amber-600" />
-        <StatCard label="Complete" value="428" trend={18} icon={<CheckCircle size={16} />} color="bg-blue-600" />
+        <StatCard label="Total Grampanchayat" value={stats.totalGP} trend={0} icon={<Database size={16} />} color="bg-indigo-600" />
+        <StatCard label="Active Grampanchayat" value={stats.activeGP} trend={0} icon={<Activity size={16} />} color="bg-emerald-600" />
+        <StatCard label="Unprocess" value={stats.unprocess} trend={0} icon={<Clock size={16} />} color="bg-amber-600" />
+        <StatCard label="Complete" value={stats.complete} trend={0} icon={<CheckCircle size={16} />} color="bg-blue-600" />
       </div>
 
       {/* Main Area (70/30 split) */}

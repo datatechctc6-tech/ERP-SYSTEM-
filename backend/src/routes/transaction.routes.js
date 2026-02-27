@@ -3,6 +3,7 @@ const router = express.Router();
 const transactionController = require('../controllers/transaction.controller');
 
 // Read
+router.get('/dashboard-stats', transactionController.getDashboardStats);
 router.get('/', transactionController.getAllTransactions);
 router.get('/:id', transactionController.getTransactionById);
 

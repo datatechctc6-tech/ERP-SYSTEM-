@@ -55,6 +55,15 @@ export const deleteTransaction = async (id) => {
     return res.json();
 };
 
+export const getDashboardStats = async () => {
+    const res = await fetch(`${BASE_URL}/dashboard-stats`, {
+        method: 'GET',
+        headers: getHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to fetch dashboard stats');
+    return res.json();
+};
+
 export const searchGps = async (keyword) => {
     const res = await fetch(`http://localhost:5000/api/gp/search?q=${encodeURIComponent(keyword)}`, {
         method: 'GET',

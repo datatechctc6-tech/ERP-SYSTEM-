@@ -1,5 +1,15 @@
 const transactionService = require('../services/transaction.service');
 
+exports.getDashboardStats = async (req, res) => {
+    try {
+        const data = await transactionService.getDashboardStats();
+        res.status(200).json(data);
+    } catch (error) {
+        console.error('Error fetching dashboard stats:', error);
+        res.status(500).json({ error: error.message || 'Internal Server Error' });
+    }
+};
+
 exports.getAllTransactions = async (req, res) => {
     try {
         const data = await transactionService.getAllTransactions();
