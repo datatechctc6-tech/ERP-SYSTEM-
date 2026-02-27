@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Save, Edit3, XCircle, ArrowLeft, Trash2 } from 'lucide-react';
 import './AccountCreation.css';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { createTransaction, updateTransaction, searchGps, getGpById, getDepartments } from '../../services/transaction.service';
 
 const AccountCreation = () => {
     const navigate = useNavigate();
@@ -10,29 +11,102 @@ const AccountCreation = () => {
     const isEditMode = !!id;
     const editVoucher = location.state?.voucher;
     const [message, setMessage] = useState(editVoucher?.message || '');
+    const [loading, setLoading] = useState(false);
+    const [suggestions, setSuggestions] = useState([]);
+    const [departmentList, setDepartmentList] = useState([]);
+    const [activeRowIndex, setActiveRowIndex] = useState(null);
     const [accounts, setAccounts] = useState(() => {
         const rows = [...Array(20)].map((_, i) => ({
             id: i + 1,
             partyName: '',
+            gp_id: null,
+            work_code: null,
+            dept_code: null,
             department: '',
             amount: '',
             status: ''
         }));
         if (editVoucher) {
             rows[0] = {
-                id: 1,
+                id: editVoucher.id || 1,
                 partyName: editVoucher.partyName || '',
+                gp_id: editVoucher.gp_id || editVoucher.HOLD_CODE || null,
+                work_code: editVoucher.WORK_CODE || null,
+                dept_code: editVoucher.dept_code || null,
                 department: editVoucher.dept || '',
                 amount: editVoucher.amount ? String(editVoucher.amount) : '',
-                status: editVoucher.status || ''
+                status: editVoucher.status || 'Pending'
             };
         }
         return rows;
     });
 
+    useEffect(() => {
+        const fetchDepts = async () => {
+            try {
+                const fetchedDepts = await getDepartments();
+                setDepartmentList(fetchedDepts);
+            } catch (error) {
+                console.error('Failed to fetch departments:', error);
+            }
+        };
+        fetchDepts();
+    }, []);
+
+    const handlePartyChange = async (index, value) => {
+        const newAccounts = [...accounts];
+        newAccounts[index].partyName = value;
+        newAccounts[index].gp_id = null;
+        setAccounts(newAccounts);
+
+        if (value.trim().length > 0) {
+            try {
+                const results = await searchGps(value);
+                setSuggestions(results);
+                setActiveRowIndex(index);
+            } catch (error) {
+                console.error('Failed to search GPs:', error);
+                setSuggestions([]);
+            }
+        } else {
+            setSuggestions([]);
+            setActiveRowIndex(null);
+        }
+    };
+
+    const handleSelectSuggestion = async (rowIndex, gp) => {
+        try {
+            const data = await getGpById(gp.id);
+            const newAccounts = [...accounts];
+            newAccounts[rowIndex].partyName = data.name;
+            newAccounts[rowIndex].gp_id = data.hold_code;
+            newAccounts[rowIndex].work_code = data.work_code || null;
+            newAccounts[rowIndex].dept_code = data.dept_code || null;
+            if (data.department_name) {
+                newAccounts[rowIndex].department = data.department_name;
+            }
+            setAccounts(newAccounts);
+            setSuggestions([]);
+            setActiveRowIndex(null);
+        } catch (error) {
+            console.error('Failed to fetch full GP details:', error);
+        }
+    };
+
     const handleInputChange = (index, field, value) => {
         const newAccounts = [...accounts];
-        newAccounts[index][field] = value;
+        if (field === 'department') {
+            const selectedDept = departmentList.find(d => String(d.DEPT_CODE) === value);
+            if (selectedDept) {
+                newAccounts[index].dept_code = selectedDept.DEPT_CODE;
+                newAccounts[index].department = selectedDept.DEPT_NAME;
+            } else {
+                newAccounts[index].dept_code = null;
+                newAccounts[index].department = '';
+            }
+        } else {
+            newAccounts[index][field] = value;
+        }
         setAccounts(newAccounts);
     };
 
@@ -66,6 +140,62 @@ const AccountCreation = () => {
         }
     };
 
+    const handleSave = async () => {
+        const validRows = accounts.filter(acc =>
+            acc.department.trim() !== '' ||
+            acc.amount.trim() !== ''
+        );
+
+        if (validRows.length === 0) {
+            alert('Please enter at least one transaction row with a department or amount.');
+            return;
+        }
+
+        // Validate strictly for existing GP and dept_code
+        for (const row of validRows) {
+            if (!row.gp_id) {
+                alert(`Select from existing GP only for: ${row.partyName || 'empty party'}`);
+                return;
+            }
+            if (!row.dept_code) {
+                alert(`Department code is missing for: ${row.partyName}. Cannot create a new department from transaction.`);
+                return;
+            }
+        }
+
+        setLoading(true);
+        try {
+            if (isEditMode) {
+                const mainRow = validRows[0];
+                await updateTransaction(id, {
+                    gp_id: mainRow.gp_id,
+                    dept_code: mainRow.dept_code,
+                    work_code: mainRow.work_code,
+                    amount: parseFloat(mainRow.amount.replace(/,/g, '')) || 0,
+                    status: mainRow.status || 'Pending',
+                    message: message
+                });
+            } else {
+                for (const row of validRows) {
+                    await createTransaction({
+                        gp_id: row.gp_id,
+                        dept_code: row.dept_code,
+                        work_code: row.work_code,
+                        amount: parseFloat(row.amount.replace(/,/g, '')) || 0,
+                        status: row.status || 'Pending',
+                        message: message
+                    });
+                }
+            }
+            navigate('/account-voucher-creation');
+        } catch (error) {
+            console.error('Error saving transactions:', error);
+            alert('Failed to save. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const totalRecords = accounts.filter(acc =>
         acc.partyName.trim() !== '' ||
         acc.department.trim() !== '' ||
@@ -93,30 +223,51 @@ const AccountCreation = () => {
                     <tbody className="divide-y divide-gray-200 flex-1 overflow-y-auto custom-scrollbar">
                         {accounts.map((account, index) => (
                             <tr key={account.id} className="flex w-full items-center hover:bg-gray-50/50 transition-colors">
-                                <td className="border-r border-gray-200 flex-1">
+                                <td className="border-r border-gray-200 flex-1 relative">
                                     <input
                                         type="text"
                                         data-row={index}
                                         data-col={0}
                                         value={account.partyName}
-                                        onChange={(e) => handleInputChange(index, 'partyName', e.target.value)}
+                                        onChange={(e) => handlePartyChange(index, e.target.value)}
                                         onKeyDown={(e) => handleKeyDown(e, index, 0)}
+                                        onBlur={() => setTimeout(() => setActiveRowIndex(null), 200)}
                                         className="ac-input w-full h-full px-3 font-bold text-[#004d40] bg-transparent focus:outline-none focus:bg-[#fdd55ce1]"
-                                        placeholder={index === 0 ? "Enter party name..." : ""}
+                                        placeholder={index === 0 ? "Search existing GP..." : ""}
                                         autoFocus={index === 0}
                                     />
+                                    {activeRowIndex === index && suggestions.length > 0 && (
+                                        <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-gray-300 shadow-2xl rounded max-h-48 overflow-y-auto">
+                                            {suggestions.map((gp) => (
+                                                <div
+                                                    key={gp.id}
+                                                    onClick={() => handleSelectSuggestion(index, gp)}
+                                                    className="px-3 py-2 hover:bg-[#fdd55ce1] cursor-pointer text-[#004d40] font-bold text-[12px] border-b border-gray-100 last:border-b-0"
+                                                >
+                                                    {gp.name}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </td>
                                 <td className="border-r border-gray-200 flex-1">
-                                    <input
-                                        type="text"
+                                    <select
                                         data-row={index}
                                         data-col={1}
-                                        value={account.department}
+                                        value={account.dept_code || ''}
                                         onChange={(e) => handleInputChange(index, 'department', e.target.value)}
                                         onKeyDown={(e) => handleKeyDown(e, index, 1)}
                                         className="ac-input w-full h-full px-3 bg-transparent focus:outline-none focus:bg-[#fdd55ce1]"
-                                        placeholder={index === 0 ? "Enter dept..." : ""}
-                                    />
+                                    >
+                                        <option value="" disabled className="text-gray-400">
+                                            {index === 0 ? "Select dept..." : ""}
+                                        </option>
+                                        {departmentList.map(dept => (
+                                            <option key={dept.SL_NO} value={dept.DEPT_CODE}>
+                                                {dept.DEPT_NAME}
+                                            </option>
+                                        ))}
+                                    </select>
                                 </td>
                                 <td className="border-r border-gray-200 flex-1">
                                     <input
@@ -152,7 +303,7 @@ const AccountCreation = () => {
                                                 setAccounts(newAccounts);
                                             }}
                                             className="p-1.5 text-red-400 hover:text-white hover:bg-red-500 rounded transition-all"
-                                            title="Delete"
+                                            title="Clear Row"
                                         >
                                             <Trash2 size={14} />
                                         </button>
@@ -188,9 +339,15 @@ const AccountCreation = () => {
                 {/* Footer Buttons */}
                 <div className="bg-[#f0f4f4] border-t border-gray-200 px-6 py-3 flex items-center justify-end gap-3 flex-shrink-0">
                     <button
-                        className="ac-btn bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group"
+                        onClick={handleSave}
+                        disabled={loading}
+                        className="ac-btn bg-[#004d40] hover:bg-[#00332e] disabled:opacity-50 text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group"
                     >
-                        <Save size={16} className="group-hover:scale-110 transition-transform" />
+                        {loading ? (
+                            <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        ) : (
+                            <Save size={16} className="group-hover:scale-110 transition-transform" />
+                        )}
                         <span className="ac-btn-text text-[12px] font-black uppercase tracking-widest">{isEditMode ? 'Update' : 'Save'}</span>
                     </button>
                     <button className="ac-btn bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group">

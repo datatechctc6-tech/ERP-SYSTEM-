@@ -83,7 +83,11 @@ const Party = () => {
 
     const [formData, setFormData] = useState(getInitialFormData);
     const [errors, setErrors] = useState({});
-    const [photoPreview, setPhotoPreview] = useState(null);
+    const [photoPreview, setPhotoPreview] = useState(
+        isEditMode && editParty && editParty.photo
+            ? `http://localhost:5000${editParty.photo}`
+            : null
+    );
     const [showDraftPrompt, setShowDraftPrompt] = useState(false);
 
     // Check for saved draft on mount (only for create mode)
@@ -221,21 +225,23 @@ const Party = () => {
         }
 
         // Map frontend state to backend expected fields
-        const backendData = {
-            FULL_NAME: formData.hold_name,
-            ADDRESS: formData.address1,
-            ADDRESS2: formData.address2,
-            PINCODE: formData.pincode,
-            STATE: formData.state,
-            CITY: formData.city,
-            PHONE: formData.Mobile_No,
-            WHATSAPP: formData.Whatsapp_No,
-            EMAIL_ID: formData.Gmail_Id,
-            ZONE: formData.Zone_Name,
-            PANCHAYAT: formData.gp_Name,
-            DESIGNATION: formData.designation,
-            PARTY_PHOTO: photoPreview || null
-        };
+        const formDataToSend = new FormData();
+        formDataToSend.append('FULL_NAME', formData.hold_name || '');
+        formDataToSend.append('ADDRESS', formData.address1 || '');
+        formDataToSend.append('ADDRESS2', formData.address2 || '');
+        formDataToSend.append('PINCODE', formData.pincode || '');
+        formDataToSend.append('STATE', formData.state || '');
+        formDataToSend.append('CITY', formData.city || '');
+        formDataToSend.append('PHONE', formData.Mobile_No || '');
+        formDataToSend.append('WHATSAPP', formData.Whatsapp_No || '');
+        formDataToSend.append('EMAIL_ID', formData.Gmail_Id || '');
+        formDataToSend.append('ZONE', formData.Zone_Name || '');
+        formDataToSend.append('PANCHAYAT', formData.gp_Name || '');
+        formDataToSend.append('DESIGNATION', formData.designation || '');
+
+        if (fileInputRef.current && fileInputRef.current.files[0]) {
+            formDataToSend.append('photo', fileInputRef.current.files[0]);
+        }
 
         try {
             const token = localStorage.getItem('token');
@@ -245,10 +251,9 @@ const Party = () => {
             const res = await fetch(url, {
                 method: method,
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(backendData)
+                body: formDataToSend
             });
             const data = await res.json();
             if (res.ok) {

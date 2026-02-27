@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Plus, Printer, ArrowLeft, Edit3, Trash2, Calendar } from 'lucide-react';
+import { getAllTransactions, deleteTransaction } from '../../services/transaction.service';
 import './AccountVoucherCreation.css';
 import PrintModal from '../../components/PrintModal/PrintModal';
 
@@ -27,7 +28,30 @@ const AccountVoucherCreation = () => {
         if (searchInputRef.current) {
             searchInputRef.current.focus();
         }
+        fetchTransactions();
     }, []);
+
+    const fetchTransactions = async () => {
+        try {
+            const data = await getAllTransactions();
+            const mappedData = data.map(item => ({
+                id: item.id,
+                billNo: `VOU-${String(item.id).padStart(3, '0')}`,
+                billDate: item.date ? new Date(item.date).toLocaleDateString('en-CA') : '',
+                partyName: item.partyName || 'N/A',
+                contract: item.WORK_CODE || '-',
+                gp: item.panchayat || '-',
+                zone: item.zone || '-',
+                dept: item.department || '',
+                message: item.message || '',
+                amount: item.amount || 0,
+                status: item.status || 'Pending'
+            }));
+            setVouchers(mappedData);
+        } catch (error) {
+            console.error('Error fetching transactions:', error);
+        }
+    };
 
     const handleSearchChange = (value) => {
         setSearchTerm(value);
@@ -49,16 +73,18 @@ const AccountVoucherCreation = () => {
         }
     };
 
-    // Mock data for the table
-    const [vouchers, setVouchers] = useState([
-        { id: 1, billNo: 'VOU-001', billDate: '2024-03-20', partyName: 'Sample Party A', contract: 'C-101', gp: 'GP-01', zone: 'Zone-1', dept: 'Sales', message: 'First installment First installment First installment First installment First installment First installment', amount: 5000, status: 'Pending' },
-        { id: 2, billNo: 'VOU-002', billDate: '2024-03-21', partyName: 'Sample Party B', contract: 'C-102', gp: 'GP-02', zone: 'Zone-2', dept: 'Ops', message: 'Material supply', amount: 12500, status: 'Approved' },
-        { id: 3, billNo: 'VOU-003', billDate: '2024-03-21', partyName: 'Sample Party C', contract: 'C-103', gp: 'GP-03', zone: 'Zone-3', dept: 'Finance', message: 'Service fee', amount: 3200, status: 'Rejected' },
-    ]);
+    // Data state mapped to backend
+    const [vouchers, setVouchers] = useState([]);
 
-    const handleDelete = (voucher) => {
+    const handleDelete = async (voucher) => {
         if (window.confirm(`Are you sure you want to delete "${voucher.billNo}"?`)) {
-            setVouchers(prev => prev.filter(v => v.id !== voucher.id));
+            try {
+                await deleteTransaction(voucher.id);
+                setVouchers(prev => prev.filter(v => v.id !== voucher.id));
+            } catch (error) {
+                console.error('Error deleting transaction:', error);
+                alert('Failed to delete transaction. Please try again.');
+            }
         }
     };
 
