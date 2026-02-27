@@ -6,6 +6,7 @@ import CompanyList from './pages/CompanyList/CompanyList'
 import Party from './pages/Party/Party'
 import PartyList from './pages/Party/PartyList'
 import DeptList from './pages/Department/DeptList'
+import WorkList from './pages/Work/WorkList'
 import AccountVoucherCreation from './pages/AccountVoucherCreation/AccountVoucherCreation'
 import AccountCreation from './pages/AccountCreation/AccountCreation'
 import UserCreate from './pages/Settings/UserCreate'
@@ -76,6 +77,10 @@ const router = createBrowserRouter([
       {
         path: '/department',
         element: <DeptList />,
+      },
+      {
+        path: '/work',
+        element: <WorkList />,
       },
       {
         path: '/account-voucher-creation',

@@ -15,6 +15,9 @@ const AccountCreation = () => {
     const [suggestions, setSuggestions] = useState([]);
     const [departmentList, setDepartmentList] = useState([]);
     const [activeRowIndex, setActiveRowIndex] = useState(null);
+    const [activeDeptRowIndex, setActiveDeptRowIndex] = useState(null);
+    const [activeStatusRowIndex, setActiveStatusRowIndex] = useState(null);
+    const statusOptions = ['Pending', 'Ongoing', 'Not Started', 'Completed'];
     const [accounts, setAccounts] = useState(() => {
         const rows = [...Array(20)].map((_, i) => ({
             id: i + 1,
@@ -98,13 +101,12 @@ const AccountCreation = () => {
     const handleInputChange = (index, field, value) => {
         const newAccounts = [...accounts];
         if (field === 'department') {
-            const selectedDept = departmentList.find(d => String(d.DEPT_CODE) === value);
+            newAccounts[index].department = value;
+            const selectedDept = departmentList.find(d => String(d.DEPT_NAME).toLowerCase() === String(value).toLowerCase());
             if (selectedDept) {
                 newAccounts[index].dept_code = selectedDept.DEPT_CODE;
-                newAccounts[index].department = selectedDept.DEPT_NAME;
             } else {
                 newAccounts[index].dept_code = null;
-                newAccounts[index].department = '';
             }
         } else {
             newAccounts[index][field] = value;
@@ -241,7 +243,7 @@ const AccountCreation = () => {
                                         autoFocus={index === 0}
                                     />
                                     {activeRowIndex === index && suggestions.length > 0 && (
-                                        <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-gray-300 shadow-2xl rounded max-h-48 overflow-y-auto">
+                                        <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-gray-300 shadow-2xl rounded max-h-48 overflow-y-auto animate-dropdown">
                                             {suggestions.map((gp) => (
                                                 <div
                                                     key={gp.id}
@@ -254,24 +256,35 @@ const AccountCreation = () => {
                                         </div>
                                     )}
                                 </td>
-                                <td className="border-r border-gray-200 flex-1">
-                                    <select
+                                <td className="border-r border-gray-200 flex-1 relative">
+                                    <input
+                                        type="text"
                                         data-row={index}
                                         data-col={1}
-                                        value={account.dept_code || ''}
+                                        value={account.department}
                                         onChange={(e) => handleInputChange(index, 'department', e.target.value)}
+                                        onFocus={() => setActiveDeptRowIndex(index)}
+                                        onBlur={() => setTimeout(() => setActiveDeptRowIndex(null), 200)}
                                         onKeyDown={(e) => handleKeyDown(e, index, 1)}
                                         className="ac-input w-full h-full px-3 bg-transparent focus:outline-none focus:bg-[#fdd55ce1]"
-                                    >
-                                        <option value="" disabled className="text-gray-400">
-                                            {index === 0 ? "Select dept..." : ""}
-                                        </option>
-                                        {departmentList.map(dept => (
-                                            <option key={dept.SL_NO} value={dept.DEPT_CODE}>
-                                                {dept.DEPT_NAME}
-                                            </option>
-                                        ))}
-                                    </select>
+                                        placeholder={index === 0 ? "Enter dept..." : ""}
+                                    />
+                                    {activeDeptRowIndex === index && (
+                                        <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-gray-300 shadow-2xl rounded max-h-48 overflow-y-auto animate-dropdown">
+                                            {departmentList.filter(dept => dept.DEPT_NAME.toLowerCase().includes((account.department || '').toLowerCase())).map((dept) => (
+                                                <div
+                                                    key={dept.SL_NO}
+                                                    onClick={() => {
+                                                        handleInputChange(index, 'department', dept.DEPT_NAME);
+                                                        setActiveDeptRowIndex(null);
+                                                    }}
+                                                    className="px-3 py-2 hover:bg-[#fdd55ce1] cursor-pointer text-gray-800 font-bold text-[12px] border-b border-gray-100 last:border-b-0 uppercase"
+                                                >
+                                                    {dept.DEPT_NAME}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </td>
                                 <td className="border-r border-gray-200 flex-1">
                                     <input
@@ -297,17 +310,35 @@ const AccountCreation = () => {
                                         placeholder={index === 0 ? "0.00" : ""}
                                     />
                                 </td>
-                                <td className="border-gray-200 w-32">
+                                <td className="border-gray-200 w-32 relative">
                                     <input
                                         type="text"
                                         data-row={index}
                                         data-col={4}
                                         value={account.status}
                                         onChange={(e) => handleInputChange(index, 'status', e.target.value)}
+                                        onFocus={() => setActiveStatusRowIndex(index)}
+                                        onBlur={() => setTimeout(() => setActiveStatusRowIndex(null), 200)}
                                         onKeyDown={(e) => handleKeyDown(e, index, 4)}
                                         className="ac-input w-full h-full px-3 bg-transparent focus:outline-none focus:bg-[#fdd55ce1] uppercase font-bold text-gray-600"
                                         placeholder={index === 0 ? "Status" : ""}
                                     />
+                                    {activeStatusRowIndex === index && (
+                                        <div className="absolute z-50 left-0 right-0 top-full mt-1 bg-white border border-gray-300 shadow-2xl rounded max-h-48 overflow-y-auto animate-dropdown">
+                                            {statusOptions.filter(opt => opt.toLowerCase().includes((account.status || '').toLowerCase())).map((opt) => (
+                                                <div
+                                                    key={opt}
+                                                    onClick={() => {
+                                                        handleInputChange(index, 'status', opt);
+                                                        setActiveStatusRowIndex(null);
+                                                    }}
+                                                    className="px-3 py-2 hover:bg-[#fdd55ce1] cursor-pointer text-gray-600 font-bold text-[11px] border-b border-gray-100 last:border-b-0 uppercase"
+                                                >
+                                                    {opt}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
                                 </td>
                                 <td className="border-l border-gray-200 w-24 flex items-center justify-center bg-white z-10">
                                     {totalRecords > 1 && (account.partyName.trim() || account.department.trim() || account.work.trim() || account.amount.trim()) && (
@@ -379,6 +410,25 @@ const AccountCreation = () => {
                     </button>
                 </div>
             </div>
+
+            <style>
+                {`
+                @keyframes dropdownEntry {
+                    0% {
+                        opacity: 0;
+                        transform: translateY(-10px) scaleY(0.9);
+                    }
+                    100% {
+                        opacity: 1;
+                        transform: translateY(0) scaleY(1);
+                    }
+                }
+                .animate-dropdown {
+                    animation: dropdownEntry 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+                    transform-origin: top;
+                }
+                `}
+            </style>
         </div>
     );
 };

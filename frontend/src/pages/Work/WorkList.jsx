@@ -3,17 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { ArrowLeft, Search, Edit2, Trash2 } from 'lucide-react';
 
-const DeptList = () => {
+const WorkList = () => {
     const navigate = useNavigate();
     const [isAddMode, setIsAddMode] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [formData, setFormData] = useState({
-        Sl_No: '',
-        t_v_date: '',
-        dept_Name: '',
+        id: '',
+        work_name: '',
         desc: '',
-        dept_code: ''
+        work_code: ''
     });
 
     const searchInputRef = useRef(null);
@@ -29,61 +28,55 @@ const DeptList = () => {
         }
     }, [isAddMode]);
 
-    const [departments, setDepartments] = useState([]);
+    const [works, setWorks] = useState([]);
     const [editId, setEditId] = useState(null);
 
-    const fetchDepartments = async () => {
+    const fetchWorks = async () => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:5000/api/departments', {
+            const res = await fetch('http://localhost:5000/api/works', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
                 const data = await res.json();
-                setDepartments(data);
+                setWorks(data);
             }
         } catch (err) {
-            console.error('Error fetching departments:', err);
+            console.error('Error fetching works:', err);
         }
     };
 
     useEffect(() => {
-        fetchDepartments();
+        fetchWorks();
     }, []);
 
-    const filteredDepartments = departments.filter(dept =>
-        (dept.DEPT_NAME || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (dept.DEPT_CODE || '').toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredWorks = works.filter(work =>
+        (work.WORK_NAME || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (work.WORK_CODE || '').toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const handleSearchChange = (value) => {
         setSearchTerm(value);
-        setSelectedIndex(0); // Reset selection on search
+        setSelectedIndex(0);
     };
 
     const handleKeyDown = (e) => {
         if (e.key === 'ArrowDown') {
             e.preventDefault();
-            setSelectedIndex(prev => Math.min(filteredDepartments.length - 1, prev + 1));
+            setSelectedIndex(prev => Math.min(filteredWorks.length - 1, prev + 1));
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
             setSelectedIndex(prev => Math.max(0, prev - 1));
-        } else if (e.key === 'Enter') {
-            if (filteredDepartments[selectedIndex]) {
-                // Future: Action on Enter
-                console.log('Selected:', filteredDepartments[selectedIndex]);
-            }
         }
     };
 
     const handleAction = (type) => {
         if (type === 'ADD') {
             setFormData({
-                Sl_No: '',
-                t_v_date: new Date().toISOString().split('T')[0],
-                dept_Name: '',
+                id: '',
+                work_name: '',
                 desc: '',
-                dept_code: ''
+                work_code: ''
             });
             setEditId(null);
             setIsAddMode(true);
@@ -98,17 +91,17 @@ const DeptList = () => {
     };
 
     const handleSave = async () => {
-        if (!formData.dept_Name.trim()) {
-            toast.error('Please enter Department Name');
+        if (!formData.work_name.trim()) {
+            toast.error('Please enter Work Name');
             return;
         }
         try {
             const token = localStorage.getItem('token');
-            const url = editId ? `http://localhost:5000/api/department/${editId}` : 'http://localhost:5000/api/department';
+            const url = editId ? `http://localhost:5000/api/works/${editId}` : 'http://localhost:5000/api/works';
             const method = editId ? 'PUT' : 'POST';
 
             const payload = {
-                DEPT_NAME: formData.dept_Name,
+                WORK_NAME: formData.work_name,
                 DESCRIPTION: formData.desc
             };
 
@@ -122,46 +115,46 @@ const DeptList = () => {
             });
             const data = await res.json();
             if (res.ok) {
-                alert(editId ? 'Department updated successfully!' : 'Department created successfully!');
-                fetchDepartments();
-                setFormData({ Sl_No: '', t_v_date: '', dept_Name: '', desc: '', dept_code: '' });
+                toast.success(editId ? 'Work updated successfully!' : 'Work created successfully!');
+                fetchWorks();
+                setFormData({ id: '', work_name: '', desc: '', work_code: '' });
                 setIsAddMode(false);
                 setEditId(null);
             } else {
-                alert(data.error || 'Failed to save department');
+                toast.error(data.error || 'Failed to save work');
             }
         } catch (err) {
             console.error(err);
-            alert('Server error. Backend is not responding.');
+            toast.error('Server error. Backend is not responding.');
         }
     };
 
-    const handleEdit = (dept) => {
+    const handleEdit = (work) => {
         setFormData({
             ...formData,
-            dept_Name: dept.DEPT_NAME,
-            desc: dept.DESCRIPTION,
-            dept_code: dept.DEPT_CODE
+            work_name: work.WORK_NAME,
+            desc: work.DESCRIPTION,
+            work_code: work.WORK_CODE
         });
-        setEditId(dept.SL_NO);
+        setEditId(work.ID || work.SL_NO);
         setIsAddMode(true);
     };
 
-    const handleDelete = async (slNo) => {
-        if (!window.confirm('Are you sure you want to delete this department?')) return;
+    const handleDelete = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this work?')) return;
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:5000/api/department/${slNo}`, {
+            const res = await fetch(`http://localhost:5000/api/works/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (res.ok) {
-                fetchDepartments();
+                fetchWorks();
             } else {
-                alert('Failed to delete department');
+                toast.error('Failed to delete work');
             }
         } catch (err) {
-            console.error('Error deleting department:', err);
+            console.error('Error deleting work:', err);
         }
     };
 
@@ -173,7 +166,7 @@ const DeptList = () => {
                 {/* Header */}
                 <div className="bg-[#00695c] px-4 py-2 flex items-center justify-between text-white">
                     <span className="text-sm font-bold uppercase tracking-wider">
-                        {isAddMode ? 'ADD DEPT' : 'SELECT DEPARTMENT'}
+                        {isAddMode ? 'ADD WORK' : 'SELECT WORK'}
                     </span>
                     <button onClick={() => handleAction('EXIT')} className="hover:bg-[#004d40] p-1 rounded transition-colors">
                         <ArrowLeft size={18} />
@@ -184,17 +177,17 @@ const DeptList = () => {
                     {/* Add Mode Form Section */}
                     {isAddMode && (
                         <div className="bg-white p-4 border border-[#b2dfdb] mb-1 animate-fadeIn">
-                            <h2 className="text-center font-serif text-lg font-bold mb-4 border-b border-gray-200 pb-2">DEPARTMENT MASTER</h2>
+                            <h2 className="text-center font-serif text-lg font-bold mb-4 border-b border-gray-200 pb-2">WORK MASTER</h2>
                             <div className="space-y-3 px-4">
                                 <div className="flex items-center gap-4">
                                     <label className="text-xs font-black uppercase w-20">NAME</label>
                                     <input
                                         ref={nameInputRef}
                                         type="text"
-                                        value={formData.dept_Name}
+                                        value={formData.work_name}
                                         onChange={(e) => {
                                             const name = e.target.value;
-                                            setFormData({ ...formData, dept_Name: name });
+                                            setFormData({ ...formData, work_name: name });
                                         }}
                                         className="flex-1 border border-gray-300 px-2 py-1 text-sm bg-white focus:bg-[#fdd55ce1] focus:text-black focus:outline-none focus:border-[#00695c]"
                                         onKeyDown={(e) => {
@@ -206,7 +199,7 @@ const DeptList = () => {
                                     <label className="text-xs font-black uppercase w-20">CODE<span className="text-red-500">*</span></label>
                                     <input
                                         type="text"
-                                        value={formData.dept_code}
+                                        value={formData.work_code}
                                         readOnly
                                         placeholder="AUTO"
                                         className="w-24 border border-gray-300 px-2 py-1 text-sm bg-gray-50 uppercase"
@@ -236,7 +229,7 @@ const DeptList = () => {
                                 <input
                                     ref={searchInputRef}
                                     type="text"
-                                    placeholder="Search Department..."
+                                    placeholder="Search Work..."
                                     value={searchTerm}
                                     onChange={(e) => handleSearchChange(e.target.value)}
                                     onKeyDown={handleKeyDown}
@@ -252,31 +245,34 @@ const DeptList = () => {
                             <thead className="sticky top-0 bg-[#004d40] text-white z-10">
                                 <tr className="text-[11px] font-black uppercase tracking-wider">
                                     <th className="border border-[#00332e] px-2 py-1.5 text-left w-16">CODE</th>
-                                    <th className="border border-[#00332e] px-3 py-1.5 text-left">NAME</th>
+                                    <th className="border border-[#00332e] px-3 py-1.5 text-left">WORK NAME</th>
+                                    <th className="border border-[#00332e] px-3 py-1.5 text-left">DESCRIPTION</th>
                                     <th className="border border-[#00332e] px-2 py-1.5 text-center w-20">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {filteredDepartments.map((dept, index) => (
+                                {filteredWorks.map((work, index) => (
                                     <tr
-                                        key={dept.id}
+                                        key={work.ID || work.SL_NO}
                                         className={`text-[12px] ${index === selectedIndex ? 'bg-[#fdd55ce1] border-y border-[#00695c]' : 'hover:bg-gray-50'}`}
                                         onClick={() => setSelectedIndex(index)}
                                     >
-                                        <td className="border border-gray-100 px-2 py-1.5 font-medium">{dept.DEPT_CODE}</td>
-                                        <td className="border border-gray-100 px-3 py-1.5 font-bold">{dept.DEPT_NAME}</td>
+                                        <td className="border border-gray-100 px-2 py-1.5 font-medium">{work.WORK_CODE}</td>
+                                        <td className="border border-gray-100 px-3 py-1.5 font-bold">{work.WORK_NAME}</td>
+                                        <td className="border border-gray-100 px-3 py-1.5 text-gray-600">{work.DESCRIPTION}</td>
                                         <td className="border border-gray-100 px-2 py-1.5">
                                             <div className="flex justify-center gap-1">
-                                                <button onClick={(e) => { e.stopPropagation(); handleEdit(dept); }} className="p-1 text-[#00695c] hover:bg-[#e0f2f1] rounded"><Edit2 size={12} /></button>
-                                                <button onClick={(e) => { e.stopPropagation(); handleDelete(dept.SL_NO); }} className="p-1 text-red-500 hover:bg-red-50 rounded"><Trash2 size={12} /></button>
+                                                <button onClick={(e) => { e.stopPropagation(); handleEdit(work); }} className="p-1 text-[#00695c] hover:bg-[#e0f2f1] rounded"><Edit2 size={12} /></button>
+                                                <button onClick={(e) => { e.stopPropagation(); handleDelete(work.ID || work.SL_NO); }} className="p-1 text-red-500 hover:bg-red-50 rounded"><Trash2 size={12} /></button>
                                             </div>
                                         </td>
                                     </tr>
                                 ))}
                                 {/* Empty rows */}
-                                {[...Array(Math.max(0, 10 - filteredDepartments.length))].map((_, i) => (
+                                {[...Array(Math.max(0, 10 - filteredWorks.length))].map((_, i) => (
                                     <tr key={`empty-${i}`} className="h-8">
                                         <td className="border border-gray-100 px-2 py-1.5"></td>
+                                        <td className="border border-gray-100 px-3 py-1.5"></td>
                                         <td className="border border-gray-100 px-3 py-1.5"></td>
                                         <td className="border border-gray-100 px-2 py-1.5"></td>
                                     </tr>
@@ -323,4 +319,4 @@ const DeptList = () => {
     );
 };
 
-export default DeptList;
+export default WorkList;

@@ -43,6 +43,7 @@ const AccountVoucherCreation = () => {
                 gp: item.panchayat || '-',
                 zone: item.zone || '-',
                 dept: item.department || '',
+                dept_code: item.dept_code || null,
                 message: item.message || '',
                 amount: item.amount || 0,
                 status: item.status || 'Pending'

@@ -25,6 +25,7 @@ const companyRoutes = require('./src/routes/company.routes');
 const partyRoutes = require('./src/routes/party.routes');
 const departmentRoutes = require('./src/routes/department.routes');
 const transactionRoutes = require('./src/routes/transaction.routes');
+const workRoutes = require('./src/routes/work.routes');
 
 // Basic test route (/) to check server is running
 app.get('/', (req, res) => {
@@ -37,5 +38,6 @@ app.use('/api', companyRoutes);
 app.use('/api', partyRoutes);
 app.use('/api', departmentRoutes);
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/works', workRoutes);
 
 module.exports = app;

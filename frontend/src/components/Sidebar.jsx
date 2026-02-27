@@ -128,7 +128,8 @@ const Sidebar = () => {
                     label: 'Other master',
                     icon: <Settings size={16} />,
                     subItems: [
-                        { label: 'Department', icon: <RefreshCcw size={16} />, path: '/department' }
+                        { label: 'Department', icon: <RefreshCcw size={16} />, path: '/department' },
+                        { label: 'Work', icon: <FileText size={16} />, path: '/work' }
                     ]
                 }
             ]

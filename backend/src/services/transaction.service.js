@@ -5,7 +5,8 @@ exports.getAllTransactions = async () => {
         const query = `
             SELECT 
                 t.SL_NO AS id,
-                t.DEPT_CODE AS department,
+                d.DEPT_NAME AS department,
+                t.DEPT_CODE AS dept_code,
                 t.T_V_NO AS amount,
                 t.TRANS_DESC AS message,
                 t.STATUS AS status,
@@ -16,6 +17,7 @@ exports.getAllTransactions = async () => {
                 p.ZONE_NAME AS zone
             FROM trans t
             LEFT JOIN gpholdms p ON t.HOLD_CODE = p.HOLD_CODE
+            LEFT JOIN deptms d ON t.DEPT_CODE = d.DEPT_CODE
             ORDER BY t.SL_NO DESC
         `;
         const [rows] = await db.execute(query);
@@ -30,7 +32,8 @@ exports.getTransactionById = async (id) => {
         const query = `
             SELECT 
                 t.SL_NO AS id,
-                t.DEPT_CODE AS department,
+                d.DEPT_NAME AS department,
+                t.DEPT_CODE AS dept_code,
                 t.T_V_NO AS amount,
                 t.TRANS_DESC AS message,
                 t.STATUS AS status,
@@ -41,6 +44,7 @@ exports.getTransactionById = async (id) => {
                 p.ZONE_NAME AS zone
             FROM trans t
             LEFT JOIN gpholdms p ON t.HOLD_CODE = p.HOLD_CODE
+            LEFT JOIN deptms d ON t.DEPT_CODE = d.DEPT_CODE
             WHERE t.SL_NO = ?
         `;
         const [rows] = await db.execute(query, [id]);
@@ -54,6 +58,14 @@ exports.createTransaction = async (data) => {
     try {
         const { gp_id, dept_code, amount, message, status, work_code = 1 } = data;
 
+        // Parse DEPT_CODE to integer (e.g., 'D01' -> 1)
+        let numericDeptCode = null;
+        if (dept_code != null) {
+            numericDeptCode = typeof dept_code === 'string' && dept_code.startsWith('D')
+                ? parseInt(dept_code.replace('D', ''), 10)
+                : parseInt(dept_code, 10);
+        }
+
         const query = `
             INSERT INTO trans (
                 DEPT_CODE, 
@@ -65,7 +77,7 @@ exports.createTransaction = async (data) => {
                 T_V_DATE
             ) VALUES (?, ?, ?, ?, ?, ?, CURDATE())
         `;
-        const values = [dept_code, amount, message || '', status || 'Pending', gp_id, work_code];
+        const values = [numericDeptCode, amount, message || '', status || 'Pending', gp_id, work_code];
 
         const [result] = await db.execute(query, values);
         return { id: result.insertId, ...data };
@@ -78,10 +90,18 @@ exports.updateTransaction = async (id, data) => {
     try {
         const { gp_id, dept_code, amount, message, status, work_code } = data;
 
+        // Parse DEPT_CODE to integer
+        let numericDeptCode = dept_code;
+        if (numericDeptCode != null && typeof numericDeptCode === 'string') {
+            numericDeptCode = numericDeptCode.startsWith('D')
+                ? parseInt(numericDeptCode.replace('D', ''), 10)
+                : parseInt(numericDeptCode, 10);
+        }
+
         let query = 'UPDATE trans SET ';
         const values = [];
 
-        if (dept_code !== undefined) { query += 'DEPT_CODE = ?, '; values.push(dept_code); }
+        if (numericDeptCode !== undefined) { query += 'DEPT_CODE = ?, '; values.push(numericDeptCode); }
         if (gp_id !== undefined) { query += 'HOLD_CODE = ?, '; values.push(gp_id); }
         if (amount !== undefined) { query += 'T_V_NO = ?, '; values.push(amount); }
         if (message !== undefined) { query += 'TRANS_DESC = ?, '; values.push(message); }
