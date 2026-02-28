@@ -18,6 +18,8 @@
     },
     "files": [
       "main.js",
+      "preload.js",
+      "setup.html",
       "backend/**/*",
       "frontend/dist/**/*"
     ],
@@ -45,5 +47,8 @@
     "dotenv": "^17.3.1",
     "electron": "^40.6.1",
     "electron-builder": "^26.8.1"
+  },
+  "dependencies": {
+    "mysql2": "^3.18.2"
   }
 }

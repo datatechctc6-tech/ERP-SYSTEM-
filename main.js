@@ -1,11 +1,61 @@
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const { spawn } = require("child_process");
+const fs = require("fs");
+const mysql = require("mysql2/promise");
 
 let mainWindow;
+let setupWindow;
 let serverProcess;
 
-function createWindow() {
+// Path to store the user's database configuration persistently
+const configPath = path.join(app.getPath("userData"), "db-config.json");
+
+function getDbConfig() {
+  try {
+    if (fs.existsSync(configPath)) {
+      const data = fs.readFileSync(configPath, "utf-8");
+      const config = JSON.parse(data);
+      // Basic validation
+      if (config.host && config.user && config.database) {
+        return config;
+      }
+    }
+  } catch (err) {
+    console.error("Error reading db config:", err);
+  }
+  return null;
+}
+
+function saveDbConfig(config) {
+  try {
+    fs.writeFileSync(configPath, JSON.stringify(config, null, 2), "utf-8");
+  } catch (err) {
+    console.error("Error writing db config:", err);
+  }
+}
+
+function createSetupWindow() {
+  setupWindow = new BrowserWindow({
+    width: 600,
+    height: 700,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, "preload.js"),
+    },
+    autoHideMenuBar: true,
+    resizable: false,
+  });
+
+  setupWindow.loadFile(path.join(__dirname, "setup.html"));
+
+  setupWindow.on("closed", function () {
+    setupWindow = null;
+  });
+}
+
+function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -24,39 +74,94 @@ function createWindow() {
   });
 }
 
-function startServer() {
+function startServer(dbConfig) {
   // Determine the path to server.js
-  // In development it's just ./backend/server.js
-  // In production (packaged app), paths might vary depending on how files are packaged
   const serverPath = path.join(__dirname, "backend", "server.js");
   const envPath = path.join(__dirname, "backend", ".env");
 
-  // Load the .env from the backend directory to explicitly provide it to the backend
-  require("dotenv").config({ path: envPath });
+  // Try to load any existing .env, but we will override with dbConfig
+  try {
+    require("dotenv").config({ path: envPath });
+  } catch (e) {
+    // Ignore error if dotenv is missing
+  }
+
+  // Override environment with saved config
+  const env = {
+    ...process.env,
+    DB_HOST: dbConfig.host,
+    DB_PORT: dbConfig.port.toString(),
+    DB_USER: dbConfig.user,
+    DB_PASS: dbConfig.password || "",
+    DB_NAME: dbConfig.database,
+    MASTER_DB_NAME: dbConfig.database,
+  };
 
   serverProcess = spawn(
     // Use the bundled node executable path or rely on system node
-    // Warning: for a true standalone app, you'd want to package node as well
-    // Since we are running a script, we execute node
     "node",
     [serverPath],
     {
       stdio: "inherit",
-      env: { ...process.env },
+      env: env,
     },
   );
 }
 
-app.whenReady().then(() => {
-  startServer();
+function initApp() {
+  const dbConfig = getDbConfig();
+  if (dbConfig) {
+    // Config exists, start server and main window
+    startServer(dbConfig);
 
-  // Give the server a second to start up before loading the URL
-  setTimeout(() => {
-    createWindow();
-  }, 1500);
+    // Give the server a second to start up before loading the URL
+    setTimeout(() => {
+      createMainWindow();
+    }, 1500);
+  } else {
+    // Show setup screen
+    createSetupWindow();
+  }
+}
+
+app.whenReady().then(() => {
+  // Handle IPC for DB Config save from setup.html
+  ipcMain.handle("save-db-config", async (event, config) => {
+    try {
+      // Test the connection
+      const connection = await mysql.createConnection({
+        host: config.host,
+        port: config.port,
+        user: config.user,
+        password: config.password,
+        database: config.database,
+      });
+      await connection.end(); // Close immediately if successful
+
+      // If we reach here, connection is successful
+      saveDbConfig(config);
+
+      // Start backend and load main window
+      startServer(config);
+      setTimeout(() => {
+        createMainWindow();
+        if (setupWindow && !setupWindow.isDestroyed()) {
+          setupWindow.close();
+        }
+      }, 1500);
+
+      return { success: true };
+    } catch (error) {
+      console.error("Database connection failed:", error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  // Start the application flow
+  initApp();
 
   app.on("activate", function () {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    if (BrowserWindow.getAllWindows().length === 0) initApp();
   });
 });
 
