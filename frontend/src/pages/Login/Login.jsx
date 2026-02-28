@@ -148,10 +148,33 @@ const Login = () => {
       return;
     }
     setMpinLoading(true);
-    setTimeout(() => {
+    setMpinError("");
+
+    try {
+      const response = await fetch("http://localhost:5000/api/login-pin", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ pin: mpin }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setShowPinModal(false);
+        navigate("/companylist");
+      } else {
+        setMpinError(data.error || "Invalid PIN");
+      }
+    } catch (error) {
+      console.error("Login with PIN error:", error);
+      setMpinError("An error occurred. Please check if the server is running.");
+    } finally {
       setMpinLoading(false);
-      navigate("/companylist"); // Mock navigation
-    }, 1000);
+    }
   };
 
   const isFormValid =
