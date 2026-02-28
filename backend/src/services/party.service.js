@@ -1,8 +1,8 @@
-const db = require('../config/db');
+const db = require("../config/db");
 
 exports.searchGPs = async (keyword) => {
-    try {
-        const query = `
+  try {
+    const query = `
             SELECT 
                 p.HOLD_CODE AS id,
                 p.HOLD_NAME AS name,
@@ -15,16 +15,16 @@ exports.searchGPs = async (keyword) => {
             WHERE p.HOLD_NAME LIKE ?
             LIMIT 50
         `;
-        const [rows] = await db.execute(query, [`%${keyword}%`]);
-        return rows;
-    } catch (error) {
-        throw error;
-    }
+    const [rows] = await db.execute(query, [`%${keyword}%`]);
+    return rows;
+  } catch (error) {
+    throw error;
+  }
 };
 
 exports.getGPById = async (id) => {
-    try {
-        const query = `
+  try {
+    const query = `
             SELECT 
                 p.*,
                 p.HOLD_CODE AS id,
@@ -37,53 +37,78 @@ exports.getGPById = async (id) => {
             FROM gpholdms p
             WHERE p.HOLD_CODE = ?
         `;
-        const [rows] = await db.execute(query, [id]);
-        return rows[0] || null;
-    } catch (error) {
-        throw error;
-    }
+    const [rows] = await db.execute(query, [id]);
+    return rows[0] || null;
+  } catch (error) {
+    throw error;
+  }
 };
 
 exports.createParty = async (partyData) => {
-    try {
-        const {
-            FULL_NAME, ADDRESS, ADDRESS2, STATE, CITY,
-            PHONE, WHATSAPP, EMAIL_ID, ZONE, PANCHAYAT,
-            DESIGNATION, PARTY_PHOTO, photo
-        } = partyData;
+  try {
+    const {
+      FULL_NAME,
+      ADDRESS,
+      ADDRESS2,
+      STATE,
+      CITY,
+      PHONE,
+      WHATSAPP,
+      EMAIL_ID,
+      ZONE,
+      PANCHAYAT,
+      DESIGNATION,
+      PARTY_PHOTO,
+      photo,
+      PINCODE,
+    } = partyData;
 
-        // Get max hold_code to auto-increment it manually
-        const [maxRow] = await db.execute('SELECT MAX(HOLD_CODE) as maxCode FROM gpholdms');
-        const nextHoldCode = (maxRow[0].maxCode || 0) + 1;
+    // Get max hold_code to auto-increment it manually
+    const [maxRow] = await db.execute(
+      "SELECT MAX(HOLD_CODE) as maxCode FROM gpholdms",
+    );
+    const nextHoldCode = (maxRow[0].maxCode || 0) + 1;
 
-        const query = `
+    const query = `
             INSERT INTO gpholdms (
-                T_V_DATE, HOLD_NAME, ADDRESS_1, ADDRESS_2, STATE, CITY, 
+                T_V_DATE, HOLD_NAME, ADDRESS_1, ADDRESS_2, STATE, CITY, PINCODE,
                 MOBILE_NO, WHATSAPP_NO, EMAIL_ID, ZONE_NAME, GP_NAME, 
                 DESIGNATION, GP_PHOTO, photo, HOLD_CODE
-            ) VALUES (CURDATE(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (CURDATE(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
-        const values = [
-            FULL_NAME, ADDRESS || null, ADDRESS2 || null, STATE || null,
-            CITY || null, PHONE, WHATSAPP || null, EMAIL_ID, ZONE || null,
-            PANCHAYAT || null, DESIGNATION || null, PARTY_PHOTO || null, photo || null, nextHoldCode
-        ];
+    const values = [
+      FULL_NAME,
+      ADDRESS || null,
+      ADDRESS2 || null,
+      STATE || null,
+      CITY || null,
+      PINCODE || null,
+      PHONE,
+      WHATSAPP || null,
+      EMAIL_ID,
+      ZONE || null,
+      PANCHAYAT || null,
+      DESIGNATION || null,
+      PARTY_PHOTO || null,
+      photo || null,
+      nextHoldCode,
+    ];
 
-        const [result] = await db.execute(query, values);
+    const [result] = await db.execute(query, values);
 
-        return {
-            hold_code: nextHoldCode,
-            sl_no: result.insertId
-        };
-    } catch (error) {
-        throw error;
-    }
+    return {
+      hold_code: nextHoldCode,
+      sl_no: result.insertId,
+    };
+  } catch (error) {
+    throw error;
+  }
 };
 
 exports.getParties = async () => {
-    try {
-        const query = `
+  try {
+    const query = `
             SELECT 
                 SL_NO, HOLD_CODE as id, HOLD_NAME as name, 
                 ADDRESS_1 as address, MOBILE_NO as mobile,
@@ -93,54 +118,78 @@ exports.getParties = async () => {
             FROM gpholdms
             ORDER BY SL_NO DESC
         `;
-        const [rows] = await db.execute(query);
-        return rows;
-    } catch (error) {
-        throw error;
-    }
+    const [rows] = await db.execute(query);
+    return rows;
+  } catch (error) {
+    throw error;
+  }
 };
 
 exports.updateParty = async (id, partyData) => {
-    try {
-        const {
-            FULL_NAME, ADDRESS, ADDRESS2, STATE, CITY,
-            PHONE, WHATSAPP, EMAIL_ID, ZONE, PANCHAYAT,
-            DESIGNATION, PARTY_PHOTO, photo
-        } = partyData;
+  try {
+    const {
+      FULL_NAME,
+      ADDRESS,
+      ADDRESS2,
+      STATE,
+      CITY,
+      PHONE,
+      WHATSAPP,
+      EMAIL_ID,
+      ZONE,
+      PANCHAYAT,
+      DESIGNATION,
+      PARTY_PHOTO,
+      photo,
+      PINCODE,
+    } = partyData;
 
-        // Build query and values dynamically so we only update photo if provided
-        let query = `
+    // Build query and values dynamically so we only update photo if provided
+    let query = `
             UPDATE gpholdms SET 
-                HOLD_NAME = ?, ADDRESS_1 = ?, ADDRESS_2 = ?, STATE = ?, CITY = ?, 
+                HOLD_NAME = ?, ADDRESS_1 = ?, ADDRESS_2 = ?, STATE = ?, CITY = ?, PINCODE = ?,
                 MOBILE_NO = ?, WHATSAPP_NO = ?, EMAIL_ID = ?, ZONE_NAME = ?, GP_NAME = ?, 
                 DESIGNATION = ?, GP_PHOTO = ?, T_V_DATE = CURDATE()
         `;
-        const values = [
-            FULL_NAME, ADDRESS || null, ADDRESS2 || null, STATE || null,
-            CITY || null, PHONE, WHATSAPP || null, EMAIL_ID, ZONE || null,
-            PANCHAYAT || null, DESIGNATION || null, PARTY_PHOTO || null
-        ];
+    const values = [
+      FULL_NAME,
+      ADDRESS || null,
+      ADDRESS2 || null,
+      STATE || null,
+      CITY || null,
+      PINCODE || null,
+      PHONE,
+      WHATSAPP || null,
+      EMAIL_ID,
+      ZONE || null,
+      PANCHAYAT || null,
+      DESIGNATION || null,
+      PARTY_PHOTO || null,
+    ];
 
-        if (photo) {
-            query += `, photo = ? `;
-            values.push(photo);
-        }
-
-        query += ` WHERE HOLD_CODE = ?`;
-        values.push(id);
-
-        const [result] = await db.execute(query, values);
-        return result.affectedRows > 0;
-    } catch (error) {
-        throw error;
+    if (photo) {
+      query += `, photo = ? `;
+      values.push(photo);
     }
+
+    query += ` WHERE HOLD_CODE = ?`;
+    values.push(id);
+
+    const [result] = await db.execute(query, values);
+    return result.affectedRows > 0;
+  } catch (error) {
+    throw error;
+  }
 };
 
 exports.deleteParty = async (id) => {
-    try {
-        const [result] = await db.execute('DELETE FROM gpholdms WHERE HOLD_CODE = ?', [id]);
-        return result.affectedRows > 0;
-    } catch (error) {
-        throw error;
-    }
+  try {
+    const [result] = await db.execute(
+      "DELETE FROM gpholdms WHERE HOLD_CODE = ?",
+      [id],
+    );
+    return result.affectedRows > 0;
+  } catch (error) {
+    throw error;
+  }
 };
