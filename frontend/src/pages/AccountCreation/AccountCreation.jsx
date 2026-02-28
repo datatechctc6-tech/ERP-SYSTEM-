@@ -21,6 +21,23 @@ const AccountCreation = () => {
     const [activeStatusRowIndex, setActiveStatusRowIndex] = useState(null);
     const [focusedSuggestionIndex, setFocusedSuggestionIndex] = useState(-1);
     const statusOptions = ['Pending', 'Ongoing', 'Not Started', 'Completed'];
+
+    const getStatusTextColorClass = (status) => {
+        const base = status?.trim().toLowerCase();
+        switch (base) {
+            case 'pending':
+                return 'text-yellow-600';
+            case 'ongoing':
+                return 'text-blue-600';
+            case 'not started':
+                return 'text-gray-500';
+            case 'completed':
+                return 'text-green-600';
+            default:
+                return 'text-gray-600';
+        }
+    };
+
     const [accounts, setAccounts] = useState(() => {
         const rows = [...Array(20)].map((_, i) => ({
             id: i + 1,
@@ -69,6 +86,20 @@ const AccountCreation = () => {
         fetchDepts();
         fetchWorks();
     }, []);
+
+    useEffect(() => {
+        const handleGlobalKeyDown = (e) => {
+            if (e.altKey && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+                handleSave();
+            }
+        };
+
+        window.addEventListener('keydown', handleGlobalKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleGlobalKeyDown);
+        };
+    }, [accounts, message]); // Re-bind when data changes so handleSave has latest state
 
     const handlePartyChange = async (index, value) => {
         const newAccounts = [...accounts];
@@ -416,7 +447,7 @@ const AccountCreation = () => {
                                         onFocus={() => { setActiveStatusRowIndex(index); setFocusedSuggestionIndex(-1); }}
                                         onBlur={() => setTimeout(() => { setActiveStatusRowIndex(null); setFocusedSuggestionIndex(-1); }, 200)}
                                         onKeyDown={(e) => handleKeyDown(e, index, 4)}
-                                        className="ac-input w-full h-full px-3 bg-transparent focus:outline-none focus:bg-[#fdd55ce1] uppercase font-bold text-gray-600"
+                                        className={`ac-input w-full h-full px-3 bg-transparent focus:outline-none focus:bg-[#fdd55ce1] uppercase font-bold transition-colors ${getStatusTextColorClass(account.status)}`}
                                         placeholder={index === 0 ? "Status" : ""}
                                     />
                                     {activeStatusRowIndex === index && (
@@ -429,7 +460,7 @@ const AccountCreation = () => {
                                                         setActiveStatusRowIndex(null);
                                                         setFocusedSuggestionIndex(-1);
                                                     }}
-                                                    className={`px-3 py-2 cursor-pointer text-gray-600 font-bold text-[11px] border-b border-gray-100 last:border-b-0 uppercase ${focusedSuggestionIndex === idx ? 'bg-[#fdd55ce1]' : 'hover:bg-[#fdd55ce1]'}`}
+                                                    className={`px-3 py-2 cursor-pointer font-bold text-[11px] border-b border-gray-100 last:border-b-0 uppercase transition-colors ${focusedSuggestionIndex === idx ? 'bg-[#fdd55ce1]' : 'hover:bg-[#fdd55ce1]'} ${getStatusTextColorClass(opt)}`}
                                                 >
                                                     {opt}
                                                 </div>

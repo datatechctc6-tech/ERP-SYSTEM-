@@ -6,13 +6,38 @@ import './UserList.css';
 const UserList = () => {
     const navigate = useNavigate();
 
-    // Mock user data
-    const [userList, setUserList] = useState([
-        { id: 1, username: 'admin', pin: '1234', createdAt: '15 Jan 2024', role: 'Super Admin', color: 'bg-indigo-600', email: 'admin@system.com', phone: '+91 98765 43210' },
-        { id: 2, username: 'operator_sales', pin: '5566', createdAt: '10 Feb 2024', role: 'Sales Operator', color: 'bg-emerald-600', email: 'sales@system.com', phone: '+91 98765 43211' },
-        { id: 3, username: 'manager_rk', pin: '9001', createdAt: '20 Feb 2024', role: 'Store Manager', color: 'bg-amber-600', email: 'rk_mgr@system.com', phone: '+91 98765 43212' },
-        { id: 4, username: 'cashier_01', pin: '4321', createdAt: '22 Feb 2024', role: 'Cashier', color: 'bg-rose-600', email: 'cashier@system.com', phone: '+91 98765 43213' },
-    ]);
+    const [userList, setUserList] = useState([]);
+
+    // Fetch users from backend
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await fetch("http://localhost:5000/api/users");
+                const data = await response.json();
+
+                // Process the data to add colors and ensure default values
+                const colors = ['bg-indigo-600', 'bg-emerald-600', 'bg-amber-600', 'bg-rose-600', 'bg-blue-600', 'bg-purple-600'];
+                const processedUsers = data.map((user, index) => ({
+                    id: user.id,
+                    username: user.username || user.name || 'Unknown',
+                    pin: '****', // not returned by API
+                    createdAt: 'Recently', // Placeholder
+                    role: user.role || 'User',
+                    color: colors[index % colors.length],
+                    email: user.email || 'N/A',
+                    phone: user.phone || 'N/A'
+                }));
+
+                setUserList(processedUsers);
+                if (processedUsers.length > 0) {
+                    setSelectedUserId(processedUsers[0].id);
+                }
+            } catch (error) {
+                console.error("Failed to fetch users:", error);
+            }
+        };
+        fetchUsers();
+    }, []);
 
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedUserId, setSelectedUserId] = useState(1);

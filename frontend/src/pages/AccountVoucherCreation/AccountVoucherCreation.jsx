@@ -22,6 +22,7 @@ const AccountVoucherCreation = () => {
         { value: 'weekly', label: 'WEEKLY' },
         { value: 'quarterly', label: 'QUARTERLY' },
         { value: 'yearly', label: 'YEARLY' },
+        { value: 'all', label: 'ALL TIME' }
     ];
 
     useEffect(() => {
@@ -90,10 +91,60 @@ const AccountVoucherCreation = () => {
         }
     };
 
-    const filteredVouchers = vouchers.filter(v =>
-        v.partyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        v.billNo.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const isDateInRange = (dateString, filterType) => {
+        if (!dateString) return false;
+
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const itemDate = new Date(dateString);
+        itemDate.setHours(0, 0, 0, 0);
+
+        switch (filterType) {
+            case 'today':
+                return itemDate.getTime() === today.getTime();
+            case 'yesterday': {
+                const yesterday = new Date(today);
+                yesterday.setDate(yesterday.getDate() - 1);
+                return itemDate.getTime() === yesterday.getTime();
+            }
+            case '7days': {
+                const sevenDaysAgo = new Date(today);
+                sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+                return itemDate >= sevenDaysAgo && itemDate <= today;
+            }
+            case '14days': {
+                const fourteenDaysAgo = new Date(today);
+                fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+                return itemDate >= fourteenDaysAgo && itemDate <= today;
+            }
+            case 'weekly': {
+                const startOfWeek = new Date(today);
+                const day = startOfWeek.getDay();
+                const diff = startOfWeek.getDate() - day + (day === 0 ? -6 : 1); // Monday as start
+                startOfWeek.setDate(diff);
+                return itemDate >= startOfWeek;
+            }
+            case 'quarterly': {
+                const startOfQuarter = new Date(today.getFullYear(), Math.floor(today.getMonth() / 3) * 3, 1);
+                return itemDate >= startOfQuarter;
+            }
+            case 'yearly': {
+                const startOfYear = new Date(today.getFullYear(), 0, 1);
+                return itemDate >= startOfYear;
+            }
+            case 'all':
+            default:
+                return true;
+        }
+    };
+
+    const filteredVouchers = vouchers.filter(v => {
+        const matchesSearch = v.partyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            v.billNo.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesDate = isDateInRange(v.billDate, dateFilter);
+        return matchesSearch && matchesDate;
+    });
 
     const handleOpenPrintModal = () => {
         setIsPrintModalOpen(true);
@@ -200,9 +251,11 @@ const AccountVoucherCreation = () => {
                                         <td className="av-td px-3 py-2 border border-gray-200 text-gray-500 italic max-w-[200px] truncate" title={voucher.message}>{voucher.message}</td>
                                         <td className="av-td px-3 py-2 border border-gray-200 font-black whitespace-nowrap">₹{voucher.amount.toLocaleString('en-IN')}</td>
                                         <td className="av-td px-3 py-2 border border-gray-200">
-                                            <span className={`av-status-badge px-2 py-0.5 rounded-full font-bold text-[9px] uppercase ${voucher.status === 'Approved' ? 'bg-green-100 text-green-700' :
-                                                voucher.status === 'Rejected' ? 'bg-red-100 text-red-700' :
-                                                    'bg-yellow-100 text-yellow-700'
+                                            <span className={`av-status-badge px-2 py-0.5 rounded-full font-bold text-[9px] uppercase ${voucher.status?.trim().toLowerCase() === 'pending' ? 'bg-[#b81f1f] text-[#ffffff]' :
+                                                voucher.status?.trim().toLowerCase() === 'ongoing' ? 'bg-[#bfdbfe] text-[#1e40af]' :
+                                                    voucher.status?.trim().toLowerCase() === 'not started' ? 'bg-[#78e3dc] text-[#374151]' :
+                                                        voucher.status?.trim().toLowerCase() === 'completed' ? 'bg-[#bbf7d0] text-[#166534]' :
+                                                            'bg-gray-100 text-gray-700'
                                                 }`}>
                                                 {voucher.status}
                                             </span>

@@ -81,7 +81,70 @@ const loginUser = async (req, res) => {
     }
 };
 
+const getAllUsers = async (req, res) => {
+    try {
+        const users = await UserModel.getAllUsers();
+        return res.status(200).json(users);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+const setPin = async (req, res) => {
+    try {
+        const { email, password, pin } = req.body;
+        const user = await UserModel.findByEmail(email);
+        if (!user) return res.status(401).json({ error: 'User not found' });
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) return res.status(401).json({ error: 'Invalid credentials' });
+
+        await UserModel.updatePin(email, pin);
+        return res.status(200).json({ message: 'PIN set successfully' });
+    } catch (error) {
+        console.error('Error setting PIN:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+const loginWithPin = async (req, res) => {
+    try {
+        const { pin } = req.body;
+
+        if (!pin) {
+            return res.status(400).json({ error: 'PIN is required' });
+        }
+
+        const user = await UserModel.findByPin(pin);
+        if (!user) return res.status(401).json({ error: 'Invalid PIN' });
+
+        const token = jwt.sign(
+            { id: user.id, type: user.type },
+            process.env.JWT_SECRET || 'your_jwt_secret',
+            { expiresIn: '1d' }
+        );
+
+        return res.status(200).json({
+            message: 'Login successful',
+            token,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                type: user.type
+            }
+        });
+    } catch (error) {
+        console.error('Login error:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+    getAllUsers,
+    setPin,
+    loginWithPin
 };

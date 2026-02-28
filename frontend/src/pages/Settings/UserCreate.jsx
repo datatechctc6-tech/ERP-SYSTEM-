@@ -22,15 +22,15 @@ const UserCreate = () => {
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         if (name === 'pin') {
-            // Only allow digits and max 4 characters
-            const pinValue = value.replace(/\D/g, '').slice(0, 4);
+            // Only allow digits and max 6 characters
+            const pinValue = value.replace(/\D/g, '').slice(0, 6);
             setFormData(prev => ({ ...prev, [name]: pinValue }));
         } else {
             setFormData(prev => ({ ...prev, [name]: value }));
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.username.trim()) {
             toast.error('Please enter a username');
@@ -40,13 +40,34 @@ const UserCreate = () => {
             toast.error('Please enter a password');
             return;
         }
-        if (formData.pin.length !== 4) {
-            toast.error('Please enter a valid 4-digit PIN');
+        if (formData.pin.length !== 6) {
+            toast.error('Please enter a valid 6-digit PIN');
             return;
         }
-        console.log('User Created:', formData);
-        toast.success('User created successfully!');
-        navigate('/settings/user-list');
+
+        try {
+            const response = await fetch("http://localhost:5000/api/set-pin", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: formData.username,
+                    password: formData.password,
+                    pin: formData.pin
+                }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                toast.success('PIN set successfully!');
+                navigate('/settings/user-list');
+            } else {
+                toast.error(data.error || data.message || 'Failed to set PIN');
+            }
+        } catch (error) {
+            console.error('Error setting PIN:', error);
+            toast.error('An error occurred. Please check if the server is running.');
+        }
     };
 
     const handleClear = () => {
@@ -126,14 +147,14 @@ const UserCreate = () => {
                                     </div>
                                 </div>
 
-                                {/* 4-Digit PIN */}
+                                {/* 6-Digit PIN */}
                                 <div className="flex items-center gap-1 mb-2">
                                     <label className="w-28 flex-shrink-0 flex items-center gap-2 text-[12px] font-black text-[#004d40] uppercase tracking-tight">
                                         <KeyRound size={14} className="text-[#00695c]" />
-                                        4-Digit Pin
+                                        6-Digit Pin
                                     </label>
                                     <div className="flex-1 flex gap-2">
-                                        {[0, 1, 2, 3].map((i) => (
+                                        {[0, 1, 2, 3, 4, 5].map((i) => (
                                             <input
                                                 key={i}
                                                 type="text"
@@ -144,10 +165,10 @@ const UserCreate = () => {
                                                     const val = e.target.value.replace(/\D/g, '');
                                                     const newPin = formData.pin.split('');
                                                     newPin[i] = val;
-                                                    const joined = newPin.join('').slice(0, 4);
+                                                    const joined = newPin.join('').slice(0, 6);
                                                     setFormData(prev => ({ ...prev, pin: joined }));
                                                     // Auto-focus next input
-                                                    if (val && i < 3) {
+                                                    if (val && i < 5) {
                                                         const next = e.target.parentElement.parentElement.querySelectorAll('input')[i + 1];
                                                         if (next) next.focus();
                                                     }
