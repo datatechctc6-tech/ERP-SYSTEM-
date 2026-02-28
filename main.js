@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require("electron");
+app.disableHardwareAcceleration();
 const path = require("path");
 const { spawn } = require("child_process");
 const fs = require("fs");
@@ -69,6 +70,14 @@ function createMainWindow() {
   // We navigate to the local express server which serves both API and React
   mainWindow.loadURL("http://localhost:5000");
 
+  mainWindow.webContents.on("did-fail-load", (event, errorCode, errorDescription, validatedURL) => {
+    console.error(`Main window failed to load: ${errorDescription} (${errorCode}) at ${validatedURL}`);
+    // Optional: reload or show a more helpful error page
+    setTimeout(() => {
+      mainWindow.loadURL("http://localhost:5000");
+    }, 2000);
+  });
+
   mainWindow.on("closed", function () {
     mainWindow = null;
   });
@@ -97,15 +106,34 @@ function startServer(dbConfig) {
     MASTER_DB_NAME: dbConfig.database,
   };
 
-  serverProcess = spawn(
-    // Use the bundled node executable path or rely on system node
-    "node",
-    [serverPath],
-    {
-      stdio: "inherit",
-      env: env,
-    },
-  );
+  const spawnOptions = {
+    env: env,
+  };
+
+  if (app.isPackaged) {
+    // In production, we use the Electron executable as a Node runner
+    // We must point to the unpacked backend folder
+    const unpackedServerPath = serverPath.replace("app.asar", "app.asar.unpacked");
+    serverProcess = spawn(process.execPath, [unpackedServerPath], {
+      ...spawnOptions,
+      env: { ...env, ELECTRON_RUN_AS_NODE: "1" },
+    });
+  } else {
+    // In development, we use the system node
+    serverProcess = spawn("node", [serverPath], spawnOptions);
+  }
+
+  serverProcess.stdout.on("data", (data) => {
+    console.log(`Backend: ${data}`);
+  });
+
+  serverProcess.stderr.on("data", (data) => {
+    console.error(`Backend Error: ${data}`);
+  });
+
+  serverProcess.on("error", (err) => {
+    console.error("Failed to start server process:", err);
+  });
 }
 
 function initApp() {
