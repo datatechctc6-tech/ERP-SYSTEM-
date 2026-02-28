@@ -1,0 +1,54 @@
+{
+  "name": "erp-system-",
+  "version": "1.0.0",
+  "description": "React aur Tailwind CSS ke saath banaya gaya ERP System.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:backend": "cd backend && npm install",
+    "build:frontend": "cd frontend && npm install && npm run build"
+  },
+  "build": {
+    "appId": "com.erpsystem.app",
+    "productName": "ERP System",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "setup.html",
+      "backend/**/*",
+      "frontend/dist/**/*"
+    ],
+    "win": {
+      "target": "nsis"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/datatechctc6-tech/ERP-SYSTEM-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/datatechctc6-tech/ERP-SYSTEM-/issues"
+  },
+  "homepage": "https://github.com/datatechctc6-tech/ERP-SYSTEM-#readme",
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "dotenv": "^17.3.1",
+    "electron": "^40.6.1",
+    "electron-builder": "^26.8.1"
+  },
+  "dependencies": {
+    "mysql2": "^3.18.2"
+  }
+}
