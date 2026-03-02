@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Save, Edit3, XCircle, ArrowLeft, Trash2 } from 'lucide-react';
 import './AccountCreation.css';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import { createTransaction, updateTransaction, searchGps, getGpById, getDepartments, getWorks } from '../../services/transaction.service';
+import { createTransaction, updateTransaction, searchGps, getGpById, getDepartments, getWorks, getParties } from '../../services/transaction.service';
 
 const AccountCreation = () => {
     const navigate = useNavigate();
@@ -15,6 +15,7 @@ const AccountCreation = () => {
     const [suggestions, setSuggestions] = useState([]);
     const [departmentList, setDepartmentList] = useState([]);
     const [workList, setWorkList] = useState([]);
+    const [allParties, setAllParties] = useState([]);
     const [activeRowIndex, setActiveRowIndex] = useState(null);
     const [activeDeptRowIndex, setActiveDeptRowIndex] = useState(null);
     const [activeWorkRowIndex, setActiveWorkRowIndex] = useState(null);
@@ -83,8 +84,21 @@ const AccountCreation = () => {
                 console.error('Failed to fetch works:', error);
             }
         };
+        const fetchPartiesList = async () => {
+            try {
+                const fetchedParties = await getParties();
+                setAllParties(fetchedParties);
+                if (!isEditMode) {
+                    setSuggestions(fetchedParties);
+                    setActiveRowIndex(0);
+                }
+            } catch (error) {
+                console.error('Failed to fetch parties:', error);
+            }
+        };
         fetchDepts();
         fetchWorks();
+        fetchPartiesList();
     }, []);
 
     useEffect(() => {
@@ -118,8 +132,8 @@ const AccountCreation = () => {
                 setSuggestions([]);
             }
         } else {
-            setSuggestions([]);
-            setActiveRowIndex(null);
+            setSuggestions(allParties);
+            setActiveRowIndex(index);
         }
     };
 
@@ -282,7 +296,7 @@ const AccountCreation = () => {
                     gp_id: mainRow.gp_id,
                     dept_code: mainRow.dept_code,
                     work_code: mainRow.work_code,
-                    amount: parseFloat(mainRow.amount.replace(/,/g, '')) || 0,
+                    amount: mainRow.amount.replace(/,/g, '') || "0",
                     status: mainRow.status || 'Pending',
                     message: message
                 });
@@ -292,7 +306,7 @@ const AccountCreation = () => {
                         gp_id: row.gp_id,
                         dept_code: row.dept_code,
                         work_code: row.work_code,
-                        amount: parseFloat(row.amount.replace(/,/g, '')) || 0,
+                        amount: row.amount.replace(/,/g, '') || "0",
                         status: row.status || 'Pending',
                         message: message
                     });
@@ -343,6 +357,12 @@ const AccountCreation = () => {
                                         data-col={0}
                                         value={account.partyName}
                                         onChange={(e) => handlePartyChange(index, e.target.value)}
+                                        onFocus={() => {
+                                            setActiveRowIndex(index);
+                                            if (account.partyName.trim() === '') {
+                                                setSuggestions(allParties);
+                                            }
+                                        }}
                                         onKeyDown={(e) => handleKeyDown(e, index, 0)}
                                         onBlur={() => setTimeout(() => { setActiveRowIndex(null); setFocusedSuggestionIndex(-1); }, 200)}
                                         className="ac-input w-full h-full px-3 font-bold text-[#004d40] bg-transparent focus:outline-none focus:bg-[#fdd55ce1]"
@@ -428,10 +448,16 @@ const AccountCreation = () => {
                                 <td className="border-r border-gray-200 flex-1">
                                     <input
                                         type="text"
+                                        maxLength={15}
                                         data-row={index}
                                         data-col={3}
                                         value={account.amount}
-                                        onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
+                                        onChange={(e) => {
+                                            const val = e.target.value;
+                                            if (/^[0-9.,]*$/.test(val)) {
+                                                handleInputChange(index, 'amount', val);
+                                            }
+                                        }}
                                         onKeyDown={(e) => handleKeyDown(e, index, 3)}
                                         className="ac-input w-full h-full px-3 text-right font-black bg-transparent focus:outline-none focus:bg-[#fdd55ce1]"
                                         placeholder={index === 0 ? "0.00" : ""}
@@ -524,10 +550,6 @@ const AccountCreation = () => {
                             <Save size={16} className="group-hover:scale-110 transition-transform" />
                         )}
                         <span className="ac-btn-text text-[12px] font-black uppercase tracking-widest">{isEditMode ? 'Update' : 'Save'}</span>
-                    </button>
-                    <button className="ac-btn bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group">
-                        <Edit3 size={16} className="group-hover:rotate-12 transition-transform" />
-                        <span className="ac-btn-text text-[12px] font-black uppercase tracking-widest">Edit</span>
                     </button>
                     <button
                         onClick={() => navigate('/account-voucher-creation')}

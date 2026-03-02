@@ -214,21 +214,21 @@ const AccountVoucherCreation = () => {
                 {/* Table Container */}
                 <div className="flex-1 overflow-auto p-2">
                     <div className="bg-white border border-gray-300 rounded overflow-hidden">
-                        <table className="w-full text-left border-collapse">
+                        <table className="w-full text-left flex-col text-[10px]">
                             <thead>
                                 <tr className="bg-[#004d40] text-white">
-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Bill No</th>
-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Bill Date</th>
-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Party Name</th>
-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Contract</th>
-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">GP</th>
-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Zone</th>
-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Dept</th>
-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Work</th>
-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Message</th>
-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Amount</th>
-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Status</th>
-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e] text-center">Action</th>
+                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Bill No</th>
+                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Bill Date</th>
+                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Party Name</th>
+                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Contract</th>
+                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">GP</th>
+                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Zone</th>
+                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Dept</th>
+                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Work</th>
+                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Message</th>
+                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Amount</th>
+                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e] text-center">Status</th>
+                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e] text-center w-16">Action</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
@@ -240,18 +240,18 @@ const AccountVoucherCreation = () => {
                                             : 'hover:bg-gray-50'
                                             }`}
                                     >
-                                        <td className="av-td px-3 py-2 border border-gray-200 font-bold whitespace-nowrap">{voucher.billNo}</td>
-                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.billDate}</td>
-                                        <td className="av-td px-3 py-2 border border-gray-200 font-bold text-[#004d40] max-w-[150px] truncate" title={voucher.partyName}>{voucher.partyName}</td>
-                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.contract}</td>
-                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.gp}</td>
-                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.zone}</td>
-                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.dept}</td>
-                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.work}</td>
-                                        <td className="av-td px-3 py-2 border border-gray-200 text-gray-500 italic max-w-[200px] truncate" title={voucher.message}>{voucher.message}</td>
-                                        <td className="av-td px-3 py-2 border border-gray-200 font-black whitespace-nowrap">₹{voucher.amount.toLocaleString('en-IN')}</td>
-                                        <td className="av-td px-3 py-2 border border-gray-200">
-                                            <span className={`av-status-badge px-2 py-0.5 rounded-full font-bold text-[9px] uppercase ${voucher.status?.trim().toLowerCase() === 'pending' ? 'bg-[#b81f1f] text-[#ffffff]' :
+                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 font-bold whitespace-nowrap">{voucher.billNo}</td>
+                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 whitespace-nowrap">{voucher.billDate}</td>
+                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 font-bold text-[#004d40] max-w-[120px] truncate" title={voucher.partyName}>{voucher.partyName}</td>
+                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 max-w-[60px] truncate" title={voucher.contract}>{voucher.contract}</td>
+                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 max-w-[80px] truncate" title={voucher.gp}>{voucher.gp}</td>
+                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 max-w-[70px] truncate" title={voucher.zone}>{voucher.zone}</td>
+                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 max-w-[70px] truncate" title={voucher.dept}>{voucher.dept}</td>
+                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 max-w-[100px] truncate" title={voucher.work}>{voucher.work}</td>
+                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 text-gray-500 italic max-w-[120px] truncate" title={voucher.message}>{voucher.message}</td>
+                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 font-black max-w-[100px] truncate" title={`₹${voucher.amount.toLocaleString('en-IN')}`}>₹{voucher.amount.toLocaleString('en-IN')}</td>
+                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 text-center">
+                                            <span className={`av-status-badge px-1.5 py-0.5 rounded-full font-bold text-[8px] uppercase ${voucher.status?.trim().toLowerCase() === 'pending' ? 'bg-[#b81f1f] text-[#ffffff]' :
                                                 voucher.status?.trim().toLowerCase() === 'ongoing' ? 'bg-[#bfdbfe] text-[#1e40af]' :
                                                     voucher.status?.trim().toLowerCase() === 'not started' ? 'bg-[#78e3dc] text-[#374151]' :
                                                         voucher.status?.trim().toLowerCase() === 'completed' ? 'bg-[#bbf7d0] text-[#166534]' :
@@ -260,13 +260,13 @@ const AccountVoucherCreation = () => {
                                                 {voucher.status}
                                             </span>
                                         </td>
-                                        <td className="av-td px-3 py-2 border border-gray-200 text-center">
-                                            <div className="flex items-center justify-center gap-2">
+                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 text-center w-16">
+                                            <div className="flex items-center justify-center gap-1.5">
                                                 <button onClick={() => navigate(`/account/edit/${voucher.id}`, { state: { voucher } })} className="p-1 text-blue-600 hover:bg-blue-50 rounded border border-blue-100 transition-colors" title="Edit">
-                                                    <Edit3 size={14} />
+                                                    <Edit3 size={12} />
                                                 </button>
                                                 <button onClick={() => handleDelete(voucher)} className="p-1 text-red-600 hover:bg-red-50 rounded border border-red-100 transition-colors" title="Delete">
-                                                    <Trash2 size={14} />
+                                                    <Trash2 size={12} />
                                                 </button>
                                             </div>
                                         </td>

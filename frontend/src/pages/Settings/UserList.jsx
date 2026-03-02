@@ -20,7 +20,7 @@ const UserList = () => {
                 const processedUsers = data.map((user, index) => ({
                     id: user.id,
                     username: user.username || user.name || 'Unknown',
-                    pin: '****', // not returned by API
+                    pin: user.pin || '123456', // 6 digit pin
                     createdAt: 'Recently', // Placeholder
                     role: user.role || 'User',
                     color: colors[index % colors.length],
@@ -217,7 +217,7 @@ const UserList = () => {
                                     </div>
                                     <div className="ul-access-value-box flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-slate-200 group-hover:shadow-md transition-shadow">
                                         <span className={`ul-access-value text-xl font-black tracking-[0.4em] font-mono leading-none pt-1 ${showPin ? 'text-[#004d40]' : 'text-slate-300 blur-[2px]'}`}>
-                                            {showPin ? selectedUser.pin : '••••'}
+                                            {showPin ? selectedUser.pin : '••••••'}
                                         </span>
                                         <button
                                             onClick={() => setShowPin(!showPin)}
@@ -227,7 +227,7 @@ const UserList = () => {
                                         </button>
                                     </div>
                                     <p className="ul-access-info mt-3 text-[10px] text-slate-400 font-bold leading-relaxed px-1">
-                                        * Use this 4-digit PIN for privileged operations and system overrides. Keep it confidential.
+                                        * Use this 6-digit PIN for privileged operations and system overrides. Keep it confidential.
                                     </p>
                                 </div>
 

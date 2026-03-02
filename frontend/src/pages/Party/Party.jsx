@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, forwardRef } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
-import { X, Save, Upload, User, MapPin, Phone, Mail, Map, Briefcase, Camera } from 'lucide-react';
+import { X, Save, Upload, User, MapPin, Phone, Mail, Map, Briefcase, Camera, Trash2 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import './Party.css';
 
@@ -241,6 +241,9 @@ const Party = () => {
 
         if (fileInputRef.current && fileInputRef.current.files[0]) {
             formDataToSend.append('photo', fileInputRef.current.files[0]);
+        } else if (!photoPreview && isEditMode) {
+            // Signal to backend that the photo was cleared
+            formDataToSend.append('clear_photo', 'true');
         }
 
         try {
@@ -348,6 +351,20 @@ const Party = () => {
                                         <span className="party-upload-text text-[10px] font-black uppercase tracking-widest">Upload</span>
                                     </div>
                                 </div>
+                                {photoPreview && (
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setPhotoPreview(null);
+                                            if (fileInputRef.current) fileInputRef.current.value = '';
+                                        }}
+                                        className="flex items-center gap-1.5 text-[11px] text-red-500 hover:text-red-600 font-bold uppercase tracking-wider transition-colors mt-2 bg-red-50 px-3 py-1.5 rounded"
+                                    >
+                                        <Trash2 size={14} />
+                                        <span>Clear</span>
+                                    </button>
+                                )}
                                 <input type="file" ref={fileInputRef} onChange={handlePhotoChange} accept="image/*" className="hidden" />
                             </div>
                         </div>

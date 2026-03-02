@@ -127,6 +127,7 @@ const DeptList = () => {
                 setFormData({ Sl_No: '', t_v_date: '', dept_Name: '', desc: '', dept_code: '' });
                 setIsAddMode(false);
                 setEditId(null);
+                setSearchTerm(''); // Clear the search bar upon successful save
             } else {
                 alert(data.error || 'Failed to save department');
             }

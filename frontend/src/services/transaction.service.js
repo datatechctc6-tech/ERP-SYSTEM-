@@ -99,3 +99,12 @@ export const getWorks = async () => {
     if (!res.ok) throw new Error('Failed to fetch works');
     return res.json();
 };
+
+export const getParties = async () => {
+    const res = await fetch(`http://localhost:5000/api/parties`, {
+        method: 'GET',
+        headers: getHeaders()
+    });
+    if (!res.ok) throw new Error('Failed to fetch parties');
+    return res.json();
+};

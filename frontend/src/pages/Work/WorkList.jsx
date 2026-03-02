@@ -84,6 +84,7 @@ const WorkList = () => {
             if (isAddMode) {
                 setIsAddMode(false);
                 setEditId(null);
+                setSearchTerm('');
             } else {
                 navigate(-1);
             }
@@ -120,6 +121,7 @@ const WorkList = () => {
                 setFormData({ id: '', work_name: '', desc: '', work_code: '' });
                 setIsAddMode(false);
                 setEditId(null);
+                setSearchTerm('');
             } else {
                 toast.error(data.error || 'Failed to save work');
             }
