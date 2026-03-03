@@ -41,6 +41,8 @@ const AccountVoucherCreation = () => {
                 billDate: item.date ? new Date(item.date).toLocaleDateString('en-CA') : '',
                 partyName: item.partyName || 'N/A',
                 contract: item.WORK_CODE || '-',
+                WORK_CODE: item.WORK_CODE || null,
+                gp_id: item.HOLD_CODE || null,
                 gp: item.panchayat || '-',
                 zone: item.zone || '-',
                 dept: item.department_name || '',
