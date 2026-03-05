@@ -129,7 +129,9 @@ const Sidebar = () => {
                     icon: <Settings size={16} />,
                     subItems: [
                         { label: 'Department', icon: <RefreshCcw size={16} />, path: '/department' },
-                        { label: 'Work', icon: <FileText size={16} />, path: '/work' }
+                        { label: 'Work', icon: <FileText size={16} />, path: '/work' },
+                        { label: 'Zone', icon: <Circle size={16} />, path: '/zone' },
+                        { label: 'Panchayat', icon: <Circle size={16} />, path: '/panchayat' }
                     ]
                 }
             ]

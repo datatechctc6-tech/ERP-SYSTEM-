@@ -31,7 +31,9 @@ const RoleAssign = () => {
                 id: 'oth_master',
                 label: 'Other master',
                 items: [
-                    { id: 'dept', label: 'Department' }
+                    { id: 'dept', label: 'Department' },
+                    { id: 'zone', label: 'Zone' },
+                    { id: 'panchayat', label: 'Panchayat' }
                 ]
             }
         ],

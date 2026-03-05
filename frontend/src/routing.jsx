@@ -7,6 +7,8 @@ import Party from './pages/Party/Party'
 import PartyList from './pages/Party/PartyList'
 import DeptList from './pages/Department/DeptList'
 import WorkList from './pages/Work/WorkList'
+import PanchayatList from './pages/Panchayat/PanchayatList'
+import ZoneList from './pages/Zone/ZoneList'
 import AccountVoucherCreation from './pages/AccountVoucherCreation/AccountVoucherCreation'
 import AccountCreation from './pages/AccountCreation/AccountCreation'
 import UserCreate from './pages/Settings/UserCreate'
@@ -81,6 +83,14 @@ const router = createBrowserRouter([
       {
         path: '/work',
         element: <WorkList />,
+      },
+      {
+        path: '/zone',
+        element: <ZoneList />,
+      },
+      {
+        path: '/panchayat',
+        element: <PanchayatList />,
       },
       {
         path: '/account-voucher-creation',

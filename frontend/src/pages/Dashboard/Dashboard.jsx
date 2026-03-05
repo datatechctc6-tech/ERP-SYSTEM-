@@ -90,38 +90,45 @@ function Dashboard() {
     fetchStats();
   }, []);
 
-  const handleCloseWelcome = () => {
-    setShowWelcome(false);
-    sessionStorage.setItem('welcomeShown', 'true');
-  };
+  useEffect(() => {
+    if (showWelcome) {
+      const timer = setTimeout(() => {
+        setShowWelcome(false);
+        sessionStorage.setItem('welcomeShown', 'true');
+      }, 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [showWelcome]);
 
   return (
     <div className="dashboard-page h-[calc(100vh-80px)] overflow-hidden flex flex-col space-y-3 p-1">
 
       {/* Welcome Message Modal */}
       {showWelcome && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-2xl w-[90%] max-w-[420px] overflow-hidden animate-fadeIn">
-            {/* Header */}
-            <div className="bg-[#004d40] px-6 py-4 text-center">
-              <h2 className="text-xl font-black text-white tracking-wide">Welcome</h2>
-              <p className="text-[#a7ffeb] text-xs font-semibold mt-1">DATATECH ERP System</p>
-            </div>
-            {/* Body */}
-            <div className="px-6 py-5 text-center">
-              <p className="text-gray-700 text-sm font-semibold leading-relaxed">
-                Welcome to <span className="text-[#004d40] font-black">Datatech ERP System</span>
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-md transition-opacity duration-300">
+          <div className="relative bg-white/95 backdrop-blur-xl rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.3)] w-[90%] max-w-[400px] overflow-hidden border border-white/40 transform transition-all scale-100 animate-fadeIn p-8 text-center">
+            {/* Decorative background glow */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-teal-400/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div className="relative z-10 flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#004d40] to-teal-400 flex items-center justify-center shadow-lg mb-5 text-white ring-4 ring-teal-50">
+                <CheckCircle size={32} strokeWidth={2.5} />
+              </div>
+
+              <h2 className="text-2xl font-black text-gray-900 tracking-tight mb-1">
+                Welcome Back!
+              </h2>
+              <h3 className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-[#004d40] to-teal-500 uppercase tracking-widest mb-4">
+                Datatech ERP System
+              </h3>
+
+              <p className="text-gray-500 text-sm font-medium leading-relaxed mb-6 px-2">
+                Your enterprise resource planning solution is ready. Experience seamless operations and real-time analytics.
               </p>
-              <p className="text-gray-400 text-xs mt-2">Your enterprise resource planning solution is ready.</p>
-            </div>
-            {/* Footer */}
-            <div className="flex border-t border-gray-100">
-              <button
-                onClick={handleCloseWelcome}
-                className="flex-1 py-3 text-sm font-bold text-gray-500 hover:bg-gray-50 transition-colors cursor-pointer"
-              >
-                Cancel
-              </button>
+
+              <div className="flex items-center justify-center gap-2 text-teal-600 text-[10px] font-bold uppercase tracking-widest animate-pulse mt-4">
+                Loading Dashboard...
+              </div>
             </div>
           </div>
         </div>

@@ -26,6 +26,8 @@ const partyRoutes = require("./src/routes/party.routes");
 const departmentRoutes = require("./src/routes/department.routes");
 const transactionRoutes = require("./src/routes/transaction.routes");
 const workRoutes = require("./src/routes/work.routes");
+const zoneRoutes = require("./src/routes/zone.routes");
+const panchayatRoutes = require("./src/routes/panchayat.routes");
 
 // Basic test route (/) to check server is running
 app.get("/api/test", (req, res) => {
@@ -39,6 +41,8 @@ app.use("/api", partyRoutes);
 app.use("/api", departmentRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/works", workRoutes);
+app.use("/api/zones", zoneRoutes);
+app.use("/api/panchayats", panchayatRoutes);
 
 // Serve frontend build in production
 const frontendBuildPath = path.join(__dirname, "../frontend/dist");
