@@ -4,7 +4,7 @@ import { X, Save, Upload, User, MapPin, Phone, Mail, Map, Briefcase, Camera, Tra
 import toast, { Toaster } from 'react-hot-toast';
 import './Party.css';
 
-const FormInput = forwardRef(({ label, name, type = "text", placeholder, icon: Icon, isFullWidth = false, value, onChange, onKeyDown, maxLength, error, required }, ref) => (
+const FormInput = forwardRef(({ label, name, type = "text", placeholder, icon: Icon, isFullWidth = false, value, onChange, onKeyDown, maxLength, error, required, options, disabled }, ref) => (
     <div className={`flex items-center gap-3 mb-1 ${isFullWidth ? 'col-span-full' : ''}`}>
         <label className="party-label w-32 flex-shrink-0 flex items-center gap-2 text-[12px] font-black text-[#004d40] uppercase tracking-tight">
             {Icon && <Icon size={14} className="text-[#00695c]" />}
@@ -12,17 +12,40 @@ const FormInput = forwardRef(({ label, name, type = "text", placeholder, icon: I
             {required && <span className="text-red-500 text-sm">*</span>}
         </label>
         <div className="flex-1">
-            <input
-                ref={ref}
-                type={type}
-                name={name}
-                value={value}
-                onChange={onChange}
-                onKeyDown={onKeyDown}
-                placeholder={placeholder}
-                maxLength={maxLength}
-                className={`party-input w-full bg-[#f8fafc] border ${error ? 'border-red-400 focus:border-red-500 focus:bg-[#fdd55ce1]' : 'border-gray-300 focus:border-[#004d40] focus:bg-[#fdd55ce1]'} outline-none px-3 py-1.5 text-[13px] font-bold text-gray-800 transition-all placeholder:text-gray-400 placeholder:font-normal focus:text-black focus:placeholder:text-gray-600 rounded shadow-sm`}
-            />
+            {type === 'select' ? (
+                <select
+                    ref={ref}
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    onKeyDown={onKeyDown}
+                    disabled={disabled}
+                    onFocus={(e) => {
+                        try {
+                            if (!disabled) e.target.showPicker();
+                        } catch (err) { }
+                    }}
+                    className={`party-input w-full bg-[#f8fafc] border ${error ? 'border-red-400 focus:border-red-500 focus:bg-[#fdd55ce1]' : 'border-gray-300 focus:border-[#004d40] focus:bg-[#fdd55ce1]'} outline-none px-3 py-1.5 text-[13px] font-bold text-gray-800 transition-all focus:text-black rounded shadow-sm disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed`}
+                >
+                    <option value="">-- {placeholder} --</option>
+                    {options && options.map((opt, i) => (
+                        <option key={i} value={opt.value}>{opt.label}</option>
+                    ))}
+                </select>
+            ) : (
+                <input
+                    ref={ref}
+                    type={type}
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    onKeyDown={onKeyDown}
+                    placeholder={placeholder}
+                    maxLength={maxLength}
+                    disabled={disabled}
+                    className={`party-input w-full bg-[#f8fafc] border ${error ? 'border-red-400 focus:border-red-500 focus:bg-[#fdd55ce1]' : 'border-gray-300 focus:border-[#004d40] focus:bg-[#fdd55ce1]'} outline-none px-3 py-1.5 text-[13px] font-bold text-gray-800 transition-all placeholder:text-gray-400 placeholder:font-normal focus:text-black focus:placeholder:text-gray-600 rounded shadow-sm disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed`}
+                />
+            )}
             {error && <p className="party-error text-[10px] text-red-500 mt-0.5 font-semibold">{error}</p>}
         </div>
     </div>
@@ -83,6 +106,8 @@ const Party = () => {
 
     const [formData, setFormData] = useState(getInitialFormData);
     const [errors, setErrors] = useState({});
+    const [zones, setZones] = useState([]);
+    const [panchayats, setPanchayats] = useState([]);
     const [photoPreview, setPhotoPreview] = useState(
         isEditMode && editParty && editParty.photo
             ? `http://localhost:5000${editParty.photo}`
@@ -92,6 +117,39 @@ const Party = () => {
 
     // Check for saved draft on mount (only for create mode)
     useEffect(() => {
+        const fetchZones = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('http://localhost:5000/api/zones', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setZones(data);
+                }
+            } catch (err) {
+                console.error('Error fetching zones:', err);
+            }
+        };
+
+        const fetchPanchayats = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('http://localhost:5000/api/panchayats', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    setPanchayats(data);
+                }
+            } catch (err) {
+                console.error('Error fetching panchayats:', err);
+            }
+        };
+
+        fetchZones();
+        fetchPanchayats();
+
         if (!isEditMode) {
             try {
                 const saved = localStorage.getItem(DRAFT_KEY);
@@ -187,7 +245,15 @@ const Party = () => {
 
             // Move to next field
             if (currentIndex < fieldOrder.length - 1) {
-                fieldOrder[currentIndex + 1].current?.focus();
+                const nextRef = fieldOrder[currentIndex + 1];
+                nextRef.current?.focus();
+                setTimeout(() => {
+                    try {
+                        if (nextRef.current && nextRef.current.tagName === 'SELECT') {
+                            nextRef.current.showPicker();
+                        }
+                    } catch (err) { }
+                }, 50);
             }
         }
 
@@ -324,8 +390,33 @@ const Party = () => {
                                 </h2>
                                 <div className="grid grid-cols-2 gap-x-6">
                                     <FormInput ref={emailRef} label="Email ID" name="Gmail_Id" type="email" icon={Mail} placeholder="name@email.com" value={formData.Gmail_Id} onChange={handleInputChange} onKeyDown={(e) => handleKeyDown(e, emailRef)} error={errors.email} required />
-                                    <FormInput ref={gramPanchayatRef} label="Panchayat" name="gp_Name" icon={Briefcase} placeholder="Gram Panchayat" value={formData.gp_Name} onChange={handleInputChange} onKeyDown={(e) => handleKeyDown(e, gramPanchayatRef)} />
-                                    <FormInput ref={zoneRef} label="Zone" name="Zone_Name" icon={Briefcase} placeholder="Zone / Area" value={formData.Zone_Name} onChange={handleInputChange} onKeyDown={(e) => handleKeyDown(e, zoneRef)} />
+                                    <FormInput
+                                        ref={gramPanchayatRef}
+                                        label="Panchayat"
+                                        name="gp_Name"
+                                        type="select"
+                                        icon={Briefcase}
+                                        placeholder="Select Panchayat"
+                                        value={formData.gp_Name}
+                                        onChange={handleInputChange}
+                                        onKeyDown={(e) => handleKeyDown(e, gramPanchayatRef)}
+                                        disabled={!formData.Zone_Name}
+                                        options={panchayats
+                                            .filter(p => !formData.Zone_Name || String(p.ZONE_CODE) === String(formData.Zone_Name))
+                                            .map(p => ({ value: p.PANCHAYAT_NAME, label: p.PANCHAYAT_NAME }))}
+                                    />
+                                    <FormInput
+                                        ref={zoneRef}
+                                        label="Zone"
+                                        name="Zone_Name"
+                                        type="select"
+                                        icon={Briefcase}
+                                        placeholder="Select Zone"
+                                        value={formData.Zone_Name}
+                                        onChange={handleInputChange}
+                                        onKeyDown={(e) => handleKeyDown(e, zoneRef)}
+                                        options={zones.map(z => ({ value: z.ID || z.SL_NO, label: `${z.ZONE_CODE} - ${z.ZONE_NAME}` }))}
+                                    />
                                     <FormInput ref={designationRef} label="Designation" name="designation" icon={Briefcase} placeholder="e.g. Proprietor" value={formData.designation} onChange={handleInputChange} onKeyDown={(e) => handleKeyDown(e, designationRef)} />
                                 </div>
                             </div>

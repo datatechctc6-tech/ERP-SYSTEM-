@@ -15,7 +15,9 @@ import UserCreate from './pages/Settings/UserCreate'
 import RoleAssign from './pages/Settings/RoleAssign'
 import UserList from './pages/Settings/UserList'
 import AdminPin from './pages/Settings/AdminPin'
+import UserHistory from './pages/Settings/UserHistory'
 import CompanyRegistration from './pages/CompanyRegistration/CompanyRegistration'
+
 import Register from './pages/Register/Register'
 import MainLayout from './components/MainLayout'
 import PrivateRoute from './components/PrivateRoute'
@@ -120,6 +122,11 @@ const router = createBrowserRouter([
         path: '/settings/admin-pin',
         element: <AdminPin />,
       },
+      {
+        path: '/settings/user-history',
+        element: <UserHistory />,
+      },
+
     ],
   },
 ])

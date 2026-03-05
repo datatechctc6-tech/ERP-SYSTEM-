@@ -67,10 +67,14 @@ const PanchayatList = () => {
         fetchZones();
     }, []);
 
-    const filteredPanchayats = panchayats.filter(p =>
-        (p.PANCHAYAT_NAME || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (p.PANCHAYAT_CODE || '').toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredPanchayats = panchayats.filter(p => {
+        const matchingZone = zones.find(z => (z.ID || z.SL_NO) == p.ZONE_CODE);
+        const zoneName = matchingZone ? matchingZone.ZONE_NAME : String(p.ZONE_CODE || '');
+        return (
+            (p.PANCHAYAT_NAME || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+            zoneName.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    });
 
     const handleSearchChange = (value) => {
         setSearchTerm(value);
@@ -215,7 +219,15 @@ const PanchayatList = () => {
                                         }}
                                         className="flex-1 border border-gray-300 px-2 py-1 text-sm bg-white focus:bg-[#fdd55ce1] focus:text-black focus:outline-none focus:border-[#00695c]"
                                         onKeyDown={(e) => {
-                                            if (e.key === 'Enter') { e.preventDefault(); descInputRef.current?.focus(); }
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                                descInputRef.current?.focus();
+                                                setTimeout(() => {
+                                                    try {
+                                                        descInputRef.current?.showPicker();
+                                                    } catch (err) { }
+                                                }, 50);
+                                            }
                                         }}
                                     />
                                 </div>
@@ -235,8 +247,20 @@ const PanchayatList = () => {
                                         onChange={(e) => setFormData({ ...formData, zone_code: e.target.value })}
                                         className="flex-1 border border-gray-300 px-2 py-1 text-sm bg-white focus:bg-[#fdd55ce1] focus:text-black focus:outline-none focus:border-[#00695c]"
                                         onKeyDown={(e) => {
-                                            if (e.key === 'Enter') { e.preventDefault(); saveBtnRef.current?.focus(); }
+                                            if (e.key === 'Enter') {
+                                                e.preventDefault();
+                                                if (!formData.zone_code) {
+                                                    try {
+                                                        e.currentTarget.showPicker();
+                                                    } catch (err) {
+                                                        saveBtnRef.current?.focus();
+                                                    }
+                                                } else {
+                                                    saveBtnRef.current?.focus();
+                                                }
+                                            }
                                             if (e.key === 'ArrowUp') { e.preventDefault(); nameInputRef.current?.focus(); }
+                                            if (e.key === 'ArrowRight') { e.preventDefault(); saveBtnRef.current?.focus(); }
                                         }}
                                     >
                                         <option value="">-- Select Zone --</option>
@@ -294,6 +318,7 @@ const PanchayatList = () => {
                                             <td className="border border-gray-100 px-2 py-1.5">
                                                 <div className="flex justify-center gap-1">
                                                     <button onClick={(e) => { e.stopPropagation(); handleEdit(p); }} className="p-1 text-[#00695c] hover:bg-[#e0f2f1] rounded"><Edit2 size={12} /></button>
+                                                    <button onClick={(e) => { e.stopPropagation(); handleDelete(p.ID || p.SL_NO); }} className="p-1 text-red-500 hover:bg-red-50 rounded"><Trash2 size={12} /></button>
                                                 </div>
                                             </td>
                                         </tr>

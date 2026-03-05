@@ -1,4 +1,6 @@
 const panchayatService = require('../services/panchayat.service');
+const logActivity = require('../utils/activityLogger');
+
 
 exports.createPanchayat = async (req, res) => {
     try {
@@ -15,6 +17,8 @@ exports.createPanchayat = async (req, res) => {
             panchayat_code: result.PANCHAYAT_CODE,
             sl_no: result.SL_NO
         });
+        logActivity(req, 'CREATE_PANCHAYAT', `Created panchayat: ${PANCHAYAT_NAME}`);
+
     } catch (error) {
         if (error.message === 'Panchayat name already exists') {
             return res.status(409).json({ error: error.message });
@@ -50,6 +54,8 @@ exports.updatePanchayat = async (req, res) => {
         }
 
         res.status(200).json({ message: 'Panchayat updated successfully' });
+        logActivity(req, 'UPDATE_PANCHAYAT', `Updated panchayat ID: ${id} (${PANCHAYAT_NAME})`);
+
     } catch (error) {
         if (error.message === 'Panchayat name already exists') {
             return res.status(409).json({ error: error.message });
@@ -70,6 +76,8 @@ exports.deletePanchayat = async (req, res) => {
         }
 
         res.status(200).json({ message: 'Panchayat deleted successfully' });
+        logActivity(req, 'DELETE_PANCHAYAT', `Deleted panchayat ID: ${id}`);
+
     } catch (error) {
         console.error('Error deleting panchayat:', error);
         res.status(500).json({ error: 'Internal server error while deleting panchayat' });

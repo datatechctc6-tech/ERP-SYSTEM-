@@ -1,4 +1,6 @@
 const transactionService = require('../services/transaction.service');
+const logActivity = require('../utils/activityLogger');
+
 
 exports.getDashboardStats = async (req, res) => {
     try {
@@ -39,6 +41,8 @@ exports.createTransaction = async (req, res) => {
     try {
         const data = await transactionService.createTransaction(req.body);
         res.status(201).json(data);
+        logActivity(req, 'CREATE_TRANSACTION', `Created transaction ID: ${data.id || 'New'}`);
+
     } catch (error) {
         console.error('Error creating transaction:', error);
         res.status(500).json({ error: error.message || 'Internal Server Error' });
@@ -56,6 +60,8 @@ exports.updateTransaction = async (req, res) => {
         }
 
         res.status(200).json({ message: 'Transaction updated successfully' });
+        logActivity(req, 'UPDATE_TRANSACTION', `Updated transaction ID: ${id}`);
+
     } catch (error) {
         console.error(`Error updating transaction ${req.params.id}:`, error);
         res.status(500).json({ error: error.message || 'Internal Server Error' });
@@ -72,6 +78,8 @@ exports.deleteTransaction = async (req, res) => {
         }
 
         res.status(200).json({ message: 'Transaction deleted successfully' });
+        logActivity(req, 'DELETE_TRANSACTION', `Deleted transaction ID: ${id}`);
+
     } catch (error) {
         console.error(`Error deleting transaction ${req.params.id}:`, error);
         res.status(500).json({ error: error.message || 'Internal Server Error' });

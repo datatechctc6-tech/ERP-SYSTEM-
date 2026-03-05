@@ -1,4 +1,6 @@
 const partyService = require("../services/party.service");
+const logActivity = require("../utils/activityLogger");
+
 
 exports.searchGPs = async (req, res) => {
   try {
@@ -50,6 +52,9 @@ exports.createParty = async (req, res) => {
       hold_code: result.hold_code,
       sl_no: result.sl_no,
     });
+
+    logActivity(req, 'CREATE_PARTY', `Created party: ${FULL_NAME} (Phone: ${PHONE})`);
+
   } catch (error) {
     console.error("Error saving party data:", error);
     res
@@ -93,6 +98,9 @@ exports.updateParty = async (req, res) => {
     }
 
     res.status(200).json({ message: "Party updated successfully" });
+
+    logActivity(req, 'UPDATE_PARTY', `Updated party ID: ${id} (${FULL_NAME})`);
+
   } catch (error) {
     console.error("Error updating party:", error);
     res
@@ -111,6 +119,9 @@ exports.deleteParty = async (req, res) => {
     }
 
     res.status(200).json({ message: "Party deleted successfully" });
+
+    logActivity(req, 'DELETE_PARTY', `Deleted party ID: ${id}`);
+
   } catch (error) {
     console.error("Error deleting party:", error);
     res

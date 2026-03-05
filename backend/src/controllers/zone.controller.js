@@ -1,4 +1,6 @@
 const zoneService = require('../services/zone.service');
+const logActivity = require('../utils/activityLogger');
+
 
 exports.createZone = async (req, res) => {
     try {
@@ -15,6 +17,8 @@ exports.createZone = async (req, res) => {
             zone_code: result.ZONE_CODE,
             sl_no: result.SL_NO
         });
+        logActivity(req, 'CREATE_ZONE', `Created zone: ${ZONE_NAME}`);
+
     } catch (error) {
         if (error.message === 'Zone name already exists') {
             return res.status(409).json({ error: error.message });
@@ -50,6 +54,8 @@ exports.updateZone = async (req, res) => {
         }
 
         res.status(200).json({ message: 'Zone updated successfully' });
+        logActivity(req, 'UPDATE_ZONE', `Updated zone ID: ${id} (${ZONE_NAME})`);
+
     } catch (error) {
         if (error.message === 'Zone name already exists') {
             return res.status(409).json({ error: error.message });
@@ -70,6 +76,8 @@ exports.deleteZone = async (req, res) => {
         }
 
         res.status(200).json({ message: 'Zone deleted successfully' });
+        logActivity(req, 'DELETE_ZONE', `Deleted zone ID: ${id}`);
+
     } catch (error) {
         console.error('Error deleting zone:', error);
         res.status(500).json({ error: 'Internal server error while deleting zone' });

@@ -1,4 +1,6 @@
 const workService = require('../services/work.service');
+const logActivity = require('../utils/activityLogger');
+
 
 exports.createWork = async (req, res) => {
     try {
@@ -15,6 +17,8 @@ exports.createWork = async (req, res) => {
             work_code: result.WORK_CODE,
             sl_no: result.SL_NO
         });
+        logActivity(req, 'CREATE_WORK', `Created work: ${WORK_NAME}`);
+
     } catch (error) {
         if (error.message === 'Work name already exists') {
             return res.status(409).json({ error: error.message });
@@ -50,6 +54,8 @@ exports.updateWork = async (req, res) => {
         }
 
         res.status(200).json({ message: 'Work updated successfully' });
+        logActivity(req, 'UPDATE_WORK', `Updated work ID: ${id} (${WORK_NAME})`);
+
     } catch (error) {
         if (error.message === 'Work name already exists') {
             return res.status(409).json({ error: error.message });
@@ -70,6 +76,8 @@ exports.deleteWork = async (req, res) => {
         }
 
         res.status(200).json({ message: 'Work deleted successfully' });
+        logActivity(req, 'DELETE_WORK', `Deleted work ID: ${id}`);
+
     } catch (error) {
         console.error('Error deleting work:', error);
         res.status(500).json({ error: 'Internal server error while deleting work' });

@@ -50,13 +50,25 @@ const Header = () => {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (token) {
+                await fetch('http://localhost:5000/api/logout', {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+            }
+        } catch (error) {
+            console.error('Logout error:', error);
+        }
         // Clear session if any
         localStorage.clear();
         sessionStorage.clear();
         // Redirect to login
         navigate('/login', { replace: true });
     };
+
 
     return (
         <header className="fixed top-0 left-0 right-0 h-14 bg-[#004d40] text-white flex items-center px-4 z-50 shadow-md">

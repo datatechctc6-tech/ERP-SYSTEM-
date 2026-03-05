@@ -18,8 +18,10 @@ import {
     UserPlus,
     Shield,
     List,
-    KeyRound
+    KeyRound,
+    History
 } from 'lucide-react';
+
 
 const NavItem = ({ item, isSidebarOpen, openMenus, toggleMenu, handleNavigate, depth = 0 }) => {
     const hasSubItems = item.subItems && item.subItems.length > 0;
@@ -156,8 +158,10 @@ const Sidebar = () => {
                 { label: 'Role Assign', icon: <Shield size={16} />, path: '/settings/role-assign' },
                 { label: 'User List', icon: <List size={16} />, path: '/settings/user-list' },
                 { label: 'Admin Pin', icon: <KeyRound size={16} />, path: '/settings/admin-pin' },
+                { label: 'User History', icon: <History size={16} />, path: '/settings/user-history' }
             ]
         },
+
     ];
 
     return (

@@ -1,6 +1,10 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const UserModel = require('../models/userModel');
+const UserHistoryModel = require('../models/userHistoryModel');
+const UserSessionModel = require('../models/userSessionModel');
+
+
 
 const registerUser = async (req, res) => {
     try {
@@ -65,6 +69,19 @@ const loginUser = async (req, res) => {
             { expiresIn: '1d' }
         );
 
+        // Log successful login
+        await UserHistoryModel.logAction(
+            user.id,
+            user.name,
+            'LOGIN',
+            `User logged in via email/password`,
+            req.ip
+        );
+
+        // Start session tracking
+        await UserSessionModel.startSession(user.id, req.ip);
+
+
         return res.status(200).json({
             message: 'Login successful',
             token,
@@ -125,6 +142,19 @@ const loginWithPin = async (req, res) => {
             { expiresIn: '1d' }
         );
 
+        // Log successful login
+        await UserHistoryModel.logAction(
+            user.id,
+            user.name,
+            'LOGIN_PIN',
+            `User logged in via PIN`,
+            req.ip
+        );
+
+        // Start session tracking
+        await UserSessionModel.startSession(user.id, req.ip);
+
+
         return res.status(200).json({
             message: 'Login successful',
             token,
@@ -141,10 +171,25 @@ const loginWithPin = async (req, res) => {
     }
 };
 
+const logoutUser = async (req, res) => {
+    try {
+        if (req.user) {
+            await UserSessionModel.endSession(req.user.id);
+            await UserHistoryModel.logAction(req.user.id, req.user.name || 'User', 'LOGOUT', 'User logged out', req.ip);
+        }
+        return res.status(200).json({ message: 'Logout successful' });
+    } catch (error) {
+        console.error('Logout error:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
 module.exports = {
     registerUser,
     loginUser,
     getAllUsers,
     setPin,
-    loginWithPin
+    loginWithPin,
+    logoutUser
 };
+

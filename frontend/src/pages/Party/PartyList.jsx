@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, Edit2, Trash2, MapPin, Phone, User, MoreVertical, XCircle } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, MapPin, Phone, User, MoreVertical, XCircle, Briefcase } from 'lucide-react';
 import './PartyList.css';
 
 const PartyList = () => {
     const navigate = useNavigate();
     const [searchTerm, setSearchTerm] = useState('');
+    const [filterType, setFilterType] = useState('all');
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [parties, setParties] = useState([]);
     const searchInputRef = useRef(null);
@@ -90,10 +91,30 @@ const PartyList = () => {
         }
     };
 
-    const filteredParties = parties.filter(party =>
-        (party.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (party.mobile || '').includes(searchTerm)
-    );
+    const filteredParties = parties.filter(party => {
+        const search = searchTerm.toLowerCase();
+        if (!search) return true;
+
+        switch (filterType) {
+            case 'name':
+                return (party.name || '').toLowerCase().includes(search);
+            case 'address':
+                return (party.address || '').toLowerCase().includes(search);
+            case 'mobile':
+                return (party.mobile || '').toLowerCase().includes(search);
+
+            case 'panchayat':
+                return (party.gramPanchayat || '').toLowerCase().includes(search);
+            case 'all':
+            default:
+                return (
+                    (party.name || '').toLowerCase().includes(search) ||
+                    (party.address || '').toLowerCase().includes(search) ||
+                    (party.mobile || '').toLowerCase().includes(search) ||
+                    (party.gramPanchayat || '').toLowerCase().includes(search)
+                );
+        }
+    });
 
     return (
         <div className="partylist-page h-full w-full bg-[#f0f4f4] flex overflow-hidden">
@@ -112,12 +133,28 @@ const PartyList = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
+                        <select
+                            value={filterType}
+                            onChange={(e) => {
+                                setFilterType(e.target.value);
+                                setSelectedIndex(0);
+                                searchInputRef.current?.focus();
+                            }}
+                            className="bg-[#f8fafc] border border-gray-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-[#004d40] text-gray-700 font-medium cursor-pointer"
+                        >
+                            <option value="all">All Filters</option>
+                            <option value="name">Name</option>
+                            <option value="address">Address</option>
+                            <option value="mobile">Mobile</option>
+
+                            <option value="panchayat">Panchayat</option>
+                        </select>
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                             <input
                                 type="text"
                                 ref={searchInputRef}
-                                placeholder="Search by name or mobile..."
+                                placeholder={`Search ${filterType === 'all' ? 'parties' : `by ${filterType}`}...`}
                                 value={searchTerm}
                                 onChange={(e) => handleSearchChange(e.target.value)}
                                 onKeyDown={handleKeyDown}
@@ -136,6 +173,8 @@ const PartyList = () => {
                                     <th className="pl-th px-3 font-black uppercase tracking-widest border border-[#00332e]">Party Name</th>
                                     <th className="pl-th px-3 font-black uppercase tracking-widest border border-[#00332e]">Address</th>
                                     <th className="pl-th px-3 font-black uppercase tracking-widest border border-[#00332e]">Mobile</th>
+
+                                    <th className="pl-th px-3 font-black uppercase tracking-widest border border-[#00332e]">Panchayat</th>
                                     <th className="pl-th px-3 font-black uppercase tracking-widest border border-[#00332e] text-center">Action</th>
                                 </tr>
                             </thead>
@@ -166,6 +205,13 @@ const PartyList = () => {
                                             <div className="flex items-center gap-2">
                                                 <Phone size={12} className="text-gray-400 pl-icon" />
                                                 {party.mobile}
+                                            </div>
+                                        </td>
+
+                                        <td className="pl-td px-3 pl-td-text text-gray-600 border border-gray-200">
+                                            <div className="flex items-center gap-2">
+                                                <Briefcase size={12} className="text-gray-400 pl-icon" />
+                                                {party.gramPanchayat || '-'}
                                             </div>
                                         </td>
                                         <td className="pl-td px-3 border border-gray-200 pl-td-actions">

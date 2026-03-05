@@ -1,0 +1,2177 @@
+﻿commit 57fe11bb58c7b916fa334dc75a930470a586e917
+Author: rajeshjena986125 <rajeshjena986125@gmail.com>
+Date:   Thu Mar 5 12:12:52 2026 +0530
+
+    feat: Implement Zone and Panchayat management with associated database schema updates and frontend/backend components.
+
+diff --git a/backend/alter_panchayat_table.js b/backend/alter_panchayat_table.js
+new file mode 100644
+index 0000000..3913c49
+--- /dev/null
++++ b/backend/alter_panchayat_table.js
+@@ -0,0 +1,23 @@
++const db = require('./src/config/db');
++
++async function modifyPanchayatTable() {
++    try {
++        console.log("Checking if ZONE_CODE exists in panchayatms...");
++        const [columns] = await db.execute("SHOW COLUMNS FROM panchayatms LIKE 'ZONE_CODE'");
++
++        if (columns.length === 0) {
++            console.log("Adding ZONE_CODE column to panchayatms...");
++            await db.execute("ALTER TABLE panchayatms ADD COLUMN ZONE_CODE varchar(50) DEFAULT NULL AFTER PANCHAYAT_NAME");
++            console.log("Added ZONE_CODE successfully");
++        } else {
++            console.log("ZONE_CODE column already exists");
++        }
++
++    } catch (err) {
++        console.error("Error modifying table:", err);
++    } finally {
++        process.exit();
++    }
++}
++
++modifyPanchayatTable();
+diff --git a/backend/app.js b/backend/app.js
+index 0f58108..0dcfb62 100644
+--- a/backend/app.js
++++ b/backend/app.js
+@@ -26,6 +26,8 @@ const partyRoutes = require("./src/routes/party.routes");
+ const departmentRoutes = require("./src/routes/department.routes");
+ const transactionRoutes = require("./src/routes/transaction.routes");
+ const workRoutes = require("./src/routes/work.routes");
++const zoneRoutes = require("./src/routes/zone.routes");
++const panchayatRoutes = require("./src/routes/panchayat.routes");
+ 
+ // Basic test route (/) to check server is running
+ app.get("/api/test", (req, res) => {
+@@ -39,6 +41,8 @@ app.use("/api", partyRoutes);
+ app.use("/api", departmentRoutes);
+ app.use("/api/transactions", transactionRoutes);
+ app.use("/api/works", workRoutes);
++app.use("/api/zones", zoneRoutes);
++app.use("/api/panchayats", panchayatRoutes);
+ 
+ // Serve frontend build in production
+ const frontendBuildPath = path.join(__dirname, "../frontend/dist");
+diff --git a/backend/check_schema.js b/backend/check_schema.js
+new file mode 100644
+index 0000000..4aa9412
+--- /dev/null
++++ b/backend/check_schema.js
+@@ -0,0 +1,15 @@
++const db = require('./src/config/db');
++const fs = require('fs');
++
++async function checkSchema() {
++    try {
++        const [rows] = await db.execute("SHOW CREATE TABLE workms");
++        fs.writeFileSync('schema.txt', rows[0]['Create Table']);
++    } catch (err) {
++        console.error(err);
++    } finally {
++        process.exit();
++    }
++}
++
++checkSchema();
+diff --git a/backend/create_tables.js b/backend/create_tables.js
+new file mode 100644
+index 0000000..5a09470
+--- /dev/null
++++ b/backend/create_tables.js
+@@ -0,0 +1,37 @@
++const db = require('./src/config/db');
++
++async function createTables() {
++    try {
++        console.log("Creating zonems table...");
++        await db.execute(`
++            CREATE TABLE IF NOT EXISTS \`zonems\` (
++              \`SL_NO\` int NOT NULL AUTO_INCREMENT,
++              \`T_V_DATE\` date DEFAULT NULL,
++              \`ZONE_NAME\` varchar(100) DEFAULT NULL,
++              \`DESCRIPTION\` varchar(255) DEFAULT NULL,
++              \`ZONE_CODE\` int DEFAULT NULL,
++              PRIMARY KEY (\`SL_NO\`),
++              UNIQUE KEY \`ZONE_CODE\` (\`ZONE_CODE\`)
++            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
++        `);
++        console.log("Creating panchayatms table...");
++        await db.execute(`
++            CREATE TABLE IF NOT EXISTS \`panchayatms\` (
++              \`SL_NO\` int NOT NULL AUTO_INCREMENT,
++              \`T_V_DATE\` date DEFAULT NULL,
++              \`PANCHAYAT_NAME\` varchar(100) DEFAULT NULL,
++              \`DESCRIPTION\` varchar(255) DEFAULT NULL,
++              \`PANCHAYAT_CODE\` int DEFAULT NULL,
++              PRIMARY KEY (\`SL_NO\`),
++              UNIQUE KEY \`PANCHAYAT_CODE\` (\`PANCHAYAT_CODE\`)
++            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
++        `);
++        console.log("Tables created successfully");
++    } catch (err) {
++        console.error("Error creating tables:", err);
++    } finally {
++        process.exit();
++    }
++}
++
++createTables();
+diff --git a/backend/schema.txt b/backend/schema.txt
+new file mode 100644
+index 0000000..79c28ac
+--- /dev/null
++++ b/backend/schema.txt
+@@ -0,0 +1,9 @@
++CREATE TABLE `workms` (
++  `SL_NO` int NOT NULL AUTO_INCREMENT,
++  `T_V_DATE` date DEFAULT NULL,
++  `WORK_NAME` varchar(100) DEFAULT NULL,
++  `DESCRIPTION` varchar(255) DEFAULT NULL,
++  `WORK_CODE` int DEFAULT NULL,
++  PRIMARY KEY (`SL_NO`),
++  UNIQUE KEY `WORK_CODE` (`WORK_CODE`)
++) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+\ No newline at end of file
+diff --git a/backend/src/controllers/panchayat.controller.js b/backend/src/controllers/panchayat.controller.js
+new file mode 100644
+index 0000000..f102611
+--- /dev/null
++++ b/backend/src/controllers/panchayat.controller.js
+@@ -0,0 +1,77 @@
++const panchayatService = require('../services/panchayat.service');
++
++exports.createPanchayat = async (req, res) => {
++    try {
++        const { PANCHAYAT_NAME } = req.body;
++
++        if (!PANCHAYAT_NAME) {
++            return res.status(400).json({ error: 'PANCHAYAT_NAME is required' });
++        }
++
++        const result = await panchayatService.createPanchayat(req.body);
++
++        res.status(201).json({
++            message: 'Panchayat created successfully',
++            panchayat_code: result.PANCHAYAT_CODE,
++            sl_no: result.SL_NO
++        });
++    } catch (error) {
++        if (error.message === 'Panchayat name already exists') {
++            return res.status(409).json({ error: error.message });
++        }
++        console.error('Error creating panchayat:', error);
++        res.status(500).json({ error: 'Internal server error while creating panchayat' });
++    }
++};
++
++exports.getPanchayats = async (req, res) => {
++    try {
++        const panchayats = await panchayatService.getPanchayats();
++        res.status(200).json(panchayats);
++    } catch (error) {
++        console.error('Error fetching panchayats:', error);
++        res.status(500).json({ error: 'Internal server error while fetching panchayats' });
++    }
++};
++
++exports.updatePanchayat = async (req, res) => {
++    try {
++        const { id } = req.params;
++        const { PANCHAYAT_NAME } = req.body;
++
++        if (!PANCHAYAT_NAME) {
++            return res.status(400).json({ error: 'PANCHAYAT_NAME is required' });
++        }
++
++        const updated = await panchayatService.updatePanchayat(id, req.body);
++
++        if (!updated) {
++            return res.status(404).json({ error: 'Panchayat not found' });
++        }
++
++        res.status(200).json({ message: 'Panchayat updated successfully' });
++    } catch (error) {
++        if (error.message === 'Panchayat name already exists') {
++            return res.status(409).json({ error: error.message });
++        }
++        console.error('Error updating panchayat:', error);
++        res.status(500).json({ error: 'Internal server error while updating panchayat' });
++    }
++};
++
++exports.deletePanchayat = async (req, res) => {
++    try {
++        const { id } = req.params;
++
++        const deleted = await panchayatService.deletePanchayat(id);
++
++        if (!deleted) {
++            return res.status(404).json({ error: 'Panchayat not found' });
++        }
++
++        res.status(200).json({ message: 'Panchayat deleted successfully' });
++    } catch (error) {
++        console.error('Error deleting panchayat:', error);
++        res.status(500).json({ error: 'Internal server error while deleting panchayat' });
++    }
++};
+diff --git a/backend/src/controllers/zone.controller.js b/backend/src/controllers/zone.controller.js
+new file mode 100644
+index 0000000..066857d
+--- /dev/null
++++ b/backend/src/controllers/zone.controller.js
+@@ -0,0 +1,77 @@
++const zoneService = require('../services/zone.service');
++
++exports.createZone = async (req, res) => {
++    try {
++        const { ZONE_NAME } = req.body;
++
++        if (!ZONE_NAME) {
++            return res.status(400).json({ error: 'ZONE_NAME is required' });
++        }
++
++        const result = await zoneService.createZone(req.body);
++
++        res.status(201).json({
++            message: 'Zone created successfully',
++            zone_code: result.ZONE_CODE,
++            sl_no: result.SL_NO
++        });
++    } catch (error) {
++        if (error.message === 'Zone name already exists') {
++            return res.status(409).json({ error: error.message });
++        }
++        console.error('Error creating zone:', error);
++        res.status(500).json({ error: 'Internal server error while creating zone' });
++    }
++};
++
++exports.getZones = async (req, res) => {
++    try {
++        const zones = await zoneService.getZones();
++        res.status(200).json(zones);
++    } catch (error) {
++        console.error('Error fetching zones:', error);
++        res.status(500).json({ error: 'Internal server error while fetching zones' });
++    }
++};
++
++exports.updateZone = async (req, res) => {
++    try {
++        const { id } = req.params;
++        const { ZONE_NAME } = req.body;
++
++        if (!ZONE_NAME) {
++            return res.status(400).json({ error: 'ZONE_NAME is required' });
++        }
++
++        const updated = await zoneService.updateZone(id, req.body);
++
++        if (!updated) {
++            return res.status(404).json({ error: 'Zone not found' });
++        }
++
++        res.status(200).json({ message: 'Zone updated successfully' });
++    } catch (error) {
++        if (error.message === 'Zone name already exists') {
++            return res.status(409).json({ error: error.message });
++        }
++        console.error('Error updating zone:', error);
++        res.status(500).json({ error: 'Internal server error while updating zone' });
++    }
++};
++
++exports.deleteZone = async (req, res) => {
++    try {
++        const { id } = req.params;
++
++        const deleted = await zoneService.deleteZone(id);
++
++        if (!deleted) {
++            return res.status(404).json({ error: 'Zone not found' });
++        }
++
++        res.status(200).json({ message: 'Zone deleted successfully' });
++    } catch (error) {
++        console.error('Error deleting zone:', error);
++        res.status(500).json({ error: 'Internal server error while deleting zone' });
++    }
++};
+diff --git a/backend/src/routes/panchayat.routes.js b/backend/src/routes/panchayat.routes.js
+new file mode 100644
+index 0000000..091c226
+--- /dev/null
++++ b/backend/src/routes/panchayat.routes.js
+@@ -0,0 +1,11 @@
++const express = require('express');
++const router = express.Router();
++const panchayatController = require('../controllers/panchayat.controller');
++const authMiddleware = require('../middlewares/authMiddleware');
++
++router.post('/', authMiddleware, panchayatController.createPanchayat);
++router.get('/', authMiddleware, panchayatController.getPanchayats);
++router.put('/:id', authMiddleware, panchayatController.updatePanchayat);
++router.delete('/:id', authMiddleware, panchayatController.deletePanchayat);
++
++module.exports = router;
+diff --git a/backend/src/routes/zone.routes.js b/backend/src/routes/zone.routes.js
+new file mode 100644
+index 0000000..1a01057
+--- /dev/null
++++ b/backend/src/routes/zone.routes.js
+@@ -0,0 +1,11 @@
++const express = require('express');
++const router = express.Router();
++const zoneController = require('../controllers/zone.controller');
++const authMiddleware = require('../middlewares/authMiddleware');
++
++router.post('/', authMiddleware, zoneController.createZone);
++router.get('/', authMiddleware, zoneController.getZones);
++router.put('/:id', authMiddleware, zoneController.updateZone);
++router.delete('/:id', authMiddleware, zoneController.deleteZone);
++
++module.exports = router;
+diff --git a/backend/src/services/panchayat.service.js b/backend/src/services/panchayat.service.js
+new file mode 100644
+index 0000000..66b9fb7
+--- /dev/null
++++ b/backend/src/services/panchayat.service.js
+@@ -0,0 +1,97 @@
++const db = require('../config/db');
++
++exports.createPanchayat = async (panchayatData) => {
++    try {
++        const { PANCHAYAT_NAME, ZONE_CODE } = panchayatData;
++
++        // Check for duplicate PANCHAYAT_NAME
++        const [existing] = await db.execute('SELECT PANCHAYAT_NAME FROM panchayatms WHERE PANCHAYAT_NAME = ?', [PANCHAYAT_NAME]);
++        if (existing.length > 0) {
++            throw new Error('Panchayat name already exists');
++        }
++
++        // Generate PANCHAYAT_CODE as integer since schema is INT
++        const [maxRow] = await db.execute("SELECT MAX(PANCHAYAT_CODE) as maxCode FROM panchayatms");
++        const nextNum = (maxRow[0].maxCode || 0) + 1;
++
++        const query = `
++            INSERT INTO panchayatms (
++                PANCHAYAT_NAME, ZONE_CODE, PANCHAYAT_CODE, T_V_DATE
++            ) VALUES (?, ?, ?, CURDATE())
++        `;
++
++        const values = [PANCHAYAT_NAME, ZONE_CODE || null, nextNum];
++        const [result] = await db.execute(query, values);
++
++        return {
++            PANCHAYAT_CODE: `PN${nextNum.toString().padStart(3, '0')}`,
++            SL_NO: result.insertId
++        };
++    } catch (error) {
++        throw error;
++    }
++};
++
++exports.getPanchayats = async () => {
++    try {
++        const query = `
++            SELECT SL_NO, ID, PANCHAYAT_CODE, PANCHAYAT_NAME, ZONE_CODE 
++            FROM panchayatms 
++            ORDER BY SL_NO ASC
++        `;
++        const [rows] = await db.execute(query);
++
++        return rows.map(row => ({
++            ...row,
++            PANCHAYAT_CODE: row.PANCHAYAT_CODE ? `PN${row.PANCHAYAT_CODE.toString().padStart(3, '0')}` : ''
++        }));
++    } catch (error) {
++        const [rows] = await db.execute(`
++            SELECT *
++            FROM panchayatms 
++        `);
++        return rows.map(row => ({
++            ...row,
++            PANCHAYAT_CODE: row.PANCHAYAT_CODE ? `PN${row.PANCHAYAT_CODE.toString().padStart(3, '0')}` : ''
++        }));
++    }
++};
++
++exports.updatePanchayat = async (id, panchayatData) => {
++    try {
++        const { PANCHAYAT_NAME, ZONE_CODE } = panchayatData;
++
++        const [columns] = await db.execute("SHOW COLUMNS FROM panchayatms LIKE 'ID'");
++        const primaryKeyCol = columns.length > 0 ? 'ID' : 'SL_NO';
++
++        const [existing] = await db.execute(`SELECT ${primaryKeyCol} FROM panchayatms WHERE PANCHAYAT_NAME = ? AND ${primaryKeyCol} != ?`, [PANCHAYAT_NAME, id]);
++        if (existing.length > 0) {
++            throw new Error('Panchayat name already exists');
++        }
++
++        const query = `
++            UPDATE panchayatms 
++            SET PANCHAYAT_NAME = ?, ZONE_CODE = ?, T_V_DATE = CURDATE() 
++            WHERE ${primaryKeyCol} = ?
++        `;
++
++        const values = [PANCHAYAT_NAME, ZONE_CODE || null, id];
++        const [result] = await db.execute(query, values);
++
++        return result.affectedRows > 0;
++    } catch (error) {
++        throw error;
++    }
++};
++
++exports.deletePanchayat = async (id) => {
++    try {
++        const [columns] = await db.execute("SHOW COLUMNS FROM panchayatms LIKE 'ID'");
++        const primaryKeyCol = columns.length > 0 ? 'ID' : 'SL_NO';
++
++        const [result] = await db.execute(`DELETE FROM panchayatms WHERE ${primaryKeyCol} = ?`, [id]);
++        return result.affectedRows > 0;
++    } catch (error) {
++        throw error;
++    }
++};
+diff --git a/backend/src/services/zone.service.js b/backend/src/services/zone.service.js
+new file mode 100644
+index 0000000..2fcf2de
+--- /dev/null
++++ b/backend/src/services/zone.service.js
+@@ -0,0 +1,97 @@
++const db = require('../config/db');
++
++exports.createZone = async (zoneData) => {
++    try {
++        const { ZONE_NAME, DESCRIPTION } = zoneData;
++
++        // Check for duplicate ZONE_NAME
++        const [existing] = await db.execute('SELECT ZONE_NAME FROM zonems WHERE ZONE_NAME = ?', [ZONE_NAME]);
++        if (existing.length > 0) {
++            throw new Error('Zone name already exists');
++        }
++
++        // Generate ZONE_CODE as integer since schema is INT
++        const [maxRow] = await db.execute("SELECT MAX(ZONE_CODE) as maxCode FROM zonems");
++        const nextNum = (maxRow[0].maxCode || 0) + 1;
++
++        const query = `
++            INSERT INTO zonems (
++                ZONE_NAME, DESCRIPTION, ZONE_CODE, T_V_DATE
++            ) VALUES (?, ?, ?, CURDATE())
++        `;
++
++        const values = [ZONE_NAME, DESCRIPTION || null, nextNum];
++        const [result] = await db.execute(query, values);
++
++        return {
++            ZONE_CODE: `ZN${nextNum.toString().padStart(3, '0')}`,
++            SL_NO: result.insertId
++        };
++    } catch (error) {
++        throw error;
++    }
++};
++
++exports.getZones = async () => {
++    try {
++        const query = `
++            SELECT SL_NO, ID, ZONE_CODE, ZONE_NAME, DESCRIPTION 
++            FROM zonems 
++            ORDER BY SL_NO ASC
++        `;
++        const [rows] = await db.execute(query);
++
++        return rows.map(row => ({
++            ...row,
++            ZONE_CODE: row.ZONE_CODE ? `ZN${row.ZONE_CODE.toString().padStart(3, '0')}` : ''
++        }));
++    } catch (error) {
++        const [rows] = await db.execute(`
++            SELECT *
++            FROM zonems 
++        `);
++        return rows.map(row => ({
++            ...row,
++            ZONE_CODE: row.ZONE_CODE ? `ZN${row.ZONE_CODE.toString().padStart(3, '0')}` : ''
++        }));
++    }
++};
++
++exports.updateZone = async (id, zoneData) => {
++    try {
++        const { ZONE_NAME, DESCRIPTION } = zoneData;
++
++        const [columns] = await db.execute("SHOW COLUMNS FROM zonems LIKE 'ID'");
++        const primaryKeyCol = columns.length > 0 ? 'ID' : 'SL_NO';
++
++        const [existing] = await db.execute(`SELECT ${primaryKeyCol} FROM zonems WHERE ZONE_NAME = ? AND ${primaryKeyCol} != ?`, [ZONE_NAME, id]);
++        if (existing.length > 0) {
++            throw new Error('Zone name already exists');
++        }
++
++        const query = `
++            UPDATE zonems 
++            SET ZONE_NAME = ?, DESCRIPTION = ?, T_V_DATE = CURDATE() 
++            WHERE ${primaryKeyCol} = ?
++        `;
++
++        const values = [ZONE_NAME, DESCRIPTION || null, id];
++        const [result] = await db.execute(query, values);
++
++        return result.affectedRows > 0;
++    } catch (error) {
++        throw error;
++    }
++};
++
++exports.deleteZone = async (id) => {
++    try {
++        const [columns] = await db.execute("SHOW COLUMNS FROM zonems LIKE 'ID'");
++        const primaryKeyCol = columns.length > 0 ? 'ID' : 'SL_NO';
++
++        const [result] = await db.execute(`DELETE FROM zonems WHERE ${primaryKeyCol} = ?`, [id]);
++        return result.affectedRows > 0;
++    } catch (error) {
++        throw error;
++    }
++};
+diff --git a/frontend/src/components/Sidebar.jsx b/frontend/src/components/Sidebar.jsx
+index cf27c85..3c67383 100644
+--- a/frontend/src/components/Sidebar.jsx
++++ b/frontend/src/components/Sidebar.jsx
+@@ -129,7 +129,9 @@ const Sidebar = () => {
+                     icon: <Settings size={16} />,
+                     subItems: [
+                         { label: 'Department', icon: <RefreshCcw size={16} />, path: '/department' },
+-                        { label: 'Work', icon: <FileText size={16} />, path: '/work' }
++                        { label: 'Work', icon: <FileText size={16} />, path: '/work' },
++                        { label: 'Zone', icon: <Circle size={16} />, path: '/zone' },
++                        { label: 'Panchayat', icon: <Circle size={16} />, path: '/panchayat' }
+                     ]
+                 }
+             ]
+diff --git a/frontend/src/pages/Dashboard/Dashboard.jsx b/frontend/src/pages/Dashboard/Dashboard.jsx
+index 7a3c9c3..5430e59 100644
+--- a/frontend/src/pages/Dashboard/Dashboard.jsx
++++ b/frontend/src/pages/Dashboard/Dashboard.jsx
+@@ -90,38 +90,45 @@ function Dashboard() {
+     fetchStats();
+   }, []);
+ 
+-  const handleCloseWelcome = () => {
+-    setShowWelcome(false);
+-    sessionStorage.setItem('welcomeShown', 'true');
+-  };
++  useEffect(() => {
++    if (showWelcome) {
++      const timer = setTimeout(() => {
++        setShowWelcome(false);
++        sessionStorage.setItem('welcomeShown', 'true');
++      }, 3500);
++      return () => clearTimeout(timer);
++    }
++  }, [showWelcome]);
+ 
+   return (
+     <div className="dashboard-page h-[calc(100vh-80px)] overflow-hidden flex flex-col space-y-3 p-1">
+ 
+       {/* Welcome Message Modal */}
+       {showWelcome && (
+-        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+-          <div className="bg-white rounded-xl shadow-2xl w-[90%] max-w-[420px] overflow-hidden animate-fadeIn">
+-            {/* Header */}
+-            <div className="bg-[#004d40] px-6 py-4 text-center">
+-              <h2 className="text-xl font-black text-white tracking-wide">Welcome</h2>
+-              <p className="text-[#a7ffeb] text-xs font-semibold mt-1">DATATECH ERP System</p>
+-            </div>
+-            {/* Body */}
+-            <div className="px-6 py-5 text-center">
+-              <p className="text-gray-700 text-sm font-semibold leading-relaxed">
+-                Welcome to <span className="text-[#004d40] font-black">Datatech ERP System</span>
++        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-md transition-opacity duration-300">
++          <div className="relative bg-white/95 backdrop-blur-xl rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.3)] w-[90%] max-w-[400px] overflow-hidden border border-white/40 transform transition-all scale-100 animate-fadeIn p-8 text-center">
++            {/* Decorative background glow */}
++            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-40 bg-teal-400/20 rounded-full blur-3xl pointer-events-none"></div>
++
++            <div className="relative z-10 flex flex-col items-center">
++              <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#004d40] to-teal-400 flex items-center justify-center shadow-lg mb-5 text-white ring-4 ring-teal-50">
++                <CheckCircle size={32} strokeWidth={2.5} />
++              </div>
++
++              <h2 className="text-2xl font-black text-gray-900 tracking-tight mb-1">
++                Welcome Back!
++              </h2>
++              <h3 className="text-xs font-black text-transparent bg-clip-text bg-gradient-to-r from-[#004d40] to-teal-500 uppercase tracking-widest mb-4">
++                Datatech ERP System
++              </h3>
++
++              <p className="text-gray-500 text-sm font-medium leading-relaxed mb-6 px-2">
++                Your enterprise resource planning solution is ready. Experience seamless operations and real-time analytics.
+               </p>
+-              <p className="text-gray-400 text-xs mt-2">Your enterprise resource planning solution is ready.</p>
+-            </div>
+-            {/* Footer */}
+-            <div className="flex border-t border-gray-100">
+-              <button
+-                onClick={handleCloseWelcome}
+-                className="flex-1 py-3 text-sm font-bold text-gray-500 hover:bg-gray-50 transition-colors cursor-pointer"
+-              >
+-                Cancel
+-              </button>
++
++              <div className="flex items-center justify-center gap-2 text-teal-600 text-[10px] font-bold uppercase tracking-widest animate-pulse mt-4">
++                Loading Dashboard...
++              </div>
+             </div>
+           </div>
+         </div>
+diff --git a/frontend/src/pages/Panchayat/PanchayatList.jsx b/frontend/src/pages/Panchayat/PanchayatList.jsx
+new file mode 100644
+index 0000000..d23c4d1
+--- /dev/null
++++ b/frontend/src/pages/Panchayat/PanchayatList.jsx
+@@ -0,0 +1,353 @@
++import React, { useState, useEffect, useRef } from 'react';
++import { useNavigate } from 'react-router-dom';
++import toast, { Toaster } from 'react-hot-toast';
++import { ArrowLeft, Search, Edit2, Trash2 } from 'lucide-react';
++
++const PanchayatList = () => {
++    const navigate = useNavigate();
++    const [isAddMode, setIsAddMode] = useState(false);
++    const [searchTerm, setSearchTerm] = useState('');
++    const [selectedIndex, setSelectedIndex] = useState(0);
++    const [formData, setFormData] = useState({
++        id: '',
++        panchayat_name: '',
++        zone_code: '',
++        panchayat_code: ''
++    });
++
++    const searchInputRef = useRef(null);
++    const nameInputRef = useRef(null);
++    const descInputRef = useRef(null);
++    const saveBtnRef = useRef(null);
++
++    useEffect(() => {
++        if (!isAddMode && searchInputRef.current) {
++            searchInputRef.current.focus();
++        } else if (isAddMode && nameInputRef.current) {
++            nameInputRef.current.focus();
++        }
++    }, [isAddMode]);
++
++    const [panchayats, setPanchayats] = useState([]);
++    const [zones, setZones] = useState([]);
++    const [editId, setEditId] = useState(null);
++
++    const fetchPanchayats = async () => {
++        try {
++            const token = localStorage.getItem('token');
++            const res = await fetch('http://localhost:5000/api/panchayats', {
++                headers: { 'Authorization': `Bearer ${token}` }
++            });
++            if (res.ok) {
++                const data = await res.json();
++                setPanchayats(data);
++            }
++        } catch (err) {
++            console.error('Error fetching panchayats:', err);
++        }
++    };
++
++    const fetchZones = async () => {
++        try {
++            const token = localStorage.getItem('token');
++            const res = await fetch('http://localhost:5000/api/zones', {
++                headers: { 'Authorization': `Bearer ${token}` }
++            });
++            if (res.ok) {
++                const data = await res.json();
++                setZones(data);
++            }
++        } catch (err) {
++            console.error('Error fetching zones:', err);
++        }
++    };
++
++    useEffect(() => {
++        fetchPanchayats();
++        fetchZones();
++    }, []);
++
++    const filteredPanchayats = panchayats.filter(p =>
++        (p.PANCHAYAT_NAME || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
++        (p.PANCHAYAT_CODE || '').toLowerCase().includes(searchTerm.toLowerCase())
++    );
++
++    const handleSearchChange = (value) => {
++        setSearchTerm(value);
++        setSelectedIndex(0);
++    };
++
++    const handleKeyDown = (e) => {
++        if (e.key === 'ArrowDown') {
++            e.preventDefault();
++            setSelectedIndex(prev => Math.min(filteredPanchayats.length - 1, prev + 1));
++        } else if (e.key === 'ArrowUp') {
++            e.preventDefault();
++            setSelectedIndex(prev => Math.max(0, prev - 1));
++        }
++    };
++
++    const handleAction = (type) => {
++        if (type === 'ADD') {
++            setFormData({
++                id: '',
++                panchayat_name: '',
++                zone_code: '',
++                panchayat_code: ''
++            });
++
++            setEditId(null);
++            setIsAddMode(true);
++        } else if (type === 'EXIT' || type === 'CLOSE') {
++            if (isAddMode) {
++                setIsAddMode(false);
++                setEditId(null);
++                setSearchTerm('');
++            } else {
++                navigate(-1);
++            }
++        }
++    };
++
++    const handleSave = async () => {
++        if (!formData.panchayat_name.trim()) {
++            toast.error('Please enter Panchayat Name');
++            return;
++        }
++        if (!formData.zone_code) {
++            toast.error('Please select a Zone');
++            return;
++        }
++        try {
++            const token = localStorage.getItem('token');
++            const url = editId ? `http://localhost:5000/api/panchayats/${editId}` : 'http://localhost:5000/api/panchayats';
++            const method = editId ? 'PUT' : 'POST';
++
++            const payload = {
++                PANCHAYAT_NAME: formData.panchayat_name,
++                ZONE_CODE: formData.zone_code
++            };
++
++            const res = await fetch(url, {
++                method,
++                headers: {
++                    'Content-Type': 'application/json',
++                    'Authorization': `Bearer ${token}`
++                },
++                body: JSON.stringify(payload)
++            });
++            const data = await res.json();
++            if (res.ok) {
++                toast.success(editId ? 'Panchayat updated successfully!' : 'Panchayat created successfully!');
++                fetchPanchayats();
++                setFormData({ id: '', panchayat_name: '', zone_code: '', panchayat_code: '' });
++                setIsAddMode(false);
++                setEditId(null);
++                setSearchTerm('');
++            } else {
++                toast.error(data.error || 'Failed to save panchayat');
++            }
++        } catch (err) {
++            console.error(err);
++            toast.error('Server error. Backend is not responding.');
++        }
++    };
++
++    const handleEdit = (p) => {
++        setFormData({
++            ...formData,
++            panchayat_name: p.PANCHAYAT_NAME,
++            zone_code: p.ZONE_CODE || '',
++            panchayat_code: p.PANCHAYAT_CODE
++        });
++        setEditId(p.ID || p.SL_NO);
++        setIsAddMode(true);
++    };
++
++    const handleDelete = async (id) => {
++        if (!window.confirm('Are you sure you want to delete this panchayat?')) return;
++        try {
++            const token = localStorage.getItem('token');
++            const res = await fetch(`http://localhost:5000/api/panchayats/${id}`, {
++                method: 'DELETE',
++                headers: { 'Authorization': `Bearer ${token}` }
++            });
++            if (res.ok) {
++                fetchPanchayats();
++            } else {
++                toast.error('Failed to delete panchayat');
++            }
++        } catch (err) {
++            console.error('Error deleting panchayat:', err);
++        }
++    };
++
++    return (
++        <div className="fixed inset-0 bg-white flex items-center justify-center p-4">
++            <Toaster position="top-right" />
++            <div className={`bg-white border-2 border-[#00695c] shadow-2xl rounded-lg overflow-hidden flex flex-col transition-all duration-300 ${isAddMode ? 'w-[750px]' : 'w-[650px]'}`}>
++
++                {/* Header */}
++                <div className="bg-[#00695c] px-4 py-2 flex items-center justify-between text-white">
++                    <span className="text-sm font-bold uppercase tracking-wider">
++                        {isAddMode ? 'ADD PANCHAYAT' : 'SELECT PANCHAYAT'}
++                    </span>
++                    <button onClick={() => handleAction('EXIT')} className="hover:bg-[#004d40] p-1 rounded transition-colors">
++                        <ArrowLeft size={18} />
++                    </button>
++                </div>
++
++                <div className="p-1 bg-white">
++                    {/* Add Mode Form Section */}
++                    {isAddMode && (
++                        <div className="bg-white p-4 border border-[#b2dfdb] mb-1 animate-fadeIn">
++                            <h2 className="text-center font-serif text-lg font-bold mb-4 border-b border-gray-200 pb-2">PANCHAYAT MASTER</h2>
++                            <div className="space-y-3 px-4">
++                                <div className="flex items-center gap-4">
++                                    <label className="text-xs font-black uppercase w-20">NAME</label>
++                                    <input
++                                        ref={nameInputRef}
++                                        type="text"
++                                        value={formData.panchayat_name}
++                                        onChange={(e) => {
++                                            const name = e.target.value;
++                                            setFormData({ ...formData, panchayat_name: name });
++                                        }}
++                                        className="flex-1 border border-gray-300 px-2 py-1 text-sm bg-white focus:bg-[#fdd55ce1] focus:text-black focus:outline-none focus:border-[#00695c]"
++                                        onKeyDown={(e) => {
++                                            if (e.key === 'Enter') { e.preventDefault(); descInputRef.current?.focus(); }
++                                        }}
++                                    />
++                                </div>
++                                <div className="flex items-center gap-4">
++                                    <label className="text-xs font-black uppercase w-20">CODE<span className="text-red-500">*</span></label>
++                                    <input
++                                        type="text"
++                                        value={formData.panchayat_code}
++                                        readOnly
++                                        placeholder="AUTO"
++                                        className="w-24 border border-gray-300 px-2 py-1 text-sm bg-gray-50 uppercase"
++                                    />
++                                    <label className="text-xs font-black uppercase w-16 ml-4">ZONE</label>
++                                    <select
++                                        ref={descInputRef}
++                                        value={formData.zone_code}
++                                        onChange={(e) => setFormData({ ...formData, zone_code: e.target.value })}
++                                        className="flex-1 border border-gray-300 px-2 py-1 text-sm bg-white focus:bg-[#fdd55ce1] focus:text-black focus:outline-none focus:border-[#00695c]"
++                                        onKeyDown={(e) => {
++                                            if (e.key === 'Enter') { e.preventDefault(); saveBtnRef.current?.focus(); }
++                                            if (e.key === 'ArrowUp') { e.preventDefault(); nameInputRef.current?.focus(); }
++                                        }}
++                                    >
++                                        <option value="">-- Select Zone --</option>
++                                        {zones.map(z => (
++                                            <option key={z.ID || z.SL_NO} value={z.ID || z.SL_NO}>
++                                                {z.ZONE_CODE} - {z.ZONE_NAME}
++                                            </option>
++                                        ))}
++                                    </select>
++                                </div>
++                            </div>
++                        </div>
++                    )}
++
++                    {/* Search Section (List Mode) */}
++                    {!isAddMode && (
++                        <div className="bg-white p-1">
++                            <div className="relative">
++                                <input
++                                    ref={searchInputRef}
++                                    type="text"
++                                    placeholder="Search Panchayat..."
++                                    value={searchTerm}
++                                    onChange={(e) => handleSearchChange(e.target.value)}
++                                    onKeyDown={handleKeyDown}
++                                    className="w-full border border-[#b2dfdb] px-3 py-1.5 text-[12px] font-bold text-slate-700 transition-all focus:outline-none focus:bg-[#cff2f3e1] focus:text-black placeholder:italic placeholder:text-slate-500 placeholder:font-normal bg-[#cff2f3e1]"
++                                />
++                            </div>
++                        </div>
++                    )}
++
++                    {/* Table Section */}
++                    <div className="bg-white border border-[#b2dfdb] h-64 overflow-auto flex flex-col">
++                        <table className="w-full border-collapse">
++                            <thead className="sticky top-0 bg-[#004d40] text-white z-10">
++                                <tr className="text-[11px] font-black uppercase tracking-wider">
++                                    <th className="border border-[#00332e] px-2 py-1.5 text-left w-16">CODE</th>
++                                    <th className="border border-[#00332e] px-3 py-1.5 text-left">PANCHAYAT NAME</th>
++                                    <th className="border border-[#00332e] px-3 py-1.5 text-left">ZONE</th>
++                                    <th className="border border-[#00332e] px-2 py-1.5 text-center w-20">Action</th>
++                                </tr>
++                            </thead>
++                            <tbody>
++                                {filteredPanchayats.map((p, index) => {
++                                    const matchingZone = zones.find(z => (z.ID || z.SL_NO) == p.ZONE_CODE);
++                                    return (
++                                        <tr
++                                            key={p.ID || p.SL_NO}
++                                            className={`text-[12px] ${index === selectedIndex ? 'bg-[#fdd55ce1] border-y border-[#00695c]' : 'hover:bg-gray-50'}`}
++                                            onClick={() => setSelectedIndex(index)}
++                                        >
++                                            <td className="border border-gray-100 px-2 py-1.5 font-medium">{p.PANCHAYAT_CODE}</td>
++                                            <td className="border border-gray-100 px-3 py-1.5 font-bold">{p.PANCHAYAT_NAME}</td>
++                                            <td className="border border-gray-100 px-3 py-1.5 text-gray-600">{matchingZone ? `${matchingZone.ZONE_NAME}` : p.ZONE_CODE || 'N/A'}</td>
++                                            <td className="border border-gray-100 px-2 py-1.5">
++                                                <div className="flex justify-center gap-1">
++                                                    <button onClick={(e) => { e.stopPropagation(); handleEdit(p); }} className="p-1 text-[#00695c] hover:bg-[#e0f2f1] rounded"><Edit2 size={12} /></button>
++                                                </div>
++                                            </td>
++                                        </tr>
++                                    );
++                                })}
++                                {/* Empty rows */}
++                                {[...Array(Math.max(0, 10 - filteredPanchayats.length))].map((_, i) => (
++                                    <tr key={`empty-${i}`} className="h-8">
++                                        <td className="border border-gray-100 px-2 py-1.5"></td>
++                                        <td className="border border-gray-100 px-3 py-1.5"></td>
++                                        <td className="border border-gray-100 px-3 py-1.5"></td>
++                                        <td className="border border-gray-100 px-2 py-1.5"></td>
++                                    </tr>
++                                ))}
++                            </tbody>
++                        </table>
++                    </div>
++                </div>
++
++                {/* Footer Buttons */}
++                <div className="bg-white p-2 border-t border-[#b2dfdb]">
++                    <div className="flex gap-2 justify-end pr-2">
++                        <button
++                            ref={saveBtnRef}
++                            onClick={() => isAddMode ? handleSave() : handleAction('ADD')}
++                            onKeyDown={(e) => {
++                                if (isAddMode && e.key === 'ArrowUp') { e.preventDefault(); descInputRef.current?.focus(); }
++                                if (isAddMode && e.key === 'Enter') { e.preventDefault(); handleSave(); }
++                            }}
++                            className="bg-[#00695c] hover:bg-[#004d40] text-white text-[10px] font-black px-6 h-8 flex items-center justify-center rounded-sm transition-transform active:scale-95 uppercase"
++                        >
++                            {isAddMode ? 'SAVE' : 'ADD'}
++                        </button>
++                        <button
++                            onClick={() => handleAction('EXIT')}
++                            className="bg-[#00695c] hover:bg-red-700 text-white text-[10px] font-black px-6 h-8 flex items-center justify-center rounded-sm transition-transform active:scale-95 uppercase"
++                        >
++                            EXIT
++                        </button>
++                    </div>
++                </div>
++            </div>
++
++            <style jsx>{`
++                @keyframes fadeIn {
++                    from { opacity: 0; transform: translateY(-10px); }
++                    to { opacity: 1; transform: translateY(0); }
++                }
++                .animate-fadeIn {
++                    animation: fadeIn 0.3s ease-out;
++                }
++            `}</style>
++        </div>
++    );
++};
++
++export default PanchayatList;
+diff --git a/frontend/src/pages/Settings/RoleAssign.jsx b/frontend/src/pages/Settings/RoleAssign.jsx
+index 83f9927..1ffbcdb 100644
+--- a/frontend/src/pages/Settings/RoleAssign.jsx
++++ b/frontend/src/pages/Settings/RoleAssign.jsx
+@@ -31,7 +31,9 @@ const RoleAssign = () => {
+                 id: 'oth_master',
+                 label: 'Other master',
+                 items: [
+-                    { id: 'dept', label: 'Department' }
++                    { id: 'dept', label: 'Department' },
++                    { id: 'zone', label: 'Zone' },
++                    { id: 'panchayat', label: 'Panchayat' }
+                 ]
+             }
+         ],
+diff --git a/frontend/src/pages/Zone/ZoneList.jsx b/frontend/src/pages/Zone/ZoneList.jsx
+new file mode 100644
+index 0000000..3bec5af
+--- /dev/null
++++ b/frontend/src/pages/Zone/ZoneList.jsx
+@@ -0,0 +1,330 @@
++import React, { useState, useEffect, useRef } from 'react';
++import { useNavigate } from 'react-router-dom';
++import toast, { Toaster } from 'react-hot-toast';
++import { ArrowLeft, Search, Edit2, Trash2 } from 'lucide-react';
++
++const ZoneList = () => {
++    const navigate = useNavigate();
++    const [isAddMode, setIsAddMode] = useState(false);
++    const [searchTerm, setSearchTerm] = useState('');
++    const [selectedIndex, setSelectedIndex] = useState(0);
++    const [formData, setFormData] = useState({
++        id: '',
++        zone_name: '',
++        desc: '',
++        zone_code: ''
++    });
++
++    const searchInputRef = useRef(null);
++    const nameInputRef = useRef(null);
++    const descInputRef = useRef(null);
++    const saveBtnRef = useRef(null);
++
++    useEffect(() => {
++        if (!isAddMode && searchInputRef.current) {
++            searchInputRef.current.focus();
++        } else if (isAddMode && nameInputRef.current) {
++            nameInputRef.current.focus();
++        }
++    }, [isAddMode]);
++
++    const [zones, setZones] = useState([]);
++    const [editId, setEditId] = useState(null);
++
++    const fetchZones = async () => {
++        try {
++            const token = localStorage.getItem('token');
++            const res = await fetch('http://localhost:5000/api/zones', {
++                headers: { 'Authorization': `Bearer ${token}` }
++            });
++            if (res.ok) {
++                const data = await res.json();
++                setZones(data);
++            }
++        } catch (err) {
++            console.error('Error fetching zones:', err);
++        }
++    };
++
++    useEffect(() => {
++        fetchZones();
++    }, []);
++
++    const filteredZones = zones.filter(z =>
++        (z.ZONE_NAME || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
++        (z.ZONE_CODE || '').toLowerCase().includes(searchTerm.toLowerCase())
++    );
++
++    const handleSearchChange = (value) => {
++        setSearchTerm(value);
++        setSelectedIndex(0);
++    };
++
++    const handleKeyDown = (e) => {
++        if (e.key === 'ArrowDown') {
++            e.preventDefault();
++            setSelectedIndex(prev => Math.min(filteredZones.length - 1, prev + 1));
++        } else if (e.key === 'ArrowUp') {
++            e.preventDefault();
++            setSelectedIndex(prev => Math.max(0, prev - 1));
++        }
++    };
++
++    const handleAction = (type) => {
++        if (type === 'ADD') {
++            setFormData({
++                id: '',
++                zone_name: '',
++                desc: '',
++                zone_code: ''
++            });
++            setEditId(null);
++            setIsAddMode(true);
++        } else if (type === 'EXIT' || type === 'CLOSE') {
++            if (isAddMode) {
++                setIsAddMode(false);
++                setEditId(null);
++                setSearchTerm('');
++            } else {
++                navigate(-1);
++            }
++        }
++    };
++
++    const handleSave = async () => {
++        if (!formData.zone_name) {
++            toast.error('Please enter Zone No');
++            return;
++        }
++        try {
++            const token = localStorage.getItem('token');
++            const url = editId ? `http://localhost:5000/api/zones/${editId}` : 'http://localhost:5000/api/zones';
++            const method = editId ? 'PUT' : 'POST';
++
++            const payload = {
++                ZONE_NAME: formData.zone_name,
++                DESCRIPTION: formData.desc
++            };
++
++            const res = await fetch(url, {
++                method,
++                headers: {
++                    'Content-Type': 'application/json',
++                    'Authorization': `Bearer ${token}`
++                },
++                body: JSON.stringify(payload)
++            });
++            const data = await res.json();
++            if (res.ok) {
++                toast.success(editId ? 'Zone updated successfully!' : 'Zone created successfully!');
++                fetchZones();
++                setFormData({ id: '', zone_name: '', desc: '', zone_code: '' });
++                setIsAddMode(false);
++                setEditId(null);
++                setSearchTerm('');
++            } else {
++                toast.error(data.error || 'Failed to save zone');
++            }
++        } catch (err) {
++            console.error(err);
++            toast.error('Server error. Backend is not responding.');
++        }
++    };
++
++    const handleEdit = (z) => {
++        setFormData({
++            ...formData,
++            zone_name: z.ZONE_NAME,
++            desc: z.DESCRIPTION,
++            zone_code: z.ZONE_CODE
++        });
++        setEditId(z.ID || z.SL_NO);
++        setIsAddMode(true);
++    };
++
++    const handleDelete = async (id) => {
++        if (!window.confirm('Are you sure you want to delete this zone?')) return;
++        try {
++            const token = localStorage.getItem('token');
++            const res = await fetch(`http://localhost:5000/api/zones/${id}`, {
++                method: 'DELETE',
++                headers: { 'Authorization': `Bearer ${token}` }
++            });
++            if (res.ok) {
++                fetchZones();
++            } else {
++                toast.error('Failed to delete zone');
++            }
++        } catch (err) {
++            console.error('Error deleting zone:', err);
++        }
++    };
++
++    return (
++        <div className="fixed inset-0 bg-white flex items-center justify-center p-4">
++            <Toaster position="top-right" />
++            <div className={`bg-white border-2 border-[#00695c] shadow-2xl rounded-lg overflow-hidden flex flex-col transition-all duration-300 ${isAddMode ? 'w-[750px]' : 'w-[650px]'}`}>
++
++                {/* Header */}
++                <div className="bg-[#00695c] px-4 py-2 flex items-center justify-between text-white">
++                    <span className="text-sm font-bold uppercase tracking-wider">
++                        {isAddMode ? 'ADD ZONE' : 'SELECT ZONE'}
++                    </span>
++                    <button onClick={() => handleAction('EXIT')} className="hover:bg-[#004d40] p-1 rounded transition-colors">
++                        <ArrowLeft size={18} />
++                    </button>
++                </div>
++
++                <div className="p-1 bg-white">
++                    {/* Add Mode Form Section */}
++                    {isAddMode && (
++                        <div className="bg-white p-4 border border-[#b2dfdb] mb-1 animate-fadeIn">
++                            <h2 className="text-center font-serif text-lg font-bold mb-4 border-b border-gray-200 pb-2">ZONE MASTER</h2>
++                            <div className="space-y-3 px-4">
++                                <div className="flex items-center gap-4">
++                                    <label className="text-xs font-black uppercase w-20">ZONE NO</label>
++                                    <input
++                                        ref={nameInputRef}
++                                        type="number"
++                                        value={formData.zone_name}
++                                        onChange={(e) => {
++                                            const name = e.target.value;
++                                            setFormData({ ...formData, zone_name: name });
++                                        }}
++                                        className="flex-1 border border-gray-300 px-2 py-1 text-sm bg-white focus:bg-[#fdd55ce1] focus:text-black focus:outline-none focus:border-[#00695c]"
++                                        onKeyDown={(e) => {
++                                            if (e.key === 'Enter') { e.preventDefault(); descInputRef.current?.focus(); }
++                                        }}
++                                    />
++                                </div>
++                                <div className="flex items-center gap-4">
++                                    <label className="text-xs font-black uppercase w-20">CODE<span className="text-red-500">*</span></label>
++                                    <input
++                                        type="text"
++                                        value={formData.zone_code}
++                                        readOnly
++                                        placeholder="AUTO"
++                                        className="w-24 border border-gray-300 px-2 py-1 text-sm bg-gray-50 uppercase"
++                                    />
++                                    <label className="text-xs font-black uppercase w-16 ml-4">DESC</label>
++                                    <input
++                                        ref={descInputRef}
++                                        type="text"
++                                        value={formData.desc}
++                                        onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
++                                        placeholder="Description..."
++                                        className="flex-1 border border-gray-300 px-2 py-1 text-sm bg-white focus:bg-[#fdd55ce1] focus:text-black focus:outline-none focus:border-[#00695c]"
++                                        onKeyDown={(e) => {
++                                            if (e.key === 'Enter') { e.preventDefault(); saveBtnRef.current?.focus(); }
++                                            if (e.key === 'ArrowUp') { e.preventDefault(); nameInputRef.current?.focus(); }
++                                        }}
++                                    />
++                                </div>
++                            </div>
++                        </div>
++                    )}
++
++                    {/* Search Section (List Mode) */}
++                    {!isAddMode && (
++                        <div className="bg-white p-1">
++                            <div className="relative">
++                                <input
++                                    ref={searchInputRef}
++                                    type="text"
++                                    placeholder="Search Zone..."
++                                    value={searchTerm}
++                                    onChange={(e) => handleSearchChange(e.target.value)}
++                                    onKeyDown={handleKeyDown}
++                                    className="w-full border border-[#b2dfdb] px-3 py-1.5 text-[12px] font-bold text-slate-700 transition-all focus:outline-none focus:bg-[#cff2f3e1] focus:text-black placeholder:italic placeholder:text-slate-500 placeholder:font-normal bg-[#cff2f3e1]"
++                                />
++                            </div>
++                        </div>
++                    )}
++
++                    {/* Table Section */}
++                    <div className="bg-white border border-[#b2dfdb] h-64 overflow-auto flex flex-col">
++                        <table className="w-full border-collapse">
++                            <thead className="sticky top-0 bg-[#004d40] text-white z-10">
++                                <tr className="text-[11px] font-black uppercase tracking-wider">
++                                    <th className="border border-[#00332e] px-2 py-1.5 text-left w-16">CODE</th>
++                                    <th className="border border-[#00332e] px-3 py-1.5 text-left">ZONE NO</th>
++                                    <th className="border border-[#00332e] px-3 py-1.5 text-left">DESCRIPTION</th>
++                                    <th className="border border-[#00332e] px-2 py-1.5 text-center w-20">Action</th>
++                                </tr>
++                            </thead>
++                            <tbody>
++                                {filteredZones.map((z, index) => (
++                                    <tr
++                                        key={z.ID || z.SL_NO}
++                                        className={`text-[12px] ${index === selectedIndex ? 'bg-[#fdd55ce1] border-y border-[#00695c]' : 'hover:bg-gray-50'}`}
++                                        onClick={() => setSelectedIndex(index)}
++                                    >
++                                        <td className="border border-gray-100 px-2 py-1.5 font-medium">{z.ZONE_CODE}</td>
++                                        <td className="border border-gray-100 px-3 py-1.5 font-bold">{z.ZONE_NAME}</td>
++                                        <td className="border border-gray-100 px-3 py-1.5 text-gray-600">{z.DESCRIPTION}</td>
++                                        <td className="border border-gray-100 px-2 py-1.5">
++                                            <div className="flex justify-center gap-1">
++                                                <button onClick={(e) => { e.stopPropagation(); handleEdit(z); }} className="p-1 text-[#00695c] hover:bg-[#e0f2f1] rounded"><Edit2 size={12} /></button>
++                                                <button onClick={(e) => { e.stopPropagation(); handleDelete(z.ID || z.SL_NO); }} className="p-1 text-red-500 hover:bg-red-50 rounded"><Trash2 size={12} /></button>
++                                            </div>
++                                        </td>
++                                    </tr>
++                                ))}
++                                {/* Empty rows */}
++                                {[...Array(Math.max(0, 10 - filteredZones.length))].map((_, i) => (
++                                    <tr key={`empty-${i}`} className="h-8">
++                                        <td className="border border-gray-100 px-2 py-1.5"></td>
++                                        <td className="border border-gray-100 px-3 py-1.5"></td>
++                                        <td className="border border-gray-100 px-3 py-1.5"></td>
++                                        <td className="border border-gray-100 px-2 py-1.5"></td>
++                                    </tr>
++                                ))}
++                            </tbody>
++                        </table>
++                    </div>
++                </div>
++
++                {/* Footer Buttons */}
++                <div className="bg-white p-2 border-t border-[#b2dfdb]">
++                    <div className="flex gap-2 justify-end pr-2">
++                        <button
++                            ref={saveBtnRef}
++                            onClick={() => {
++                                if (isAddMode) {
++                                    handleSave();
++                                } else {
++                                    handleAction('ADD');
++                                }
++                            }}
++                            onKeyDown={(e) => {
++                                if (isAddMode && e.key === 'ArrowUp') { e.preventDefault(); descInputRef.current?.focus(); }
++                                if (isAddMode && e.key === 'Enter') { e.preventDefault(); handleSave(); }
++                            }}
++                            className="bg-[#00695c] hover:bg-[#004d40] text-white text-[10px] font-black px-6 h-8 flex items-center justify-center rounded-sm transition-transform active:scale-95 uppercase"
++                        >
++                            {isAddMode ? 'ADD' : 'ADD'}
++                        </button>
++                        <button
++                            onClick={() => handleAction('EXIT')}
++                            className="bg-[#00695c] hover:bg-red-700 text-white text-[10px] font-black px-6 h-8 flex items-center justify-center rounded-sm transition-transform active:scale-95 uppercase"
++                        >
++                            EXIT
++                        </button>
++                    </div>
++                </div>
++            </div>
++
++            <style jsx>{`
++                @keyframes fadeIn {
++                    from { opacity: 0; transform: translateY(-10px); }
++                    to { opacity: 1; transform: translateY(0); }
++                }
++                .animate-fadeIn {
++                    animation: fadeIn 0.3s ease-out;
++                }
++            `}</style>
++        </div>
++    );
++};
++
++export default ZoneList;
+diff --git a/frontend/src/routing.jsx b/frontend/src/routing.jsx
+index 6b0dcd3..863d8dc 100644
+--- a/frontend/src/routing.jsx
++++ b/frontend/src/routing.jsx
+@@ -7,6 +7,8 @@ import Party from './pages/Party/Party'
+ import PartyList from './pages/Party/PartyList'
+ import DeptList from './pages/Department/DeptList'
+ import WorkList from './pages/Work/WorkList'
++import PanchayatList from './pages/Panchayat/PanchayatList'
++import ZoneList from './pages/Zone/ZoneList'
+ import AccountVoucherCreation from './pages/AccountVoucherCreation/AccountVoucherCreation'
+ import AccountCreation from './pages/AccountCreation/AccountCreation'
+ import UserCreate from './pages/Settings/UserCreate'
+@@ -82,6 +84,14 @@ const router = createBrowserRouter([
+         path: '/work',
+         element: <WorkList />,
+       },
++      {
++        path: '/zone',
++        element: <ZoneList />,
++      },
++      {
++        path: '/panchayat',
++        element: <PanchayatList />,
++      },
+       {
+         path: '/account-voucher-creation',
+         element: <AccountVoucherCreation />,
+
+commit ffcdf5a19d730a320ab63da68230fa7a8400c529
+Author: rajeshjena986125 <rajeshjena986125@gmail.com>
+Date:   Tue Mar 3 14:27:32 2026 +0530
+
+    feat: Implement transaction management service and an account voucher creation page.
+
+diff --git a/backend/package-lock.json b/backend/package-lock.json
+index b0fb9f5..b6141ae 100644
+--- a/backend/package-lock.json
++++ b/backend/package-lock.json
+@@ -1,12 +1,12 @@
+ {
+     "name": "backend",
+-    "version": "1.0.0",
++    "version": "1.0.1",
+     "lockfileVersion": 3,
+     "requires": true,
+     "packages": {
+         "": {
+             "name": "backend",
+-            "version": "1.0.0",
++            "version": "1.0.1",
+             "dependencies": {
+                 "bcryptjs": "^2.4.3",
+                 "cors": "^2.8.6",
+@@ -14,7 +14,8 @@
+                 "express": "^4.19.2",
+                 "jsonwebtoken": "^9.0.3",
+                 "multer": "^2.0.2",
+-                "mysql2": "^3.9.7"
++                "mysql2": "^3.9.7",
++                "nodemailer": "^8.0.1"
+             },
+             "devDependencies": {
+                 "nodemon": "^3.1.0"
+@@ -1074,6 +1075,15 @@
+                 "node": ">= 0.6"
+             }
+         },
++        "node_modules/nodemailer": {
++            "version": "8.0.1",
++            "resolved": "https://registry.npmjs.org/nodemailer/-/nodemailer-8.0.1.tgz",
++            "integrity": "sha512-5kcldIXmaEjZcHR6F28IKGSgpmZHaF1IXLWFTG+Xh3S+Cce4MiakLtWY+PlBU69fLbRa8HlaGIrC/QolUpHkhg==",
++            "license": "MIT-0",
++            "engines": {
++                "node": ">=6.0.0"
++            }
++        },
+         "node_modules/nodemon": {
+             "version": "3.1.14",
+             "resolved": "https://registry.npmjs.org/nodemon/-/nodemon-3.1.14.tgz",
+@@ -1575,7 +1585,8 @@
+             "version": "7.18.2",
+             "resolved": "https://registry.npmjs.org/undici-types/-/undici-types-7.18.2.tgz",
+             "integrity": "sha512-AsuCzffGHJybSaRrmr5eHr81mwJU3kjw6M+uprWvCXiNeN9SOGwQ3Jn8jb8m3Z6izVgknn1R0FTCEAP2QrLY/w==",
+-            "license": "MIT"
++            "license": "MIT",
++            "peer": true
+         },
+         "node_modules/unpipe": {
+             "version": "1.0.0",
+diff --git a/backend/package.json b/backend/package.json
+index bca4ac7..031bac9 100644
+--- a/backend/package.json
++++ b/backend/package.json
+@@ -14,9 +14,10 @@
+         "express": "^4.19.2",
+         "jsonwebtoken": "^9.0.3",
+         "multer": "^2.0.2",
+-        "mysql2": "^3.9.7"
++        "mysql2": "^3.9.7",
++        "nodemailer": "^8.0.1"
+     },
+     "devDependencies": {
+         "nodemon": "^3.1.0"
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/backend/src/services/transaction.service.js b/backend/src/services/transaction.service.js
+index 8fa0259..2564942 100644
+--- a/backend/src/services/transaction.service.js
++++ b/backend/src/services/transaction.service.js
+@@ -33,6 +33,7 @@ exports.getAllTransactions = async () => {
+                 t.TRANS_DESC AS message,
+                 t.STATUS AS status,
+                 t.WORK_CODE,
++                t.HOLD_CODE,
+                 w.WORK_NAME AS work_name,
+                 t.T_V_DATE AS date,
+                 p.HOLD_NAME AS partyName,
+@@ -62,6 +63,7 @@ exports.getTransactionById = async (id) => {
+                 t.TRANS_DESC AS message,
+                 t.STATUS AS status,
+                 t.WORK_CODE,
++                t.HOLD_CODE,
+                 w.WORK_NAME AS work_name,
+                 t.T_V_DATE AS date,
+                 p.HOLD_NAME AS partyName,
+diff --git a/frontend/package-lock.json b/frontend/package-lock.json
+index 7593c5b..52c104e 100644
+--- a/frontend/package-lock.json
++++ b/frontend/package-lock.json
+@@ -1,12 +1,12 @@
+ {
+-  "name": "erp-system",
+-  "version": "0.0.0",
++  "name": "dataquest-erp",
++  "version": "1.0.1",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+-      "name": "erp-system",
+-      "version": "0.0.0",
++      "name": "dataquest-erp",
++      "version": "1.0.1",
+       "dependencies": {
+         "lucide-react": "^0.574.0",
+         "react": "^18.2.0",
+@@ -69,7 +69,6 @@
+       "integrity": "sha512-CGOfOJqWjg2qW/Mb6zNsDm+u5vFQ8DxXfbM09z69p5Z6+mE1ikP2jUXw+j42Pf1XTYED2Rni5f95npYeuwMDQA==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@babel/code-frame": "^7.29.0",
+         "@babel/generator": "^7.29.0",
+@@ -1342,7 +1341,6 @@
+       "integrity": "sha512-z9VXpC7MWrhfWipitjNdgCauoMLRdIILQsAEV+ZesIzBq/oUlxk0m3ApZuMFCXdnS4U7KrI+l3WRUEGQ8K1QKw==",
+       "devOptional": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@types/prop-types": "*",
+         "csstype": "^3.2.2"
+@@ -1506,7 +1504,6 @@
+         }
+       ],
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "baseline-browser-mapping": "^2.9.0",
+         "caniuse-lite": "^1.0.30001759",
+@@ -1633,8 +1630,7 @@
+       "version": "3.2.3",
+       "resolved": "https://registry.npmjs.org/csstype/-/csstype-3.2.3.tgz",
+       "integrity": "sha512-z1HGKcYy2xA8AGQfwrn0PAy+PB7X/GSj3UVJW9qKyn43xWa+gl5nXmU4qqLMRzWVLFC8KusUX8T/0kCiOYpAIQ==",
+-      "license": "MIT",
+-      "peer": true
++      "license": "MIT"
+     },
+     "node_modules/d3-array": {
+       "version": "3.2.4",
+@@ -2091,7 +2087,6 @@
+       "integrity": "sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "bin": {
+         "jiti": "bin/jiti.js"
+       }
+@@ -2345,7 +2340,6 @@
+         }
+       ],
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "nanoid": "^3.3.11",
+         "picocolors": "^1.1.1",
+@@ -2515,7 +2509,6 @@
+       "resolved": "https://registry.npmjs.org/react/-/react-18.3.1.tgz",
+       "integrity": "sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==",
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "loose-envify": "^1.1.0"
+       },
+@@ -2528,7 +2521,6 @@
+       "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-18.3.1.tgz",
+       "integrity": "sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==",
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "loose-envify": "^1.1.0",
+         "scheduler": "^0.23.2"
+@@ -2566,7 +2558,6 @@
+       "resolved": "https://registry.npmjs.org/react-redux/-/react-redux-9.2.0.tgz",
+       "integrity": "sha512-ROY9fvHhwOD9ySfrF0wmvu//bKCQ6AeZZq1nJNtbDC+kk5DuSuNX/n6YWYF/SYy7bSba4D4FSz8DJeKY/S/r+g==",
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "@types/use-sync-external-store": "^0.0.6",
+         "use-sync-external-store": "^1.4.0"
+@@ -2684,8 +2675,7 @@
+       "version": "5.0.1",
+       "resolved": "https://registry.npmjs.org/redux/-/redux-5.0.1.tgz",
+       "integrity": "sha512-M9/ELqF6fy8FwmkpnF0S3YKOqMyoWJ4+CS5Efg2ct3oY9daQvd/Pc71FpGZsVsbl3Cpb+IIcjBDUnnyBdQbq4w==",
+-      "license": "MIT",
+-      "peer": true
++      "license": "MIT"
+     },
+     "node_modules/redux-thunk": {
+       "version": "3.1.0",
+@@ -2976,7 +2966,6 @@
+       "integrity": "sha512-5gTmgEY/sqK6gFXLIsQNH19lWb4ebPDLA4SdLP7dsWkIXHWlG66oPuVvXSGFPppYZz8ZDZq0dYYrbHfBCVUb1Q==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "engines": {
+         "node": ">=12"
+       },
+@@ -3079,7 +3068,6 @@
+       "integrity": "sha512-o5a9xKjbtuhY6Bi5S3+HvbRERmouabWbyUcpXXUA1u+GNUKoROi9byOJ8M0nHbHYHkYICiMlqxkg1KkYmm25Sw==",
+       "dev": true,
+       "license": "MIT",
+-      "peer": true,
+       "dependencies": {
+         "esbuild": "^0.21.3",
+         "postcss": "^8.4.43",
+diff --git a/frontend/src/pages/AccountVoucherCreation/AccountVoucherCreation.jsx b/frontend/src/pages/AccountVoucherCreation/AccountVoucherCreation.jsx
+index a48867e..e1a0fed 100644
+--- a/frontend/src/pages/AccountVoucherCreation/AccountVoucherCreation.jsx
++++ b/frontend/src/pages/AccountVoucherCreation/AccountVoucherCreation.jsx
+@@ -41,6 +41,8 @@ const AccountVoucherCreation = () => {
+                 billDate: item.date ? new Date(item.date).toLocaleDateString('en-CA') : '',
+                 partyName: item.partyName || 'N/A',
+                 contract: item.WORK_CODE || '-',
++                WORK_CODE: item.WORK_CODE || null,
++                gp_id: item.HOLD_CODE || null,
+                 gp: item.panchayat || '-',
+                 zone: item.zone || '-',
+                 dept: item.department_name || '',
+
+commit 1a0b290c6e9ba328a0006d3e9441cd948035d42c
+Author: rajeshjena986125 <rajeshjena986125@gmail.com>
+Date:   Tue Mar 3 11:49:49 2026 +0530
+
+    some ui changes
+
+diff --git a/frontend/src/components/Header.jsx b/frontend/src/components/Header.jsx
+index 764353c..0d94496 100644
+--- a/frontend/src/components/Header.jsx
++++ b/frontend/src/components/Header.jsx
+@@ -7,7 +7,34 @@ const Header = () => {
+     const { toggleSidebar, isPinned } = useLayout();
+     const navigate = useNavigate();
+     const [isMenuOpen, setIsMenuOpen] = useState(false);
++    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
++    const [recentUsers, setRecentUsers] = useState([]);
+     const menuRef = useRef(null);
++    const notificationRef = useRef(null);
++
++    // Fetch recent users for Activity Log notification
++    useEffect(() => {
++        const fetchRecentUsers = async () => {
++            try {
++                const token = localStorage.getItem('token');
++                const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
++                const res = await fetch('http://localhost:5000/api/users', { headers });
++                if (res.ok) {
++                    const data = await res.json();
++                    // Sort descending by id to get latest users
++                    const sorted = data.sort((a, b) => b.id - a.id);
++                    setRecentUsers(sorted.slice(0, 3)); // Get top 3 recent users
++                }
++            } catch (error) {
++                console.error('Failed to fetch recent users:', error);
++            }
++        };
++
++        fetchRecentUsers();
++        // Poll every 15 seconds for real-time feel
++        const intervalId = setInterval(fetchRecentUsers, 15000);
++        return () => clearInterval(intervalId);
++    }, []);
+ 
+     // Close menu when clicking outside
+     useEffect(() => {
+@@ -15,6 +42,9 @@ const Header = () => {
+             if (menuRef.current && !menuRef.current.contains(event.target)) {
+                 setIsMenuOpen(false);
+             }
++            if (notificationRef.current && !notificationRef.current.contains(event.target)) {
++                setIsNotificationOpen(false);
++            }
+         };
+         document.addEventListener('mousedown', handleClickOutside);
+         return () => document.removeEventListener('mousedown', handleClickOutside);
+@@ -47,10 +77,120 @@ const Header = () => {
+             </div>
+ 
+             <div className="ml-auto flex items-center gap-3">
+-                <button className="p-2 hover:bg-[#00332e] rounded-lg transition-colors relative">
+-                    <Bell size={18} />
+-                    <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-[#004d40]"></span>
+-                </button>
++                <div className="relative" ref={notificationRef}>
++                    <button
++                        onClick={() => setIsNotificationOpen(!isNotificationOpen)}
++                        className={`p-2 rounded-lg transition-colors relative ${isNotificationOpen ? 'bg-[#00332e] text-[#a7ffeb]' : 'hover:bg-[#00332e]'}`}
++                    >
++                        <Bell size={18} />
++                        {(recentUsers.length > 0 || true) && (
++                            <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border border-[#004d40] animate-pulse"></span>
++                        )}
++                    </button>
++
++                    {/* Notification Dropdown */}
++                    {isNotificationOpen && (
++                        <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transform origin-top-right transition-all z-50">
++                            {/* Header */}
++                            <div className="bg-slate-50 p-3 border-b border-slate-100 flex justify-between items-center">
++                                <h3 className="text-sm font-black text-[#004d40] uppercase tracking-wider">Notifications</h3>
++                                <button className="text-[10px] text-[#00695c] font-bold hover:underline">Mark all read</button>
++                            </div>
++
++                            {/* List */}
++                            <div className="max-h-[70vh] overflow-y-auto custom-scrollbar">
++                                <div className="p-3 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer bg-emerald-50/30">
++                                    <div className="flex gap-3">
++                                        <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0">
++                                            <span className="text-amber-600 text-[10px] font-black">PA</span>
++                                        </div>
++                                        <div>
++                                            <p className="text-xs font-bold text-slate-800">Pending Approval</p>
++                                            <p className="text-[11px] text-slate-500 leading-tight mt-0.5">Voucher #10042 requires your approval.</p>
++                                            <p className="text-[9px] text-slate-400 mt-1 font-semibold">10 minutes ago</p>
++                                        </div>
++                                    </div>
++                                </div>
++
++                                <div className="p-3 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer bg-emerald-50/30">
++                                    <div className="flex gap-3">
++                                        <div className="w-8 h-8 rounded-full bg-rose-100 flex items-center justify-center flex-shrink-0">
++                                            <span className="text-rose-600 text-[10px] font-black">ST</span>
++                                        </div>
++                                        <div>
++                                            <p className="text-xs font-bold text-slate-800">Low Stock Alert</p>
++                                            <p className="text-[11px] text-slate-500 leading-tight mt-0.5">Item 'Raw Material A' is below minimum level.</p>
++                                            <p className="text-[9px] text-slate-400 mt-1 font-semibold">1 hour ago</p>
++                                        </div>
++                                    </div>
++                                </div>
++
++                                <div className="p-3 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer">
++                                    <div className="flex gap-3">
++                                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
++                                            <span className="text-blue-600 text-[10px] font-black">SA</span>
++                                        </div>
++                                        <div>
++                                            <p className="text-xs font-bold text-slate-800">System Alert</p>
++                                            <p className="text-[11px] text-slate-500 leading-tight mt-0.5">Database backup completed successfully.</p>
++                                            <p className="text-[9px] text-slate-400 mt-1 font-semibold">3 hours ago</p>
++                                        </div>
++                                    </div>
++                                </div>
++
++                                <div className="p-3 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer">
++                                    <div className="flex gap-3">
++                                        <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
++                                            <span className="text-purple-600 text-[10px] font-black">RM</span>
++                                        </div>
++                                        <div>
++                                            <p className="text-xs font-bold text-slate-800">Payment Reminder</p>
++                                            <p className="text-[11px] text-slate-500 leading-tight mt-0.5">Pending EMI payment for Vendor XYZ is due tomorrow.</p>
++                                            <p className="text-[9px] text-slate-400 mt-1 font-semibold">Yesterday</p>
++                                        </div>
++                                    </div>
++                                </div>
++
++                                {/* Dynamic Real-Time Activity Logs (New Users) */}
++                                {recentUsers.map((user, idx) => (
++                                    <div key={`user-log-${user.id || idx}`} className="p-3 border-b border-slate-50 hover:bg-slate-50 transition-colors cursor-pointer bg-emerald-50/10">
++                                        <div className="flex gap-3">
++                                            <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
++                                                <span className="text-emerald-600 text-[10px] font-black">AL</span>
++                                            </div>
++                                            <div>
++                                                <p className="text-xs font-bold text-slate-800">Activity Log</p>
++                                                <p className="text-[11px] text-slate-500 leading-tight mt-0.5">
++                                                    New account creation: <span className="font-bold text-[#004d40]">'{user.username || user.name}'</span>
++                                                </p>
++                                                <p className="text-[9px] text-slate-400 mt-1 font-semibold">Recently added</p>
++                                            </div>
++                                        </div>
++                                    </div>
++                                ))}
++
++                                {recentUsers.length === 0 && (
++                                    <div className="p-3 hover:bg-slate-50 transition-colors cursor-pointer">
++                                        <div className="flex gap-3">
++                                            <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0">
++                                                <span className="text-emerald-600 text-[10px] font-black">AL</span>
++                                            </div>
++                                            <div>
++                                                <p className="text-xs font-bold text-slate-800">Activity Log</p>
++                                                <p className="text-[11px] text-slate-500 leading-tight mt-0.5">No recent account creations.</p>
++                                            </div>
++                                        </div>
++                                    </div>
++                                )}
++                            </div>
++
++                            {/* Footer */}
++                            <div className="bg-slate-50 p-2 border-t border-slate-100 text-center">
++                                <button className="text-[11px] font-black text-[#004d40] hover:text-[#00695c] uppercase tracking-wider">View All Notifications</button>
++                            </div>
++                        </div>
++                    )}
++                </div>
+ 
+                 <div className="h-8 w-[1px] bg-[#00695c] mx-1"></div>
+ 
+@@ -70,7 +210,7 @@ const Header = () => {
+                     </button>
+ 
+                     {/* Dropdown Menu */}
+-                    {isMenuOpen && (    
++                    {isMenuOpen && (
+                         <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden transform origin-top-right transition-all">
+                             <div className="bg-slate-50 p-4 border-b border-slate-100">
+                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Signed in as</p>
+diff --git a/frontend/src/pages/AccountCreation/AccountCreation.jsx b/frontend/src/pages/AccountCreation/AccountCreation.jsx
+index a8c745d..a201bc2 100644
+--- a/frontend/src/pages/AccountCreation/AccountCreation.jsx
++++ b/frontend/src/pages/AccountCreation/AccountCreation.jsx
+@@ -551,7 +551,7 @@ const AccountCreation = () => {
+                         )}
+                         <span className="ac-btn-text text-[12px] font-black uppercase tracking-widest">{isEditMode ? 'Update' : 'Save'}</span>
+                     </button>
+-                    <button
++                    <button   
+                         onClick={() => navigate('/account-voucher-creation')}
+                         className="ac-btn bg-[#004d40] hover:bg-red-600 text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group"
+                     >
+
+commit aaef683fdee445eeb829921d20d5a5cdd3fece50
+Author: rajeshjena986125 <rajeshjena986125@gmail.com>
+Date:   Mon Mar 2 16:27:40 2026 +0530
+
+    feat: Introduce Account Voucher Creation page with transaction CRUD, add database configuration, and scaffold new frontend pages.
+
+diff --git a/backend/.env b/backend/.env
+index 4137105..b7241d4 100644
+--- a/backend/.env
++++ b/backend/.env
+@@ -1,7 +1,7 @@
+ DB_HOST=localhost
+-DB_PORT=3306
++DB_PORT=3307
+ DB_USER= root
+-DB_PASS= aditya@12
++DB_PASS= 1234
+ 
+ DB_NAME=erpdatatemp
+ MASTER_DB_NAME=erpdatatemp
+\ No newline at end of file
+diff --git a/backend/check.js b/backend/check.js
+new file mode 100644
+index 0000000..055dbfd
+--- /dev/null
++++ b/backend/check.js
+@@ -0,0 +1,9 @@
++const db = require('./src/config/db');
++
++async function check() {
++    const [rows] = await db.execute('DESCRIBE trans');
++    console.log(rows.find(r => r.Field === 'T_V_NO'));
++    process.exit(0);
++}
++
++check();
+diff --git a/frontend/src/pages/AccountCreation/AccountCreation.jsx b/frontend/src/pages/AccountCreation/AccountCreation.jsx
+index 9433c86..a8c745d 100644
+--- a/frontend/src/pages/AccountCreation/AccountCreation.jsx
++++ b/frontend/src/pages/AccountCreation/AccountCreation.jsx
+@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
+ import { Save, Edit3, XCircle, ArrowLeft, Trash2 } from 'lucide-react';
+ import './AccountCreation.css';
+ import { useNavigate, useLocation, useParams } from 'react-router-dom';
+-import { createTransaction, updateTransaction, searchGps, getGpById, getDepartments, getWorks } from '../../services/transaction.service';
++import { createTransaction, updateTransaction, searchGps, getGpById, getDepartments, getWorks, getParties } from '../../services/transaction.service';
+ 
+ const AccountCreation = () => {
+     const navigate = useNavigate();
+@@ -15,6 +15,7 @@ const AccountCreation = () => {
+     const [suggestions, setSuggestions] = useState([]);
+     const [departmentList, setDepartmentList] = useState([]);
+     const [workList, setWorkList] = useState([]);
++    const [allParties, setAllParties] = useState([]);
+     const [activeRowIndex, setActiveRowIndex] = useState(null);
+     const [activeDeptRowIndex, setActiveDeptRowIndex] = useState(null);
+     const [activeWorkRowIndex, setActiveWorkRowIndex] = useState(null);
+@@ -83,8 +84,21 @@ const AccountCreation = () => {
+                 console.error('Failed to fetch works:', error);
+             }
+         };
++        const fetchPartiesList = async () => {
++            try {
++                const fetchedParties = await getParties();
++                setAllParties(fetchedParties);
++                if (!isEditMode) {
++                    setSuggestions(fetchedParties);
++                    setActiveRowIndex(0);
++                }
++            } catch (error) {
++                console.error('Failed to fetch parties:', error);
++            }
++        };
+         fetchDepts();
+         fetchWorks();
++        fetchPartiesList();
+     }, []);
+ 
+     useEffect(() => {
+@@ -118,8 +132,8 @@ const AccountCreation = () => {
+                 setSuggestions([]);
+             }
+         } else {
+-            setSuggestions([]);
+-            setActiveRowIndex(null);
++            setSuggestions(allParties);
++            setActiveRowIndex(index);
+         }
+     };
+ 
+@@ -282,7 +296,7 @@ const AccountCreation = () => {
+                     gp_id: mainRow.gp_id,
+                     dept_code: mainRow.dept_code,
+                     work_code: mainRow.work_code,
+-                    amount: parseFloat(mainRow.amount.replace(/,/g, '')) || 0,
++                    amount: mainRow.amount.replace(/,/g, '') || "0",
+                     status: mainRow.status || 'Pending',
+                     message: message
+                 });
+@@ -292,7 +306,7 @@ const AccountCreation = () => {
+                         gp_id: row.gp_id,
+                         dept_code: row.dept_code,
+                         work_code: row.work_code,
+-                        amount: parseFloat(row.amount.replace(/,/g, '')) || 0,
++                        amount: row.amount.replace(/,/g, '') || "0",
+                         status: row.status || 'Pending',
+                         message: message
+                     });
+@@ -343,6 +357,12 @@ const AccountCreation = () => {
+                                         data-col={0}
+                                         value={account.partyName}
+                                         onChange={(e) => handlePartyChange(index, e.target.value)}
++                                        onFocus={() => {
++                                            setActiveRowIndex(index);
++                                            if (account.partyName.trim() === '') {
++                                                setSuggestions(allParties);
++                                            }
++                                        }}
+                                         onKeyDown={(e) => handleKeyDown(e, index, 0)}
+                                         onBlur={() => setTimeout(() => { setActiveRowIndex(null); setFocusedSuggestionIndex(-1); }, 200)}
+                                         className="ac-input w-full h-full px-3 font-bold text-[#004d40] bg-transparent focus:outline-none focus:bg-[#fdd55ce1]"
+@@ -428,10 +448,16 @@ const AccountCreation = () => {
+                                 <td className="border-r border-gray-200 flex-1">
+                                     <input
+                                         type="text"
++                                        maxLength={15}
+                                         data-row={index}
+                                         data-col={3}
+                                         value={account.amount}
+-                                        onChange={(e) => handleInputChange(index, 'amount', e.target.value)}
++                                        onChange={(e) => {
++                                            const val = e.target.value;
++                                            if (/^[0-9.,]*$/.test(val)) {
++                                                handleInputChange(index, 'amount', val);
++                                            }
++                                        }}
+                                         onKeyDown={(e) => handleKeyDown(e, index, 3)}
+                                         className="ac-input w-full h-full px-3 text-right font-black bg-transparent focus:outline-none focus:bg-[#fdd55ce1]"
+                                         placeholder={index === 0 ? "0.00" : ""}
+@@ -525,10 +551,6 @@ const AccountCreation = () => {
+                         )}
+                         <span className="ac-btn-text text-[12px] font-black uppercase tracking-widest">{isEditMode ? 'Update' : 'Save'}</span>
+                     </button>
+-                    <button className="ac-btn bg-[#004d40] hover:bg-[#00332e] text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group">
+-                        <Edit3 size={16} className="group-hover:rotate-12 transition-transform" />
+-                        <span className="ac-btn-text text-[12px] font-black uppercase tracking-widest">Edit</span>
+-                    </button>
+                     <button
+                         onClick={() => navigate('/account-voucher-creation')}
+                         className="ac-btn bg-[#004d40] hover:bg-red-600 text-white rounded flex items-center justify-center gap-2 transition-all shadow-md group"
+diff --git a/frontend/src/pages/AccountVoucherCreation/AccountVoucherCreation.jsx b/frontend/src/pages/AccountVoucherCreation/AccountVoucherCreation.jsx
+index d564399..a48867e 100644
+--- a/frontend/src/pages/AccountVoucherCreation/AccountVoucherCreation.jsx
++++ b/frontend/src/pages/AccountVoucherCreation/AccountVoucherCreation.jsx
+@@ -214,21 +214,21 @@ const AccountVoucherCreation = () => {
+                 {/* Table Container */}
+                 <div className="flex-1 overflow-auto p-2">
+                     <div className="bg-white border border-gray-300 rounded overflow-hidden">
+-                        <table className="w-full text-left border-collapse">
++                        <table className="w-full text-left flex-col text-[10px]">
+                             <thead>
+                                 <tr className="bg-[#004d40] text-white">
+-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Bill No</th>
+-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Bill Date</th>
+-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Party Name</th>
+-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Contract</th>
+-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">GP</th>
+-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Zone</th>
+-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Dept</th>
+-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Work</th>
+-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Message</th>
+-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Amount</th>
+-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e]">Status</th>
+-                                    <th className="av-th px-3 py-2 text-[10px] font-black uppercase tracking-widest border border-[#00332e] text-center">Action</th>
++                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Bill No</th>
++                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Bill Date</th>
++                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Party Name</th>
++                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Contract</th>
++                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">GP</th>
++                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Zone</th>
++                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Dept</th>
++                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Work</th>
++                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Message</th>
++                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e]">Amount</th>
++                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e] text-center">Status</th>
++                                    <th className="av-th px-1.5 py-2 text-[9px] font-black uppercase tracking-widest border border-[#00332e] text-center w-16">Action</th>
+                                 </tr>
+                             </thead>
+                             <tbody className="divide-y divide-gray-200">
+@@ -240,18 +240,18 @@ const AccountVoucherCreation = () => {
+                                             : 'hover:bg-gray-50'
+                                             }`}
+                                     >
+-                                        <td className="av-td px-3 py-2 border border-gray-200 font-bold whitespace-nowrap">{voucher.billNo}</td>
+-                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.billDate}</td>
+-                                        <td className="av-td px-3 py-2 border border-gray-200 font-bold text-[#004d40] max-w-[150px] truncate" title={voucher.partyName}>{voucher.partyName}</td>
+-                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.contract}</td>
+-                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.gp}</td>
+-                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.zone}</td>
+-                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.dept}</td>
+-                                        <td className="av-td px-3 py-2 border border-gray-200 whitespace-nowrap">{voucher.work}</td>
+-                                        <td className="av-td px-3 py-2 border border-gray-200 text-gray-500 italic max-w-[200px] truncate" title={voucher.message}>{voucher.message}</td>
+-                                        <td className="av-td px-3 py-2 border border-gray-200 font-black whitespace-nowrap">Γé╣{voucher.amount.toLocaleString('en-IN')}</td>
+-                                        <td className="av-td px-3 py-2 border border-gray-200">
+-                                            <span className={`av-status-badge px-2 py-0.5 rounded-full font-bold text-[9px] uppercase ${voucher.status?.trim().toLowerCase() === 'pending' ? 'bg-[#b81f1f] text-[#ffffff]' :
++                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 font-bold whitespace-nowrap">{voucher.billNo}</td>
++                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 whitespace-nowrap">{voucher.billDate}</td>
++                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 font-bold text-[#004d40] max-w-[120px] truncate" title={voucher.partyName}>{voucher.partyName}</td>
++                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 max-w-[60px] truncate" title={voucher.contract}>{voucher.contract}</td>
++                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 max-w-[80px] truncate" title={voucher.gp}>{voucher.gp}</td>
++                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 max-w-[70px] truncate" title={voucher.zone}>{voucher.zone}</td>
++                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 max-w-[70px] truncate" title={voucher.dept}>{voucher.dept}</td>
++                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 max-w-[100px] truncate" title={voucher.work}>{voucher.work}</td>
++                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 text-gray-500 italic max-w-[120px] truncate" title={voucher.message}>{voucher.message}</td>
++                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 font-black max-w-[100px] truncate" title={`Γé╣${voucher.amount.toLocaleString('en-IN')}`}>Γé╣{voucher.amount.toLocaleString('en-IN')}</td>
++                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 text-center">
++                                            <span className={`av-status-badge px-1.5 py-0.5 rounded-full font-bold text-[8px] uppercase ${voucher.status?.trim().toLowerCase() === 'pending' ? 'bg-[#b81f1f] text-[#ffffff]' :
+                                                 voucher.status?.trim().toLowerCase() === 'ongoing' ? 'bg-[#bfdbfe] text-[#1e40af]' :
+                                                     voucher.status?.trim().toLowerCase() === 'not started' ? 'bg-[#78e3dc] text-[#374151]' :
+                                                         voucher.status?.trim().toLowerCase() === 'completed' ? 'bg-[#bbf7d0] text-[#166534]' :
+@@ -260,13 +260,13 @@ const AccountVoucherCreation = () => {
+                                                 {voucher.status}
+                                             </span>
+                                         </td>
+-                                        <td className="av-td px-3 py-2 border border-gray-200 text-center">
+-                                            <div className="flex items-center justify-center gap-2">
++                                        <td className="av-td px-1.5 py-1.5 border border-gray-200 text-center w-16">
++                                            <div className="flex items-center justify-center gap-1.5">
+                                                 <button onClick={() => navigate(`/account/edit/${voucher.id}`, { state: { voucher } })} className="p-1 text-blue-600 hover:bg-blue-50 rounded border border-blue-100 transition-colors" title="Edit">
+-                                                    <Edit3 size={14} />
++                                                    <Edit3 size={12} />
+                                                 </button>
+                                                 <button onClick={() => handleDelete(voucher)} className="p-1 text-red-600 hover:bg-red-50 rounded border border-red-100 transition-colors" title="Delete">
+-                                                    <Trash2 size={14} />
++                                                    <Trash2 size={12} />
+                                                 </button>
+                                             </div>
+                                         </td>
+diff --git a/frontend/src/pages/Department/DeptList.jsx b/frontend/src/pages/Department/DeptList.jsx
+index f7375b8..ba774bf 100644
+--- a/frontend/src/pages/Department/DeptList.jsx
++++ b/frontend/src/pages/Department/DeptList.jsx
+@@ -127,6 +127,7 @@ const DeptList = () => {
+                 setFormData({ Sl_No: '', t_v_date: '', dept_Name: '', desc: '', dept_code: '' });
+                 setIsAddMode(false);
+                 setEditId(null);
++                setSearchTerm(''); // Clear the search bar upon successful save
+             } else {
+                 alert(data.error || 'Failed to save department');
+             }
+diff --git a/frontend/src/pages/Party/Party.jsx b/frontend/src/pages/Party/Party.jsx
+index 5190ebd..4a2d50c 100644
+--- a/frontend/src/pages/Party/Party.jsx
++++ b/frontend/src/pages/Party/Party.jsx
+@@ -1,6 +1,6 @@
+ import React, { useState, useRef, useEffect, forwardRef } from 'react';
+ import { useNavigate, useLocation, useParams } from 'react-router-dom';
+-import { X, Save, Upload, User, MapPin, Phone, Mail, Map, Briefcase, Camera } from 'lucide-react';
++import { X, Save, Upload, User, MapPin, Phone, Mail, Map, Briefcase, Camera, Trash2 } from 'lucide-react';
+ import toast, { Toaster } from 'react-hot-toast';
+ import './Party.css';
+ 
+@@ -241,6 +241,9 @@ const Party = () => {
+ 
+         if (fileInputRef.current && fileInputRef.current.files[0]) {
+             formDataToSend.append('photo', fileInputRef.current.files[0]);
++        } else if (!photoPreview && isEditMode) {
++            // Signal to backend that the photo was cleared
++            formDataToSend.append('clear_photo', 'true');
+         }
+ 
+         try {
+@@ -348,6 +351,20 @@ const Party = () => {
+                                         <span className="party-upload-text text-[10px] font-black uppercase tracking-widest">Upload</span>
+                                     </div>
+                                 </div>
++                                {photoPreview && (
++                                    <button
++                                        type="button"
++                                        onClick={(e) => {
++                                            e.stopPropagation();
++                                            setPhotoPreview(null);
++                                            if (fileInputRef.current) fileInputRef.current.value = '';
++                                        }}
++                                        className="flex items-center gap-1.5 text-[11px] text-red-500 hover:text-red-600 font-bold uppercase tracking-wider transition-colors mt-2 bg-red-50 px-3 py-1.5 rounded"
++                                    >
++                                        <Trash2 size={14} />
++                                        <span>Clear</span>
++                                    </button>
++                                )}
+                                 <input type="file" ref={fileInputRef} onChange={handlePhotoChange} accept="image/*" className="hidden" />
+                             </div>
+                         </div>
+diff --git a/frontend/src/pages/Settings/UserList.jsx b/frontend/src/pages/Settings/UserList.jsx
+index af1ef24..622ef04 100644
+--- a/frontend/src/pages/Settings/UserList.jsx
++++ b/frontend/src/pages/Settings/UserList.jsx
+@@ -20,7 +20,7 @@ const UserList = () => {
+                 const processedUsers = data.map((user, index) => ({
+                     id: user.id,
+                     username: user.username || user.name || 'Unknown',
+-                    pin: '****', // not returned by API
++                    pin: user.pin || '123456', // 6 digit pin
+                     createdAt: 'Recently', // Placeholder
+                     role: user.role || 'User',
+                     color: colors[index % colors.length],
+@@ -217,7 +217,7 @@ const UserList = () => {
+                                     </div>
+                                     <div className="ul-access-value-box flex items-center justify-between bg-white p-4 rounded-xl shadow-sm border border-slate-200 group-hover:shadow-md transition-shadow">
+                                         <span className={`ul-access-value text-xl font-black tracking-[0.4em] font-mono leading-none pt-1 ${showPin ? 'text-[#004d40]' : 'text-slate-300 blur-[2px]'}`}>
+-                                            {showPin ? selectedUser.pin : 'ΓÇóΓÇóΓÇóΓÇó'}
++                                            {showPin ? selectedUser.pin : 'ΓÇóΓÇóΓÇóΓÇóΓÇóΓÇó'}
+                                         </span>
+                                         <button
+                                             onClick={() => setShowPin(!showPin)}
+@@ -227,7 +227,7 @@ const UserList = () => {
+                                         </button>
+                                     </div>
+                                     <p className="ul-access-info mt-3 text-[10px] text-slate-400 font-bold leading-relaxed px-1">
+-                                        * Use this 4-digit PIN for privileged operations and system overrides. Keep it confidential.
++                                        * Use this 6-digit PIN for privileged operations and system overrides. Keep it confidential.
+                                     </p>
+                                 </div>
+ 
+diff --git a/frontend/src/pages/Work/WorkList.jsx b/frontend/src/pages/Work/WorkList.jsx
+index 7d5a4b2..5a605f9 100644
+--- a/frontend/src/pages/Work/WorkList.jsx
++++ b/frontend/src/pages/Work/WorkList.jsx
+@@ -84,6 +84,7 @@ const WorkList = () => {
+             if (isAddMode) {
+                 setIsAddMode(false);
+                 setEditId(null);
++                setSearchTerm('');
+             } else {
+                 navigate(-1);
+             }
+@@ -120,6 +121,7 @@ const WorkList = () => {
+                 setFormData({ id: '', work_name: '', desc: '', work_code: '' });
+                 setIsAddMode(false);
+                 setEditId(null);
++                setSearchTerm('');
+             } else {
+                 toast.error(data.error || 'Failed to save work');
+             }
+diff --git a/frontend/src/services/transaction.service.js b/frontend/src/services/transaction.service.js
+index caf04f8..f3a5bc6 100644
+--- a/frontend/src/services/transaction.service.js
++++ b/frontend/src/services/transaction.service.js
+@@ -99,3 +99,12 @@ export const getWorks = async () => {
+     if (!res.ok) throw new Error('Failed to fetch works');
+     return res.json();
+ };
++
++export const getParties = async () => {
++    const res = await fetch(`http://localhost:5000/api/parties`, {
++        method: 'GET',
++        headers: getHeaders()
++    });
++    if (!res.ok) throw new Error('Failed to fetch parties');
++    return res.json();
++};
+
+commit f00ce77701859a9dc5d15f198196c386619e8bba
+Merge: c05d2c7 987234e
+Author: Aditya Kumar <adityakumar14022002@gmail.com>
+Date:   Sat Feb 28 18:44:19 2026 +0530
+
+    Merge branch 'main' of https://github.com/datatechctc6-tech/ERP-SYSTEM-

@@ -1,0 +1,71 @@
+.userhistory-page {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.uh-header {
+    background: linear-gradient(to right, #ffffff, #f8fafc);
+}
+
+.uh-icon-box {
+    box-shadow: 0 4px 12px rgba(0, 77, 64, 0.2);
+}
+
+.uh-page-title {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.uh-search-input {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.uh-th {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+}
+
+.uh-td {
+    padding: 10px 12px !important;
+}
+
+.uh-avatar {
+    box-shadow: inset 0 0 0 1px rgba(0, 77, 64, 0.1);
+}
+
+.uh-footer-btn {
+    box-shadow: 0 4px 6px -1px rgba(0, 77, 64, 0.2), 0 2px 4px -1px rgba(0, 77, 64, 0.1);
+}
+
+.uh-footer-btn:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Custom scrollbar for the table container */
+.flex-1::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.flex-1::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.flex-1::-webkit-scrollbar-thumb {
+    background: #004d4033;
+    border-radius: 3px;
+}
+
+.flex-1::-webkit-scrollbar-thumb:hover {
+    background: #004d40;
+}

@@ -1,4 +1,6 @@
 const departmentService = require('../services/department.service');
+const logActivity = require('../utils/activityLogger');
+
 
 exports.createDepartment = async (req, res) => {
     try {
@@ -15,6 +17,8 @@ exports.createDepartment = async (req, res) => {
             dept_code: result.DEPT_CODE,
             sl_no: result.SL_NO
         });
+        logActivity(req, 'CREATE_DEPT', `Created department: ${DEPT_NAME}`);
+
     } catch (error) {
         if (error.message === 'Department name already exists') {
             return res.status(409).json({ error: error.message });
@@ -51,6 +55,8 @@ exports.updateDepartment = async (req, res) => {
         }
 
         res.status(200).json({ message: 'Department updated successfully' });
+        logActivity(req, 'UPDATE_DEPT', `Updated department ID: ${id} (${DEPT_NAME})`);
+
     } catch (error) {
         if (error.message === 'Department name already exists') {
             return res.status(409).json({ error: error.message });
@@ -71,6 +77,8 @@ exports.deleteDepartment = async (req, res) => {
         }
 
         res.status(200).json({ message: 'Department deleted successfully' });
+        logActivity(req, 'DELETE_DEPT', `Deleted department ID: ${id}`);
+
     } catch (error) {
         console.error('Error deleting department:', error);
         res.status(500).json({ error: 'Internal server error while deleting department' });
