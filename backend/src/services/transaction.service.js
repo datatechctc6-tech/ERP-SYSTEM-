@@ -7,15 +7,27 @@ exports.getDashboardStats = async () => {
                 COUNT(DISTINCT HOLD_CODE) AS totalGP,
                 COUNT(DISTINCT CASE WHEN STATUS = 'Ongoing' THEN HOLD_CODE END) AS activeGP,
                 COUNT(CASE WHEN STATUS = 'Pending' THEN 1 END) AS unprocess,
-                COUNT(CASE WHEN STATUS = 'Completed' THEN 1 END) AS complete
+                COUNT(CASE WHEN STATUS = 'Completed' THEN 1 END) AS complete,
+                COUNT(*) as totalTransactions
             FROM trans
         `;
         const [rows] = await db.execute(query);
+
+        const zoneQuery = `
+            SELECT p.ZONE_NAME as name, COUNT(*) as value 
+            FROM trans t
+            JOIN gpholdms p ON t.HOLD_CODE = p.HOLD_CODE
+            GROUP BY p.ZONE_NAME
+        `;
+        const [zoneRows] = await db.execute(zoneQuery);
+
         return {
             totalGP: rows[0].totalGP || 0,
             activeGP: rows[0].activeGP || 0,
             unprocess: rows[0].unprocess || 0,
-            complete: rows[0].complete || 0
+            complete: rows[0].complete || 0,
+            totalTransactions: rows[0].totalTransactions || 0,
+            zoneWiseWork: zoneRows
         };
     } catch (error) {
         throw error;

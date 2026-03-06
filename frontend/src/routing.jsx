@@ -21,6 +21,7 @@ import CompanyRegistration from './pages/CompanyRegistration/CompanyRegistration
 import Register from './pages/Register/Register'
 import MainLayout from './components/MainLayout'
 import PrivateRoute from './components/PrivateRoute'
+import ReportList from './pages/Reports/ReportList'
 
 const router = createBrowserRouter([
   {
@@ -105,6 +106,10 @@ const router = createBrowserRouter([
       {
         path: '/account/edit/:id',
         element: <AccountCreation />,
+      },
+      {
+        path: '/reports',
+        element: <ReportList />,
       },
       {
         path: '/settings/user-create',

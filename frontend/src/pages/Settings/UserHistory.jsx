@@ -354,7 +354,7 @@ const UserHistory = () => {
                         className="uh-footer-btn bg-[#004d40] hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-all shadow-lg active:scale-95 group"
                     >
                         <XCircle size={18} className="group-hover:rotate-90 transition-transform" />
-                        <span className="uh-btn-text text-sm font-black uppercase tracking-widest">Close Page</span>
+                        <span className="uh-btn-text text-sm font-black uppercase tracking-widest">Close</span>
                     </button>
                 </div>
             </div>

@@ -19,7 +19,9 @@ import {
     Shield,
     List,
     KeyRound,
-    History
+    History,
+    BarChart3,
+    PieChart
 } from 'lucide-react';
 
 
@@ -147,6 +149,16 @@ const Sidebar = () => {
                 // { label: 'Sales Entry', icon: <ShoppingCart size={16} /> },
                 // { label: 'Purchase Entry', icon: <CreditCard size={16} /> },
                 // { label: 'Transfer Stock', icon: <ArrowLeftRight size={16} /> },
+            ]
+        },
+        {
+            id: 'reports',
+            label: 'Reports',
+            icon: <BarChart3 size={20} />,
+            path: '/reports',
+            subItems: [
+                { label: 'Transaction Summary', icon: <FileText size={16} />, path: '/reports' },
+                { label: 'GP Analysis', icon: <PieChart size={16} />, path: '/reports' }
             ]
         },
         {
