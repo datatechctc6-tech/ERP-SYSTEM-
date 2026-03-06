@@ -67,6 +67,9 @@ const ZoneList = () => {
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
             setSelectedIndex(prev => Math.max(0, prev - 1));
+        } else if (e.key === '/') {
+            e.preventDefault();
+            handleAction('ADD');
         }
     };
 
@@ -185,11 +188,13 @@ const ZoneList = () => {
                                     <label className="text-xs font-black uppercase w-20">ZONE NO</label>
                                     <input
                                         ref={nameInputRef}
-                                        type="number"
+                                        type="text"
                                         value={formData.zone_name}
                                         onChange={(e) => {
-                                            const name = e.target.value;
-                                            setFormData({ ...formData, zone_name: name });
+                                            const val = e.target.value;
+                                            if (val === '' || /^[0-9/]*$/.test(val)) {
+                                                setFormData({ ...formData, zone_name: val });
+                                            }
                                         }}
                                         className="flex-1 border border-gray-300 px-2 py-1 text-sm bg-white focus:bg-[#fdd55ce1] focus:text-black focus:outline-none focus:border-[#00695c]"
                                         onKeyDown={(e) => {
@@ -302,7 +307,7 @@ const ZoneList = () => {
                             }}
                             className="bg-[#00695c] hover:bg-[#004d40] text-white text-[10px] font-black px-6 h-8 flex items-center justify-center rounded-sm transition-transform active:scale-95 uppercase"
                         >
-                            {isAddMode ? 'ADD' : 'ADD'}
+                            ADD
                         </button>
                         <button
                             onClick={() => handleAction('EXIT')}

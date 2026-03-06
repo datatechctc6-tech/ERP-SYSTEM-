@@ -9,6 +9,7 @@ const UserHistory = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [history, setHistory] = useState([]);
     const [sessions, setSessions] = useState([]);
+    const [attendance, setAttendance] = useState([]);
     const [loading, setLoading] = useState(true);
     const [tick, setTick] = useState(0); // For live timer re-renders
     const searchInputRef = useRef(null);
@@ -44,9 +45,24 @@ const UserHistory = () => {
         }
     };
 
+    const fetchAttendance = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:5000/api/user-attendance', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setAttendance(data);
+            }
+        } catch (error) {
+            console.error('Error fetching attendance:', error);
+        }
+    };
+
     const fetchData = async () => {
         setLoading(true);
-        await Promise.all([fetchHistory(), fetchSessions()]);
+        await Promise.all([fetchHistory(), fetchSessions(), fetchAttendance()]);
         setLoading(false);
     };
 
@@ -77,6 +93,11 @@ const UserHistory = () => {
     });
 
     const filteredSessions = sessions.filter(item => {
+        const search = searchTerm.toLowerCase();
+        return (item.user_name || '').toLowerCase().includes(search);
+    });
+
+    const filteredAttendance = attendance.filter(item => {
         const search = searchTerm.toLowerCase();
         return (item.user_name || '').toLowerCase().includes(search);
     });
@@ -139,6 +160,12 @@ const UserHistory = () => {
                                     className={`text-[10px] font-black uppercase tracking-widest pb-1 transition-all ${activeTab === 'hours' ? 'text-[#004d40] border-b-2 border-[#004d40]' : 'text-gray-400'}`}
                                 >
                                     Work Hours
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('attendance')}
+                                    className={`text-[10px] font-black uppercase tracking-widest pb-1 transition-all ${activeTab === 'attendance' ? 'text-[#004d40] border-b-2 border-[#004d40]' : 'text-gray-400'}`}
+                                >
+                                    Attendance
                                 </button>
                             </div>
                         </div>
@@ -234,7 +261,7 @@ const UserHistory = () => {
                                     ))}
                                 </tbody>
                             </table>
-                        ) : (
+                        ) : activeTab === 'hours' ? (
                             <table className="w-full text-left border-collapse border border-gray-300">
                                 <thead>
                                     <tr className="bg-[#004d40] text-white z-10">
@@ -278,9 +305,40 @@ const UserHistory = () => {
                                     ))}
                                 </tbody>
                             </table>
+                        ) : (
+                            <table className="w-full text-left border-collapse border border-gray-300">
+                                <thead>
+                                    <tr className="bg-[#004d40] text-white z-10">
+                                        <th className="uh-th px-3 py-2 font-black uppercase tracking-widest border border-[#00332e] sticky top-0 bg-[#004d40]">User</th>
+                                        <th className="uh-th px-3 py-2 font-black uppercase tracking-widest border border-[#00332e] sticky top-0 bg-[#004d40]">Date</th>
+                                        <th className="uh-th px-3 py-2 font-black uppercase tracking-widest border border-[#00332e] sticky top-0 bg-[#004d40]">Status</th>
+                                        <th className="uh-th px-3 py-2 font-black uppercase tracking-widest border border-[#00332e] sticky top-0 bg-[#004d40]">Arrival Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-200">
+                                    {loading ? (
+                                        <tr><td colSpan="4" className="text-center py-10 text-gray-400 font-bold">Loading...</td></tr>
+                                    ) : filteredAttendance.map((item, index) => (
+                                        <tr key={index} className="hover:bg-gray-50 transition-colors">
+                                            <td className="uh-td px-3 py-2 border border-gray-200 font-bold text-[13px]">{item.user_name}</td>
+                                            <td className="uh-td px-3 py-2 border border-gray-200 text-[12px] font-bold text-gray-600">{item.date}</td>
+                                            <td className="uh-td px-3 py-2 border border-gray-200">
+                                                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase ${item.status === 'Present' ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'}`}>
+                                                    {item.status}
+                                                </span>
+                                            </td>
+                                            <td className="uh-td px-3 py-2 border border-gray-200">
+                                                <div className="flex items-center gap-2 text-slate-600 font-bold text-[11px]">
+                                                    <Clock size={14} /> {item.first_login ? formatDate(item.first_login) : '---'}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
                         )}
 
-                        {!loading && ((activeTab === 'activity' && filteredHistory.length === 0) || (activeTab === 'hours' && filteredSessions.length === 0)) && (
+                        {!loading && ((activeTab === 'activity' && filteredHistory.length === 0) || (activeTab === 'hours' && filteredSessions.length === 0) || (activeTab === 'attendance' && filteredAttendance.length === 0)) && (
                             <div className="py-20 flex flex-col items-center justify-center text-gray-400">
                                 <History size={48} strokeWidth={1} className="mb-4 opacity-20" />
                                 <p className="uh-empty-text text-sm font-medium uppercase tracking-widest">No records found</p>
