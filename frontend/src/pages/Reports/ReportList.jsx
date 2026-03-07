@@ -68,13 +68,21 @@ const ReportList = () => {
         totalTransactions: 0,
         zoneWiseWork: []
     });
+    const [allTransactions, setAllTransactions] = useState([]);
+    const [filterType, setFilterType] = useState('all'); // all, date, month, year, range
+    const [filterValue1, setFilterValue1] = useState(''); 
+    const [filterValue2, setFilterValue2] = useState(''); 
     const [loading, setLoading] = useState(true);
 
     const fetchStats = async () => {
         setLoading(true);
         try {
-            const data = await getDashboardStats();
+            const [data, txns] = await Promise.all([
+                getDashboardStats(),
+                getAllTransactions()
+            ]);
             setStats(data);
+            setAllTransactions(txns || []);
         } catch (error) {
             console.error('Error fetching stats:', error);
             toast.error('Failed to load report statistics');
@@ -93,12 +101,44 @@ const ReportList = () => {
             console.log('Starting download for:', reportTitle);
 
             if (reportTitle === "Transaction Reports") {
-                const transactions = await getAllTransactions();
-                if (transactions && transactions.length > 0) {
-                    exportToCSV(transactions, 'Transactions_Report');
+                let filteredTransactions = allTransactions;
+                
+                if (filterType !== 'all') {
+                    filteredTransactions = filteredTransactions.filter(t => {
+                        if (!t.date) return false;
+                        const tDate = new Date(t.date);
+                        
+                        if (filterType === 'date') {
+                            if (!filterValue1) return true;
+                            const filterD = new Date(filterValue1);
+                            return tDate.getFullYear() === filterD.getFullYear() &&
+                                   tDate.getMonth() === filterD.getMonth() &&
+                                   tDate.getDate() === filterD.getDate();
+                        } else if (filterType === 'month') {
+                            if (!filterValue1) return true;
+                            const [year, month] = filterValue1.split('-');
+                            return tDate.getFullYear() === parseInt(year) &&
+                                   (tDate.getMonth() + 1) === parseInt(month);
+                        } else if (filterType === 'year') {
+                            if (!filterValue1) return true;
+                            return tDate.getFullYear() === parseInt(filterValue1);
+                        } else if (filterType === 'range') {
+                            if (!filterValue1 || !filterValue2) return true;
+                            const startD = new Date(filterValue1);
+                            const endD = new Date(filterValue2);
+                            startD.setHours(0,0,0,0);
+                            endD.setHours(23,59,59,999);
+                            return tDate >= startD && tDate <= endD;
+                        }
+                        return true;
+                    });
+                }
+
+                if (filteredTransactions && filteredTransactions.length > 0) {
+                    exportToCSV(filteredTransactions, 'Transactions_Report');
                     toast.success('Transaction report downloaded', { id: toastId });
                 } else {
-                    toast.error('No transactions found to download', { id: toastId });
+                    toast.error('No transactions found to download for selected range', { id: toastId });
                 }
             } else if (reportTitle === "Grampanchayat Analysis") {
                 // Prepare data even if zoneWiseWork is empty
@@ -216,6 +256,39 @@ const ReportList = () => {
                                 className="pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#004d4033] focus:border-[#004d40] w-64 shadow-sm transition-all"
                             />
                         </div>
+
+                        <select
+                            value={filterType}
+                            onChange={(e) => {
+                                setFilterType(e.target.value);
+                                setFilterValue1('');
+                                setFilterValue2('');
+                            }}
+                            className="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#004d4033] focus:border-[#004d40] shadow-sm cursor-pointer"
+                        >
+                            <option value="all">All Time</option>
+                            <option value="date">Specific Date</option>
+                            <option value="month">By Month</option>
+                            <option value="year">By Year</option>
+                            <option value="range">Custom Range</option>
+                        </select>
+                        
+                        {filterType === 'date' && (
+                            <input type="date" value={filterValue1} onChange={e => setFilterValue1(e.target.value)} className="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#004d4033] focus:border-[#004d40] shadow-sm" />
+                        )}
+                        {filterType === 'month' && (
+                            <input type="month" value={filterValue1} onChange={e => setFilterValue1(e.target.value)} className="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#004d4033] focus:border-[#004d40] shadow-sm" />
+                        )}
+                        {filterType === 'year' && (
+                            <input type="number" placeholder="YYYY" min="2000" max="2100" value={filterValue1} onChange={e => setFilterValue1(e.target.value)} className="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#004d4033] focus:border-[#004d40] shadow-sm w-24" />
+                        )}
+                        {filterType === 'range' && (
+                            <div className="flex items-center gap-2">
+                                <input type="date" value={filterValue1} onChange={e => setFilterValue1(e.target.value)} className="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#004d4033] focus:border-[#004d40] shadow-sm" />
+                                <span className="text-gray-400 text-xs">to</span>
+                                <input type="date" value={filterValue2} onChange={e => setFilterValue2(e.target.value)} className="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#004d4033] focus:border-[#004d40] shadow-sm" />
+                            </div>
+                        )}
                         <button
                             onClick={fetchStats}
                             disabled={loading || !stats}

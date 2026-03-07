@@ -1,4 +1,5 @@
 const pool = require('../config/db');
+const UserAttendanceModel = require('./userAttendanceModel');
 
 class UserSessionModel {
     static async createTableIfNotExists() {
@@ -30,6 +31,10 @@ class UserSessionModel {
                 VALUES (?, ?)
             `;
             const [result] = await pool.query(query, [userId, ipAddress]);
+            
+            // Also update the daily user_attendance record
+            await UserAttendanceModel.recordLogin(userId);
+            
             return result.insertId;
         } catch (error) {
             console.error('❌ Error starting session:', error);
@@ -48,6 +53,9 @@ class UserSessionModel {
         `;
         try {
             await pool.query(query, [userId]);
+            
+            // Also update the daily user_attendance record logout time
+            await UserAttendanceModel.recordLogout(userId);
         } catch (error) {
             console.error('❌ Error ending session:', error);
             throw error;

@@ -30,7 +30,7 @@ const PartyList = () => {
         fetchParties();
     }, []);
 
-    // Always keep focus on the search bar
+    // Focus search bar on mount and when not interacting with other inputs
     useEffect(() => {
         if (searchInputRef.current) {
             searchInputRef.current.focus();
@@ -38,10 +38,16 @@ const PartyList = () => {
 
         const handleFocusOut = () => {
             setTimeout(() => {
+                const activeTag = document.activeElement?.tagName;
+                // Avoid stealing focus if user is actively interacting with other inputs/dropdowns/buttons
+                if (activeTag === 'INPUT' || activeTag === 'SELECT' || activeTag === 'BUTTON' || activeTag === 'TEXTAREA') {
+                    return;
+                }
+                
                 if (searchInputRef.current && document.activeElement !== searchInputRef.current) {
                     searchInputRef.current.focus();
                 }
-            }, 0);
+            }, 10);
         };
 
         document.addEventListener('click', handleFocusOut);
@@ -175,6 +181,7 @@ const PartyList = () => {
                                     <th className="pl-th px-3 font-black uppercase tracking-widest border border-[#00332e]">Mobile</th>
 
                                     <th className="pl-th px-3 font-black uppercase tracking-widest border border-[#00332e]">Panchayat</th>
+                                    <th className="pl-th px-3 font-black uppercase tracking-widest border border-[#00332e]">Zone</th>
                                     <th className="pl-th px-3 font-black uppercase tracking-widest border border-[#00332e] text-center">Action</th>
                                 </tr>
                             </thead>
@@ -212,6 +219,12 @@ const PartyList = () => {
                                             <div className="flex items-center gap-2">
                                                 <Briefcase size={12} className="text-gray-400 pl-icon" />
                                                 {party.gramPanchayat || '-'}
+                                            </div>
+                                        </td>
+                                        <td className="pl-td px-3 pl-td-text text-gray-600 border border-gray-200">
+                                            <div className="flex items-center gap-2">
+                                                <Briefcase size={12} className="text-gray-400 pl-icon" />
+                                                {party.zone || '-'}
                                             </div>
                                         </td>
                                         <td className="pl-td px-3 border border-gray-200 pl-td-actions">

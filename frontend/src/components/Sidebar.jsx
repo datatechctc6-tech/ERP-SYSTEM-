@@ -157,8 +157,7 @@ const Sidebar = () => {
             icon: <BarChart3 size={20} />,
             path: '/reports',
             subItems: [
-                { label: 'Transaction Summary', icon: <FileText size={16} />, path: '/reports' },
-                { label: 'GP Analysis', icon: <PieChart size={16} />, path: '/reports' }
+                { label: 'Transaction Summary', icon: <FileText size={16} />, path: '/reports' }
             ]
         },
         {
