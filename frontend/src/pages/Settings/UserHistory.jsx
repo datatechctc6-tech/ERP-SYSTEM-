@@ -456,8 +456,8 @@ const UserHistory = () => {
 
                             {/* Company Header */}
                             <div className="text-center mb-3 pb-2 border-b-2 border-slate-800">
-                                <h1 className="text-xl font-black text-slate-800 tracking-widest uppercase mb-0.5">COMPANY NAME</h1>
-                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Office Address, City, State - PIN</p>
+                                <h1 className="text-xl font-black text-slate-800 tracking-widest uppercase mb-0.5">DATAECH</h1>
+                                <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Bamphi Sahi,Cuttack, Odisha - 755001</p>
                                 <div className="mt-2 bg-slate-100 py-0.5 border-y border-slate-300">
                                     <h2 className="text-sm font-black text-slate-800 tracking-widest uppercase mb-0.5">ATTENDANCE & WORK SLIP</h2>
                                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">For the Date: {printData.date}</p>

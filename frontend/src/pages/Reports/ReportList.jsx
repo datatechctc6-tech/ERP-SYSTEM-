@@ -70,8 +70,8 @@ const ReportList = () => {
     });
     const [allTransactions, setAllTransactions] = useState([]);
     const [filterType, setFilterType] = useState('all'); // all, date, month, year, range
-    const [filterValue1, setFilterValue1] = useState(''); 
-    const [filterValue2, setFilterValue2] = useState(''); 
+    const [filterValue1, setFilterValue1] = useState('');
+    const [filterValue2, setFilterValue2] = useState('');
     const [loading, setLoading] = useState(true);
 
     const fetchStats = async () => {
@@ -102,23 +102,23 @@ const ReportList = () => {
 
             if (reportTitle === "Transaction Reports") {
                 let filteredTransactions = allTransactions;
-                
+
                 if (filterType !== 'all') {
                     filteredTransactions = filteredTransactions.filter(t => {
                         if (!t.date) return false;
                         const tDate = new Date(t.date);
-                        
+
                         if (filterType === 'date') {
                             if (!filterValue1) return true;
                             const filterD = new Date(filterValue1);
                             return tDate.getFullYear() === filterD.getFullYear() &&
-                                   tDate.getMonth() === filterD.getMonth() &&
-                                   tDate.getDate() === filterD.getDate();
+                                tDate.getMonth() === filterD.getMonth() &&
+                                tDate.getDate() === filterD.getDate();
                         } else if (filterType === 'month') {
                             if (!filterValue1) return true;
                             const [year, month] = filterValue1.split('-');
                             return tDate.getFullYear() === parseInt(year) &&
-                                   (tDate.getMonth() + 1) === parseInt(month);
+                                (tDate.getMonth() + 1) === parseInt(month);
                         } else if (filterType === 'year') {
                             if (!filterValue1) return true;
                             return tDate.getFullYear() === parseInt(filterValue1);
@@ -126,8 +126,8 @@ const ReportList = () => {
                             if (!filterValue1 || !filterValue2) return true;
                             const startD = new Date(filterValue1);
                             const endD = new Date(filterValue2);
-                            startD.setHours(0,0,0,0);
-                            endD.setHours(23,59,59,999);
+                            startD.setHours(0, 0, 0, 0);
+                            endD.setHours(23, 59, 59, 999);
                             return tDate >= startD && tDate <= endD;
                         }
                         return true;
@@ -272,7 +272,7 @@ const ReportList = () => {
                             <option value="year">By Year</option>
                             <option value="range">Custom Range</option>
                         </select>
-                        
+
                         {filterType === 'date' && (
                             <input type="date" value={filterValue1} onChange={e => setFilterValue1(e.target.value)} className="px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#004d4033] focus:border-[#004d40] shadow-sm" />
                         )}

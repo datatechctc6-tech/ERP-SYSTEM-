@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Menu, Bell, User, LogOut, ChevronDown, CheckCircle } from 'lucide-react';
+import { Menu, Bell, User, LogOut, ChevronDown, CheckCircle, Layout } from 'lucide-react';
 import { useLayout } from './LayoutContext';
 import { useNavigate } from 'react-router-dom';
+import TopNav from './TopNav';
 
 const Header = () => {
-    const { toggleSidebar, isPinned } = useLayout();
+    const { toggleSidebar, isPinned, isTopNav, toggleNavMode } = useLayout();
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -72,23 +73,39 @@ const Header = () => {
 
     return (
         <header className="fixed top-0 left-0 right-0 h-14 bg-[#004d40] text-white flex items-center px-4 z-50 shadow-md">
-            <button
-                onClick={toggleSidebar}
-                className={`p-2 hover:bg-[#00332e] rounded-lg transition-colors mr-3 ${isPinned ? 'bg-[#00332e] text-[#a7ffeb]' : ''}`}
-            >
-                <Menu size={20} />
-            </button>
+            {!isTopNav && (
+                <button
+                    onClick={toggleSidebar}
+                    className={`p-2 hover:bg-[#00332e] rounded-lg transition-colors mr-3 ${isPinned ? 'bg-[#00332e] text-[#a7ffeb]' : ''}`}
+                >
+                    <Menu size={20} />
+                </button>
+            )}
 
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/dashboard/1')}>
-                <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
-                    <span className="text-[#004d40] font-black italic text-xs">DT</span>
+            {!isTopNav ? (
+                <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/dashboard/1')}>
+                    <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
+                        <span className="text-[#004d40] font-black italic text-xs">DT</span>
+                    </div>
+                    <h1 className="text-2xl font-black  uppercase hidden sm:block">
+                        DATATECH ERP <span className="text-[#a7ffeb]">System</span>
+                    </h1>
                 </div>
-                <h1 className="text-2xl font-black  uppercase hidden sm:block">
-                    DATATECH ERP <span className="text-[#a7ffeb]">System</span>
-                </h1>
-            </div>
+            ) : (
+                <div className="flex-1 h-full flex items-center relative z-[100]">
+                    <TopNav />
+                </div>
+            )}
 
             <div className="ml-auto flex items-center gap-3">
+                <button
+                    onClick={toggleNavMode}
+                    className="p-2 rounded-lg transition-colors hover:bg-[#00332e] text-amber-200"
+                    title="Toggle Layout (Side / Top)"
+                >
+                    <Layout size={18} />
+                </button>
+
                 <div className="relative" ref={notificationRef}>
                     <button
                         onClick={() => setIsNotificationOpen(!isNotificationOpen)}
