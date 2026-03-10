@@ -4,6 +4,27 @@ import toast, { Toaster } from 'react-hot-toast';
 import { ShieldCheck, X, KeyRound, RefreshCw, Save } from 'lucide-react';
 import './AdminPin.css';
 
+const PinInputGroup = ({ label, name, value, onChange }) => (
+    <div className="ap-input-group flex items-center gap-3 mb-2">
+        <label className="ap-label w-36 flex-shrink-0 flex items-center gap-2 text-[12px] font-black text-[#004d40] uppercase tracking-tight">
+            <KeyRound size={14} className="text-[#00695c]" />
+            {label}
+        </label>
+        <input
+            type="password"
+            inputMode="numeric"
+            maxLength={4}
+            value={value}
+            onChange={(e) => {
+                const val = e.target.value.replace(/\D/g, '').slice(0, 4);
+                onChange(name, val);
+            }}
+            placeholder="Enter 4-digit PIN"
+            className="ap-input flex-1 h-10 bg-[#f8fafc] border-2 border-gray-300 focus:border-[#004d40] focus:ring-1 focus:ring-[#004d40] outline-none px-3 text-[14px] font-bold text-[#004d40] transition-all placeholder:font-normal rounded-lg shadow-sm"
+        />
+    </div>
+);
+
 const AdminPin = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -35,26 +56,9 @@ const AdminPin = () => {
         setFormData({ currentPin: '', newPin: '', confirmPin: '' });
     };
 
-    const PinInputGroup = ({ label, name, value }) => (
-        <div className="ap-input-group flex items-center gap-3 mb-2">
-            <label className="ap-label w-36 flex-shrink-0 flex items-center gap-2 text-[12px] font-black text-[#004d40] uppercase tracking-tight">
-                <KeyRound size={14} className="text-[#00695c]" />
-                {label}
-            </label>
-            <input
-                type="password"
-                inputMode="numeric"
-                maxLength={4}
-                value={value}
-                onChange={(e) => {
-                    const val = e.target.value.replace(/\D/g, '').slice(0, 4);
-                    setFormData(prev => ({ ...prev, [name]: val }));
-                }}
-                placeholder="Enter 4-digit PIN"
-                className="ap-input flex-1 h-10 bg-[#f8fafc] border-2 border-gray-300 focus:border-[#004d40] focus:ring-1 focus:ring-[#004d40] outline-none px-3 text-[14px] font-bold text-[#004d40] transition-all placeholder:font-normal rounded-lg shadow-sm"
-            />
-        </div>
-    );
+    const handlePinChange = (name, val) => {
+        setFormData(prev => ({ ...prev, [name]: val }));
+    };
 
     return (
         <div className="admin-pin-page h-full w-full bg-[#f0f4f4] flex overflow-hidden">
@@ -85,9 +89,9 @@ const AdminPin = () => {
                                     Change Admin PIN
                                 </h2>
 
-                                <PinInputGroup label="Current Pin" name="currentPin" value={formData.currentPin} />
-                                <PinInputGroup label="New Pin" name="newPin" value={formData.newPin} />
-                                <PinInputGroup label="Confirm Pin" name="confirmPin" value={formData.confirmPin} />
+                                <PinInputGroup label="Current Pin" name="currentPin" value={formData.currentPin} onChange={handlePinChange} />
+                                <PinInputGroup label="New Pin" name="newPin" value={formData.newPin} onChange={handlePinChange} />
+                                <PinInputGroup label="Confirm Pin" name="confirmPin" value={formData.confirmPin} onChange={handlePinChange} />
 
                                 {/* Save & Clear Buttons */}
                                 <div className="flex items-center justify-end gap-2 mt-5">
